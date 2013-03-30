@@ -11,7 +11,7 @@ to be the basis for a curve generation upon ultimate display.
 }
 
 \usage{
-CBpiv(x, CI, S = 10^4, Bval=c(.01,.05,.1,.2,.3,.4,.6,.9,.99), Eta=1.0, Beta=1.0, model = "w2", ProgRpt = FALSE) 
+CBpiv(x, CI, S = 10^4, Bval=mrank(rep(1,15)), Eta=1.0, Beta=1.0, model = "w2", ProgRpt = FALSE) 
 }
 
 \arguments{
@@ -29,7 +29,7 @@ of 10, not less than 1,000.  The default of 10^4 is adequate for most instances.
 
 
 \value{
-Returns a dataframe holding the Lower bound, the Median, and the Upper bound accourding to the sequence of B-values provided.
+Returns a dataframe holding the Lower bound, the Median, and the Upper bound according to the sequence of B-values provided.
 }
 
 \references{
@@ -41,5 +41,5 @@ Returns a dataframe holding the Lower bound, the Median, and the Upper bound acc
 bounds<-CBpiv(10,0.9)
 }
 
-\keyword{ confidence }
+\keyword{ interval confidence }
 
