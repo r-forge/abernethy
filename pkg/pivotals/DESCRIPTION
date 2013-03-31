@@ -3,7 +3,7 @@ Title: Functions implementing pivotal Monte Carlo methods
 Version: 0.1.1
 Date: 2013-2-13
 Author: David J. Silkworth
-Maintainer: Who to complain to <davidsilkworth@openreliability.me>
+Maintainer: David Silkworth <davidsilkworth@openreliability.me>
 Description: Functions specific to pivotal Monte Carlo analysis for weibull distributed data.
 License: GPL (>= 2)
 LazyLoad: yes
