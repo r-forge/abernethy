@@ -22,7 +22,7 @@
  * The hope is to encourage study of P-value estimate methods by correlation with high quality samples.
  * and exploration into  establishing pivotal confidence bounds for data including suspensions.
  *
- *     Copyright (C) 2013 David J. Silkworth
+ *     Copyright (C) 2013 Jacob T. Ormerod
  */
 
 #include "pivotals.h"
