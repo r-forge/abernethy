@@ -7,7 +7,7 @@ Functions to support pivotal analysis studies
 \description{
 Pivotal analysis is used to establish goodness of fit by means of Critical Correlation Coeficient (CCC) 
  and the p-value of r and r^2.  This analysis is also used and to establish confidence interval bounds
- for a given data set size and event classification (fail\suspension). 
+ for a given data set size and event classification (fail-suspension). 
 }
 \details{
 Functions:
