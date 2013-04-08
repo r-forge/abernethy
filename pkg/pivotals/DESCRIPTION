@@ -1,7 +1,7 @@
 Package: pivotals
 Title: Functions implementing pivotal Monte Carlo methods
-Version: 0.1.1
-Date: 2013-2-13
+Version: 0.1.2
+Date: 2013-4-5
 Author: Jacob T. Ormerod
 Maintainer: David Silkworth <davidsilkworth@openreliability.me>
 Description: Functions specific to pivotal Monte Carlo analysis for weibull distributed data.

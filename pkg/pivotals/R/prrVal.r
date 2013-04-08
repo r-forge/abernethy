@@ -1,4 +1,4 @@
-prrVal<-function(x, Rsqr, S=10^4, Eta=1.0, Beta=1.0, model="w2", ProgRpt=FALSE)  {	
+prrVal<-function(x, Rsqr, S=10^4, Eta=1.0, Beta=1.0, model="w2", ProgRpt=FALSE,seed=1234,method="exact",CI=0.0)  {	
 	## Test for valid x
       if(length(x)==1) {		
   	    N = as.integer(x)	
@@ -30,9 +30,9 @@ prrVal<-function(x, Rsqr, S=10^4, Eta=1.0, Beta=1.0, model="w2", ProgRpt=FALSE) 
 	stop("Insufficient samples")
 	}
 	
-	seed=1234
+	#seed=1234
 	Bval=.5   ## just to be some value, not used
-	CI=0.0
+	#CI=0.0
 	
 	## Test for model
 	if(model=="w2"|| model=="W2") {

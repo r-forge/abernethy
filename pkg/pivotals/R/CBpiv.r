@@ -5,15 +5,15 @@
 
 
 
-CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w2", ProgRpt=FALSE)	
+CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w2", seed=1234, ProgRpt=FALSE)
 {
       if(length(x)==1) {		
   	    N = as.integer(x)	
-  	    if (N < 3) stop("Insufficient data points")	 	                     	
+  	    if (N < 2) stop("Insufficient data points")
   	    event<-rep(1,N)
   	    mranks<-mrank(event)
       }else{
-          if(length(x)<3) {
+          if(length(x)<2) {
                 stop("Insufficient data points")          
           }else{
             for(i in 1:length(x)) {
@@ -34,7 +34,7 @@ CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w
 	    }	
 		
 		R2=0.0
-		seed=1234
+		#seed=1234
 		
 	    if (model == "w2" || model == "W2") {	
 
