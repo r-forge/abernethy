@@ -5,7 +5,7 @@
 
 
 
-CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w2", seed=1234, ProgRpt=FALSE)
+CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w2", seed=1234, ProgRpt=FALSE) 
 {
       if(length(x)==1) {		
   	    N = as.integer(x)	
@@ -33,7 +33,7 @@ CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w
 	        stop("Insufficient samples")	
 	    }	
 		
-		R2=0.0
+		R2=0.0  ## this diables p-value calculations for this specific CB function run
 		#seed=1234
 		
 	    if (model == "w2" || model == "W2") {	

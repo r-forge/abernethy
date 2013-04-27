@@ -10,7 +10,7 @@ pivotal parameters.  The 90% Critical Coefficient is the Rsqr value at the 10th 
 }
 
 \usage{
-prrVal(x, Rsqr, S = 10^4, Eta=1.0, Beta=1.0, model = "w2", ProgRpt = FALSE) 
+prrVal(x, Rsqr, S = 10^4, Eta=1.0, Beta=1.0, model = "w2", seed=1234, ProgRpt = FALSE) 
 }
 
 \arguments{
@@ -22,6 +22,7 @@ of 10, not less than 1,000.  The default of 10^4 is adequate for most instances.
 \item{Beta}{The Beta parameter to be used in random sampling. Default = 1.0}
 \item{model}{A character string representing the model of interest.  The default value of "w2" for 
 2-parameter Weibull is the only model currently valid.} 
+\item{seed}{an integer used to set the RNG seed.  Default = 1234}
 \item{ProgRpt}{A boolean value to control the generation of percent completion feedback in the R terminal.}
 }
 
