@@ -10,11 +10,14 @@ Benard's approximation is applied to adjusted ranks to produce a vector of media
 }
 
 \usage{
-mrank(x) 
+mrank(x,options=NULL) 
 }
 
 \arguments{
-\item{x}{The quantity of complete failures for evaluation, or an event vector}
+\item{x}{An ordered event vector consisting of 1's for failures, 0's for suspensions.}
+\item{options}{An optional list such as constructed by wiebulltoolkit::wb.options including the
+ named item methods.rank for which only a value of "qbeta" has been implemented to alter the otherwise default
+ Benard's approximation for determing point estimates for plotting positions.}
 }
 
 
