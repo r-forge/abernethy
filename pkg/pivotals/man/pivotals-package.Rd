@@ -7,13 +7,15 @@ Functions to support pivotal analysis studies
 \description{
 Pivotal analysis is used to establish goodness of fit by means of Critical Correlation Coeficient (CCC) 
  and the p-value of r and r^2.  This analysis is also used and to establish confidence interval bounds
- for a given data set size. Only complete failure data is compliant with the New Weibull Handbook. 
+ for a given data set size. Only complete failure data is compliant with the New Weibull Handbook, but 
+ the capability to explore suspended data techniques is provided.
 
 }
 \details{
-Functions:
+Functions:\cr
 \code{CBpiv}\cr
 \code{mrank}\cr
+\code{MRRln2pxy}\cr
 \code{MRRw2pxy}\cr
 \code{prrVal}\cr
 \code{prrVec}\cr

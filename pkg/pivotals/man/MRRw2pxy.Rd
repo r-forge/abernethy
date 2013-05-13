@@ -19,7 +19,7 @@ MRRw2pxy(x,s=NULL)
 }
 
 \value{
-   A vector containing results in the following order: Eta (scale), Beta (shape), R^2 (regression variance)
+   A vector containing results in the following order: Eta (scale), Beta (shape), R^2 (explained variance of regression)
 }
 
 \details{

@@ -75,14 +75,22 @@ SEXP MRRw2pXonY (SEXP arg1, SEXP arg2)
 
 	}
 
-	SEXP MRRln2pXonY (SEXP arg1, SEXP arg2)
+	SEXP MRRln2pXonY (SEXP arg1, SEXP arg2, SEXP arg3)
 {
     using namespace Rcpp ;
 
 	Rcpp::NumericVector time(arg1);
 	Rcpp::NumericVector event(arg2);
-	Rcpp::NumericVector mrank(medianRank(event));
+	Rcpp::IntegerVector method(arg3);
+	//Rcpp::NumericVector mrank(medianRank(event));
 	int N=time.size();
+	Rcpp::NumericVector mrank(N);
+	if(method[0]==1)  {
+	    mrank=medianRank1(event);
+	}
+	else  {
+        mrank=medianRank(event);
+	}
 	int F=mrank.size();
 // declare the arma objects with n_rows = F for bounds checking
 	arma::mat X(F,2);
