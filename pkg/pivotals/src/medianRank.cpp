@@ -84,7 +84,7 @@ SEXP medianRank1 (SEXP arg1)
 		{
 			adj_rank(i)= (rr*adj_rank(i-1)+Ndbl+1.0)/(rr+1.0);
 			if(j<F) {
-			median_rank[j]=Rf_qbeta(0.5,adj_rank(i),rr,1,0);
+			median_rank[j]=Rf_qbeta(0.5,adj_rank(i),Ndbl-adj_rank(i)+1.0,1,0);
 			j++; }
 		}
 		else
