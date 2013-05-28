@@ -39,49 +39,77 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-options.abrem <- function(...){
+options.abremplot <- function(...){
    # function to handle the many options of the weibull toolkits functions
-   # the option list should only be manipulated through this function!
-
+   # the option list should only be manipulated by this function!
    single <- FALSE
    args <- list(...)
-
-   if(!exists(as.character(substitute(options_abrem))))
+   if(!exists(as.character(substitute(options_abremplot)))){
       # if the globally accessible variable was not defined yet, then
       # create it here with default values OR reset to default values
       # message ("Resetting Weibulltoolkit options to default values...")
-      options_abrem <<- list(
-         dist="weibull",
-         method=c("mrr","qbeta","xony"),
-         S=10000,
-         pivotals=NULL,
-         cl=0.9,
-         blives=c(0.1,0.05,0.01),
-         sides="double",
-         verbosity=1,
-         cb.points=25
-         )
-
-   if (!length(args))
-      args <- options_abrem
+      options_abremplot <<- list(
+         main="Weibull Plot\n",
+         sub=NULL,
+         xlim=NULL,
+         ylim=c(0.01,0.99),
+         xlab="Time To Failure",
+         ylab="Unreliability [%]",
+         log="x",
+         coordinate.text.size=0.7,
+         signif=4,
+         pch=1,
+         lwd=2,
+         lwd.points=2,
+         lty=1,
+         col="black",
+         col.grid="gray",
+         is.plot.grid=TRUE,
+         is.plot.fittedline=TRUE,
+         is.plot.datapoints=TRUE,
+         is.plot.datacoordinates=FALSE,
+         is.plot.legend=TRUE,
+#         legend.position="bottomright",
+         legend.text.size=0.7,
+         legend.title=NULL,
+         is.legend.blives=TRUE,
+         is.legend.gof=FALSE,
+         is.plot.cb = TRUE,
+         persistent=TRUE)
+   }
+   if(!length(args)){
+       args <- options_abremplot
          # return the current option list
-   else {
-      if (all(unlist(lapply(args, is.character))))
+   }else{
+      if(all(unlist(lapply(args, is.character)))){
          # if all items in the args are characters, then
          # treat them as the names of the options.
          args <- as.list(unlist(args))
-      if (length(args) == 1) {
-         if (is.list(args[[1L]]) | is.null(args[[1L]]))
+      }
+      if(length(args) == 1) {
+         if (is.list(args[[1L]]) | is.null(args[[1L]])){
             args <- args[[1L]]
             # unlist the first (and only) argument to a string
-         else if(is.null(names(args)))
+         }else{if(is.null(names(args)))
             # if there is no name to args then
             # the arg itself is the name (?)
-            single <- TRUE}}
-   options_abrem <<-
-      modifyList(options_abrem, value <- args)
-   if (is.null(names(args)))
-      value <- options_abrem[match(args,names(options_abrem))]
-   if (single) value <- value[[1L]]
+            single <- TRUE
+         }
+      }
+   }
+   value <- args
+   if(options_abremplot$persistent){
+       options_abremplot <<-modifyList(options_abremplot, value)
+   }
+   if(!is.null(args$persistent)){
+        value <- args
+        if(args$persistent){
+           options_abremplot <<-modifyList(options_abremplot, value)
+        }
+   }
+       # make the options stick between calls of options.abremplot()
+   if(is.null(names(args)))
+      value <- options_abremplot[match(args,names(options_abremplot))]
+   if(single) value <- value[[1L]]
    value}
 # note that options that are NULL are not shown in the printout -> needs to change

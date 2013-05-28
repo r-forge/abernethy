@@ -1,12 +1,13 @@
 Package: abrem
 Type: Package
 Title: Abernethy Reliability Methods package
-Version: 0.1.1
-Date: May 23, 2013
-Author: Jurgen Symynck <jurgen.symynck@kahosl.be>, Dr. Jacob Ormerod <jtormerod@gmail.com>
+Version: 0.1.2
+Date: May 27, 2013
+Author: Jurgen Symynck <jurgen.symynck@kahosl.be>, Jacob Ormerod <jtormerod@gmail.com>
 Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
-Depends: survival, pivotals
-Description: This packages will calculate fits from lifetime data, following the metehods of "The New Weibull Handbook, Fifth edition" by Dr. Robert B. Abernethy. The package uses the 'pivotals' package that can be downloaded from http://r-forge.r-project.org/projects/abernethy/. Currently, it only holds the options.abrem() function for testing r-forge automated building.
+Depends: pivotals
+Suggests: abremout, survival
+Description: This packages will calculate fits from lifetime data, following the methods of "The New Weibull Handbook, Fifth edition" by Dr. Robert B. Abernethy. Dependencies can be downloaded from http://r-forge.r-project.org/projects/abernethy/.
 License: GPL-3
 URL: https://r-forge.r-project.org/projects/abernethy/
 BugReports: email the authors at <jurgen.symynck@kahosl.be> and <jtormerod@gmail.com>

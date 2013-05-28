@@ -39,49 +39,43 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-options.abrem <- function(...){
-   # function to handle the many options of the weibull toolkits functions
-   # the option list should only be manipulated through this function!
-
-   single <- FALSE
-   args <- list(...)
-
-   if(!exists(as.character(substitute(options_abrem))))
-      # if the globally accessible variable was not defined yet, then
-      # create it here with default values OR reset to default values
-      # message ("Resetting Weibulltoolkit options to default values...")
-      options_abrem <<- list(
-         dist="weibull",
-         method=c("mrr","qbeta","xony"),
-         S=10000,
-         pivotals=NULL,
-         cl=0.9,
-         blives=c(0.1,0.05,0.01),
-         sides="double",
-         verbosity=1,
-         cb.points=25
-         )
-
-   if (!length(args))
-      args <- options_abrem
-         # return the current option list
-   else {
-      if (all(unlist(lapply(args, is.character))))
-         # if all items in the args are characters, then
-         # treat them as the names of the options.
-         args <- as.list(unlist(args))
-      if (length(args) == 1) {
-         if (is.list(args[[1L]]) | is.null(args[[1L]]))
-            args <- args[[1L]]
-            # unlist the first (and only) argument to a string
-         else if(is.null(names(args)))
-            # if there is no name to args then
-            # the arg itself is the name (?)
-            single <- TRUE}}
-   options_abrem <<-
-      modifyList(options_abrem, value <- args)
-   if (is.null(names(args)))
-      value <- options_abrem[match(args,names(options_abrem))]
-   if (single) value <- value[[1L]]
-   value}
-# note that options that are NULL are not shown in the printout -> needs to change
+Abrem <- function(x,...){
+    args <- list(...)
+    ret <-list()
+    class(ret) <- "abrem"
+    timeorder <- c()
+    if(!missing(x)){
+        ret$data <- NULL
+        if(is.vector(x)){
+            # assuming vector of lifetimes
+            timeorder <- order(x)
+            ret$data <- data.frame(time=x[timeorder],event=1)
+        }
+        if(is.data.frame(x)){
+            if(!is.null(x$time) && !is.null(x$event)){
+                # dataframe is formatted appropriate
+                # extra info is also copied
+            timeorder <- order(x$time)
+            ret$data <- x[timeorder,]
+            }
+        }
+    }else{
+        if(!is.null(args$time)){
+            if(is.vector(args$time)){
+                # assuming vector of lifetimes
+                timeorder <- order(args$time)
+                ret$data  <- data.frame(time=args$time[timeorder],event=1)
+            }
+        }else{stop("No lifetime data was provided.")}
+    }
+    if(!is.null(args$event) && !is.null(ret$data)){
+        if(is.vector(args$event)){
+            # assuming event vector
+#            ret$data <- cbind(ret$data,event=args$event[order(timeorder)])
+            ret$data$event <- args$event[timeorder]
+        }
+    }
+    ret
+    # TODO: check what to do with the automatically added row names that
+    # are sometimes out of order
+}
