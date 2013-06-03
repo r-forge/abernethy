@@ -2,7 +2,7 @@
 \alias{params.to.ft}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-    Create (un-)Censored Testdata From Distribution Parameters}
+    Create (un-)censored Testdata From Distribution Parameters}
 \description{
     Create a set of (life-)time observations (possibly with censoring),
     perfectly matching a given distribution.
@@ -21,10 +21,15 @@
 }
 \details{}
 \value{
-    An object of class  \code{"Surv"} with the specified censoring scheme.
-    The dataset has \code{beta} and  \code{eta} as its Weibull parameters.
+    A data frame with the specified censoring scheme, the dataset has the
+    chosen distributions parameters.
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\note{
+    Currently, only Weibull distributions fitted with
+    \code{method.fit = c("mrr","xony","qbeta")} and \code{dist = "weibull"}
+    are supported.
+}
 \seealso{}
 \examples{
 ### generate two synthetic Weibull datasets ###
