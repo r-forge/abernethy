@@ -93,18 +93,20 @@ abrem.fit <- function(x,...){
                         Surv(time=x$data$time,event=x$data$event)
                     x$fit[[i]]$survreg <-
                         survreg(x$fit[[i]]$data~1,dist=opa$dist)
-                }else{warning("Currently, \"surv\" is only supported through ",
-                    "package survival.")}
-                if(tolower(opa$dist) %in% c("weibull","weibull2p")){
-                    x$fit[[i]]$beta <- 1/x$fit[[i]]$survreg$scale
-                    x$fit[[i]]$eta  <- exp(x$fit[[i]]$survreg$coefficients[1])
-                }
-                if(tolower(opa$dist) %in% c("lognormal","lognormal2")){
-                    if(require(survival)){
+                    if(tolower(opa$dist) %in% c("weibull","weibull2p")){
+                        x$fit[[i]]$beta <- 1/x$fit[[i]]$survreg$scale
+                        x$fit[[i]]$eta  <-
+                            exp(x$fit[[i]]$survreg$coefficients[1])
+                    }
+                    if(tolower(opa$dist) %in% c("lognormal","lognormal2")){
                         x$fit[[i]]$meanlog <- x$fit[[i]]$survreg$coefficients[1]
                         x$fit[[i]]$sdlog <- x$fit[[i]]$survreg$scale
-                    }else{warning("Currently, \"lognormal\" and \"surv\" are ",
-                        "only supported through package survival.")}
+                    }
+                }else{
+                    warning("Currently, \"surv\" is only supported through ",
+                        "package survival.")
+                        # TODO: check the effect of message() or warning()
+                        # on r-forge building
                 }
             }
             if("yonx" %in% tolower(opa$method.fit)){

@@ -16,8 +16,8 @@
             Weibull plots are displayed as a straight line.
         \item (right-)Censored data (suspensions) are supported, where some
             observations are not failures.
-        #\item Monte Carlo pivotal confidence bounds are calculated and
-        #    displayed, Beta-binomial confidence bounds can be displayed.
+        % \item Monte Carlo pivotal confidence bounds are calculated and
+        % displayed, Beta-binomial confidence bounds can be displayed.
         \item The \code{mark()} function draws a point on the plot with dotted
             lines extending towards the axes, for marking points of interest.}
 }
@@ -61,7 +61,7 @@
 \examples{
 data(p2.2,package="abrem")
 da <- abrem.fit(Abrem(p2.2),dist="weibull",
-    method.fit=c("mrr","xony","exact"),pch=3)
+    method.fit=c("mrr","xony","qbeta"),pch=3)
 da <- abrem.conf(da,method.conf.blives="mcpivotal")
 da <- abrem.fit(da,dist="weibull",
     method.fit=c("mrr","xony","bernard"),

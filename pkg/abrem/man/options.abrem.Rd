@@ -44,13 +44,13 @@
    
    Returns the current value of an option.
    
-   \code{options.abrem(cl=0.95)}\cr\code{options.wb(list(cl=95,S=5e4))}
+   \code{options.abrem(cl=0.95)}\cr\code{options.abrem(list(cl=0.95,S=5e4))}
    
    Sets the specified options.
    
    Currently, there is no way to reset the options to the default values using
    this function.  One might, before changing any options, store the option
-   list in a temporary variable like  \code{abrem.default <- options.abrem()}
+   list in a temporary variable like  \code{abrem.defaults <- options.abrem()}
    for restoring it later by running  \code{options.abrem(abrem.defaults)}.
 
     The function creates a globally accessible list named  \code{options_abrem},
@@ -61,7 +61,7 @@
    Executing \code{options.abrem()} without arguments returns a named list
    containing the currently active global options of the \pkg{abrem} package.
    
-   When supplying arguments to \code{options.abrem()}, these arguments are
+   When supplying arguments to \code{options.abrem}, these arguments are
    returned in a names list.
 }
 \section{Abrem options}{
@@ -79,6 +79,7 @@
             \code{"bernard"} for Bernards approximation to exact ranking,
             \code{"xony"} and \code{"yonx"} for X-on-Y regression or
             Y-on-X regression, respectively.
+            Defaults to \code{c("mrr","xony","qbeta")}.
 
             Note that currently, ALL relevant settings must be supplied for the
             fitting to succeed, if one supplies \code{"bernard"} then one must
@@ -86,8 +87,6 @@
             combinations of method arguments will result in a fit. For instance,
             \code{"surv"} and \code{"xony"} do not match together because MLE
             uses no rank regression.
-
-            Defaults to \code{c("mrr","xony","qbeta")}.
         }
         \item{\code{S}}{
             An integer describing the number of Monte Carlo simulations on
