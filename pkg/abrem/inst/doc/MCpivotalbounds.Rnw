@@ -1,0 +1,4 @@
+%\VignetteIndexEntry{Monte Carlo pivotal confidence bounds for Weibull analysis, with implementations in R}
+\documentclass{article}
+\begin{document}
+\end{document}

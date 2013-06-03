@@ -1,0 +1,4 @@
+%\VignetteIndexEntry{Weibull analysis using R, in a nutshell}
+\documentclass{article}
+\begin{document}
+\end{document}

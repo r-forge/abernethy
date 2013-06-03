@@ -107,14 +107,14 @@ plot(da,main="Comparison between Weibull (MRR and MLE) and Lognormal \n")
 #legend("topleft",c("curve (Surv) using MLE"),lwd=2,bg="white",cex=0.7,
 #   col="red",inset=0.025)
 # +-----------------------------------------------------------------------------
-data(p13.6,package="abrem")
-da <- abrem.fit(Abrem(p13.6),dist="weibull",method.fit=c("mrr","xony","qbeta"))
-for(i in 1:20){
-    da <- abrem.conf(da,method.conf.blives="mcpivotal",S=1000,col="red",lwd=1)
-}
-options.abremplot(is.plot.legend=FALSE)
-m <- "Variability in \"mcpivotals\" B-life confidence for S=1000.\n"
-plot(da,xlim=c(10,500),main=m)
+#data(p13.6,package="abrem")
+#da <- abrem.fit(Abrem(p13.6),dist="weibull",method.fit=c("mrr","xony","qbeta"))
+#for(i in 1:20){
+#    da <- abrem.conf(da,method.conf.blives="mcpivotal",S=1000,col="red",lwd=1)
+#}
+#options.abremplot(is.plot.legend=FALSE)
+#m <- "Variability in \"mcpivotals\" B-life confidence for S=1000.\n"
+#plot(da,xlim=c(10,500),main=m)
 
 # +-----------------------------------------------------------------------------
 da <- params.to.ft("weibull",beta=3,eta=1000,event=c(1,1,1,rep(0,10)))

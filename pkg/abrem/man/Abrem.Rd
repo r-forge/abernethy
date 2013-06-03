@@ -2,7 +2,8 @@
 \alias{Abrem}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-    Create (live-)time Observation Data Object for Abrem Analysis
+    Create (life-)time Observation Data Object for
+    Lifetime and Reliability Analysis
 }
 \description{
     This function creates an object of class \code{abrem} for further processing
