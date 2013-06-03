@@ -39,16 +39,15 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-mrr <- function(d=NULL,is.XonY.regression=TRUE){
-   if(!is.data.frame(d) || is.null(d$mrank) || is.null(d$time))
-      stop("Missing 'time', 'mrank' column or argument is no data frame. Is the data median ranked?")
-   if(is.XonY.regression){
-      # options()$na.action should be set to "na.omit" to deal
-      # properly with censored items in the dataframe
-      fwb <- lm(log(d$time) ~ F0inv(d$mrank),d)
-   }else{
-      # y on x regression. Do not use this , use x on y regression.
-      # possibly BUGGY!
-      fwb <- lm(F0inv(d$mrank) ~ log(d$time),d)}
-   fwb}
-   
+bbb <- function(j,f,CL,beta,eta){
+   # function to calculate Beta Binomial Confidence Bounds for B-lives.
+   # j    : rank of failure
+   # f    : number of failures (is NOT the same as sample size!) see
+   #        'suspended items' fotr more info
+   # CB   : Confidence Bound, Confidence Limit
+   # beta : Weibull slope or scale parameter
+   # eta  : Weibull shape paramater
+   # see "The new Weibull handbook, fifth edition" p. 7-3
+   # see "The new Weibull handbook, fifth edition" Appendix I
+   # see also MS. Excel's and GNUmeric's BETAINV() function
+   eta*(log(1/(1-qbeta(CL,j,f-j+1))))^(1/beta)}

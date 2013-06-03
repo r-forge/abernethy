@@ -39,31 +39,21 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-splitargs <- function(...){
-    # (1) split the ... argument in opp options and opa options
-    # (2) assign the above to either opp and opa
-
-    args <- (...)
-    #args <- as.list(substitute(list(...)))[-1L]
-        # TODO: what is the difference with the above?
-    argsnames <- names(args)
-        # TODO: what is the difference with names(args) ?
-    parplot     <- plot_default_args()
-    ret         <- list()
-    oppnames    <- names(options.abremplot())
-    opanames    <- names(options.abrem())
-    ret$opp     <- args[argsnames %in% unique(c(parplot,oppnames))]
-    ret$opa     <- args[tolower(argsnames) %in% tolower(opanames)]
-        # the above can be empty lists but NOT NULL.
-#    if(lvec <- argsnames %in% parplot){
-#        ret$opp     <- args[lvec]
-#    }else{
-#        ret$opp <- NULL
-#    }
-#    if(lvec <- tolower(argsnames) %in% tolower(opanames)){
-#        ret$opa     <- args[lvec]
-#    }else{
-#        ret$opa <- NULL
-#    }
-    ret
-}
+.onLoad <- function(libname, pkgname, ...){
+#    packageStartupMessage("Creating CCC2wb2()...")
+    utils::data(CCC2table,package=pkgname,lib.loc=libname)
+    # TODO: change the above and CCC2table itself to use readRDS
+    fun1 <- stats::approxfun(
+        x=CCC2table[,1],
+        y=CCC2table[,2],method="constant",f=1)
+        # 'f=1'ensures that when interpolation is happening,
+        # the returned value is the highest of the possible
+        # two choices -> allows for the most conservative comparison
+    fun2 <- stats::approxfun(
+        x=CCC2table[,1],
+        y=CCC2table[,3],method="constant",f=1)
+    CCC2wb2 <<- function(fail)list(
+        CCC2  =fun1(fail),
+        signif=fun2(fail))
+#    packageStartupMessage("... finished creating CCC2wb2().")
+    }

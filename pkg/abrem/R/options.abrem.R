@@ -40,44 +40,45 @@
 # +-----------------------------------+
 #
 options.abrem <- function(...){
-   # function to handle the many options of the weibull toolkits functions
-   # the option list should only be manipulated through this function!
+    # function to handle the many options of the weibull toolkits functions
+    # the option list should only be manipulated through this function!
 
-   single <- FALSE
-   args <- list(...)
+    single <- FALSE
+    args <- list(...)
 
-   if(!exists(as.character(substitute(options_abrem))))
-      # if the globally accessible variable was not defined yet, then
-      # create it here with default values OR reset to default values
-      # message ("Resetting Weibulltoolkit options to default values...")
-      options_abrem <<- list(
-         dist="weibull",
-         method=c("mrr","qbeta","xony"),
-         S=10000,
-         pivotals=NULL,
-         cl=0.9,
-         blives=c(0.1,0.05,0.01),
-         sides="double",
-         verbosity=1,
-         cb.points=25
-         )
-
-   if (!length(args))
-      args <- options_abrem
-         # return the current option list
-   else {
-      if (all(unlist(lapply(args, is.character))))
-         # if all items in the args are characters, then
-         # treat them as the names of the options.
-         args <- as.list(unlist(args))
-      if (length(args) == 1) {
-         if (is.list(args[[1L]]) | is.null(args[[1L]]))
-            args <- args[[1L]]
-            # unlist the first (and only) argument to a string
+    if(!exists(as.character(substitute(options_abrem))))
+        # if the globally accessible variable was not defined yet, then
+        # create it here with default values OR reset to default values
+        # message ("Resetting Weibulltoolkit options to default values...")
+        options_abrem <<- list(
+            dist="weibull",
+            method.fit=c("mrr","qbeta","xony"),
+            conf.what="blives",
+            conf.blives.sides="double",
+            conf.n=25,
+            method.conf.blives=c("mcpivotal","bbb"),
+            S=1e4,
+            pivotals=FALSE,
+            cl=0.9,
+            blives=c(0.1,0.05,0.01),
+            verbosity=0)
+    if (!length(args))
+        args <- options_abrem
+           # return the current option list
+    else {
+        if (all(unlist(lapply(args, is.character))))
+            # if all items in the args are characters, then
+            # treat them as the names of the options.
+            args <- as.list(unlist(args))
+        if (length(args) == 1) {
+            if (is.list(args[[1L]]) | is.null(args[[1L]]))
+               args <- args[[1L]]
+               # unlist the first (and only) argument to a string
          else if(is.null(names(args)))
             # if there is no name to args then
             # the arg itself is the name (?)
-            single <- TRUE}}
+            single <- TRUE
+         }}
    options_abrem <<-
       modifyList(options_abrem, value <- args)
    if (is.null(names(args)))

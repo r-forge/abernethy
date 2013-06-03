@@ -44,7 +44,8 @@ abrem.fit <- function(x,...){
     opp <- options.abremplot()
     opa <- options.abrem()
 #    opp <- ifelse(is.null(args$opp),NULL,modifyList(opp, args$opp))
-    if(is.null(args$opp)){opp <- NULL
+    # TODO: check for argument "add": this shoudn'gt be supplied here
+    if(length(args$opp)==0){opp <- NULL
     }else{opp <- modifyList(opp, args$opp)}
         # opp is NULL when no graphical parameters
         # have been passed through the function.
@@ -74,17 +75,17 @@ abrem.fit <- function(x,...){
                 # accompanied with a censoring indicator (0 or FALSE)
             x$fit[[i]]$fail <- sum(x$data$event)
             x$fit[[i]]$cens <- x$fit[[i]]$n-x$fit[[i]]$fail
-#            if(identical(tolower(opa$method.reg),"mrr")){
-#                if(opa$is.XonY.regression){
-            if(all(c("mrr","xony") %in% tolower(opa$method)) &&
+            if(all(c("mrr","xony") %in% tolower(opa$method.fit)) &&
                 (tolower(opa$dist) %in% c("weibull","weibull2p"))){
-                    x$fit[[i]]$data  <- mrank.data(x$data,method = opa$method)
+                    x$fit[[i]]$data  <- mrank.data(x$data,method = opa$method.fit)
                         # just pass the whole vector for further processing
-                    x$fit[[i]]$lm  <- mrr(x$fit[[i]]$data)
+                    #x$fit[[i]]$lm  <- mrr(x$fit[[i]]$data)
+                    x$fit[[i]]$lm  <- lm(log(x$fit[[i]]$data$time) ~
+                        F0inv(x$fit[[i]]$data$mrank),x$fit[[i]]$data)
                     x$fit[[i]]$beta <- 1/coef(x$fit[[i]]$lm)[2]
                     x$fit[[i]]$eta  <- exp(coef(x$fit[[i]]$lm)[1])
             }
-            if("surv" %in% tolower(opa$method)){
+            if("surv" %in% tolower(opa$method.fit)){
                 # expand code to only support this
                 # when survival package is loaded
                 if(require(survival)){
@@ -106,11 +107,11 @@ abrem.fit <- function(x,...){
                         "only supported through package survival.")}
                 }
             }
-            if("yonx" %in% tolower(opa$method)){
+            if("yonx" %in% tolower(opa$method.fit)){
                 warning("Y on X regression is currently not supported, ",
                     "doing nothing.")
             }
-            if("prcomp" %in% tolower(opa$method)){
+            if("prcomp" %in% tolower(opa$method.fit)){
                 warning("Principal component / Single Value Decomposition ",
                     "is currently not supported, doing nothing.")
             }

@@ -2,7 +2,6 @@ export(
 #	CCC2wb2,
 #	F0,
 #	F0inv,
-#	get.wbparams,
 #	bbb,
 #	mrank.data,
 #	mrank.observation,
@@ -10,7 +9,8 @@ export(
 #	splitargs,
 	Abrem,
 	abrem.fit,
-#	wbparams.to.ft,
+	abrem.conf,
+	params.to.ft,
 	options.abrem,
 	options.abremplot
 	)
