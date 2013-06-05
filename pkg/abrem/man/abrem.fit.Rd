@@ -28,7 +28,7 @@
     One can also add any parameters available from \code{options.abremplot},
     such as \code{"col"} or \code{"is.plot.legend"}. These plotting options
     will be used when plotting the fit using \code{plot.abrem}.
-    %\code{\link[abremout:plot.abrem]{plot.abrem}}.
+    % \code{\link[abremout:plot.abrem]{plot.abrem}}.
 }
 \value{
     \code{abrem.fit()} returns its argument \code{x}, extended with the

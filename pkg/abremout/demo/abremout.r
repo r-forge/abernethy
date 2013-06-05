@@ -124,7 +124,16 @@ for(i in 1:20){
 }
 options.abremplot(is.plot.legend=FALSE)
 m <- "Variability in \"mcpivotals\" B-life confidence for S=1000.\n"
-plot(da,xlim=c(1,5000),main=m)
+plot(da,xlim=c(5,5000),main=m)
+# +-----------------------------------------------------------------------------
+da <- params.to.ft("weibull",beta=3,eta=1000,event=c(1,1,1,rep(0,10)))
+da <- abrem.fit(Abrem(da),dist="weibull",method.fit=c("mrr","xony","qbeta"))
+for(i in 1:10){
+    da <- abrem.conf(da,method.conf.blives="mcpivotal",S=1e5,col="green3",lwd=1)
+}
+options.abremplot(is.plot.legend=FALSE)
+m <- "Variability in \"mcpivotals\" B-life confidence for S=1e5.\n"
+plot(da,xlim=c(5,5000),main=m)
 # +----------------------------------------------------------------------------
 #data(p13.6)
 #d <- Surv(p13.6$time,p13.6$event)

@@ -41,14 +41,17 @@
     options appended.
 }
 \section{To Do/Known issues/Bugs}{
-   \itemize{
-      \item The legend positions are slightly to the right, overlapping the
-        right Y axis (especially for small horizontal ranges).
-      \item Plotting confidence bounds with \code{blives=c()} and
-        \code{conf.n=0} produces errors and \code{"numeric(0)"} in the legend.
-      \item \code{"numeric(0)"} in the legend when supplying
-        custom \code{blives} values.
-      \item return arguments, with additional plotting information attached.
+    \itemize{
+        \item The legend positions are slightly to the right, overlapping the
+            right Y axis (especially for small horizontal ranges).
+        \item Plotting confidence bounds with \code{blives=c()} and
+            \code{conf.n=0} produces errors and \code{"numeric(0)"} in the legend.
+        \item \code{"numeric(0)"} in the legend when supplying
+            custom \code{blives} values.
+        \item return arguments, with additional plotting information attached.
+        \item Legends are still shown even when no fits were calculated: more
+            specific when \pkg{survival} is not installed, i still attempts
+            to show legends for \code{method.fit="surv"}.
    }
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}

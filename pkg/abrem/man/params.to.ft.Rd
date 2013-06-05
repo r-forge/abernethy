@@ -32,8 +32,8 @@
 }
 \seealso{}
 \examples{
-### generate two synthetic Weibull datasets ###
-### with shape = 3 and scale 1000, resp.    ###
+## generate two synthetic Weibull datasets ##
+## with shape = 3 and scale 1000, resp.    ##
 d1 <- params.to.ft("weibull",beta=3,eta=1000,n=10)
 d1 <- abrem.fit(Abrem(d1),method.fit=c("mrr","xony","qbeta"))
 print(d1$data)
