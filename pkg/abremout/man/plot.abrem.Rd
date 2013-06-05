@@ -69,9 +69,11 @@ da <- abrem.conf(da,method.conf.blives="mcpivotal")
 da <- abrem.fit(da,dist="weibull",
     method.fit=c("mrr","xony","bernard"),
     col="red",pch=4,lty=2)
-da <- abrem.fit(da,dist="weibull",method.fit="surv",
-    col="blue",pch="s")
-da <- abrem.fit(da,dist="lognormal",method.fit="surv",
-    col="green3",pch=8)
+%da <- abrem.fit(da,dist="weibull",method.fit="surv",
+%    col="blue",pch="s")
+%da <- abrem.fit(da,dist="lognormal",method.fit="surv",
+%    col="green3",pch=8)
+% the above fails on r-forge for no good reason
+% due to require(survival)
 plot(da,xlim=c(1e-2,1e4))
 }
