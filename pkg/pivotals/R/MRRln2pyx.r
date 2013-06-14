@@ -22,36 +22,24 @@
 ##
 ## This function is consistent with The Weibull Handbook, Fifth Edition and SuperSMITH software.
 
-MRRln2pyx<-function(x, s=NULL, options=NULL)  {	
+MRRln2pyx<-function(x, options=NULL)  {	
   
-  if(missing(s)) {
-## this is simply a complete failure set
-    data<-sort(x)
-    event<-rep(1,length(x))
-  }else{
-## suspension data has been provided
-    data<-c(x,s)
-    event<-c(rep(1,length(x)),rep(0,length(s)))
-    prep_df<-data.frame(data=data,event=event)
-## now sort the dataframe on data values
-    NDX<-order(prep_df[,1])
-    prep_df<-prep_df[NDX,]
-    data<-prep_df$data
-    event<-prep_df$event
-  }
+if(!identical(class(x),"abrem")){	
+	stop("input is not of class abrem")
+}
   
   ## Default point estimation method for pivotals package is Benard's approximation for median ranks			
 	method=0		
 	if(!missing(options))  {		
 ## An example means for testing the options.abrem list to be passed from abrem package			
-	     if(length(options$method.fit)>0) {		
-		if(options$method.fit[2]=="qbeta"){	
-			method=1
-		}	
-	     }		
+	    if(length(options$method.fit)>0) {		
+			if(options$method.fit[2]=="qbeta"){	
+				method=1
+			}	
+	    }		
 	}
   
-  Lognormal<-.Call("MRRln2pYonX", data, event, method, PACKAGE= "pivotals")  
+  Lognormal<-.Call("MRRln2pYonX", x$data$time, x$data$event, method, PACKAGE= "pivotals")  
   params<-c("Mulog","Sigmalog","R_squared") 
   names(Lognormal)<-params
 Lognormal
