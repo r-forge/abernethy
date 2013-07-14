@@ -24,7 +24,17 @@
  */
 
 #include "debias.h"
-#include "MLEw2p.h"
+
+
+double Gfun2(arma::colvec Data, int Nf, double Bhat);
+
+double Gfun2(arma::colvec Data, int Nf, double Bhat)  {
+arma::colvec F=Data.rows(0,Nf-1);
+arma::colvec DpB=pow(Data,Bhat);
+double GBhat=arma::as_scalar( sum(DpB%log(Data))/sum(DpB)-sum(log(F))/Nf-1/Bhat );
+return GBhat;
+}
+
 
 SEXP MLEw2p (SEXP arg1, SEXP arg2, SEXP arg3)  
 {
