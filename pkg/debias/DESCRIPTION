@@ -1,6 +1,6 @@
 Package: debias
 Title: Functions implementing MLE,its bias reduction for small samples and related issues
-Version: 0.1.1
+Version: 0.1.2
 Date: 2013-6-17
 Author: Jacob T. Ormerod
 Maintainer: David Silkworth <davidsilkworth@openreliability.me>
