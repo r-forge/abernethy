@@ -288,7 +288,7 @@ int LastPct=0;
 // establish the quantiles for evaluation of confidence bounds
 	arma::colvec CBq(ndq);
 	for(int i = 0; i<ndq; i++)  {
-		CBq(i)=Rf_qnorm5(mranks[i],0.0,1.0,1,0);
+		CBq(i)=Rf_qnorm5(dq[i],0.0,1.0,1,0);
 	}
 
 // The main iteration loop to generate the population of R-square values
