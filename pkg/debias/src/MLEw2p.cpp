@@ -62,13 +62,12 @@ SEXP MLEw2p (SEXP arg1, SEXP arg2, SEXP arg3)
 		
 	double Eta=arma::as_scalar( pow(sum(pow(Data,X0))/Nf,1/X0));	
 		
-// Now calculate the negative log-likelihood as a measure of goodness of fit		
+// Now calculate the log-likelihood as a measure of goodness of fit		
 	double failcomp=0.0,suscomp=0.0;		
 	arma::colvec F=Data.rows(0,Nf-1);		
 	for(int i=0; i<Nf; i++)  {	
 	failcomp=failcomp+R::dweibull(F(i),X0,Eta,1);	
-	}	
-	failcomp=-failcomp;	
+	}		
 	int Nd=Data.n_rows;	
 	arma::colvec S;	
 	if(Nd>Nf)  {	
@@ -77,12 +76,12 @@ SEXP MLEw2p (SEXP arg1, SEXP arg2, SEXP arg3)
 		suscomp=suscomp+R::pweibull(S(i),X0,Eta,0,1);
 		}
 	}		
-	double negLL=failcomp-suscomp;
+	double LL=failcomp+suscomp;
 
 	Rcpp::NumericVector outvec(3);	
 	outvec[0]=Eta;	
 	outvec[1]=X0;	
-	outvec[2]=negLL;	
+	outvec[2]=LL;	
 		
 	return outvec;	
 }

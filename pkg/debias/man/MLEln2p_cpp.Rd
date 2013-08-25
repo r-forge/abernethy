@@ -21,7 +21,7 @@
 }
 
 \value{
-   A vector containing results in the following order: Mulog, Sigmalog, negative Log-Likelihood.
+   A vector containing results in the following order: Mulog, Sigmalog, Log-Likelihood.
 }
 
 \details{

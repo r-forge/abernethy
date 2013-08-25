@@ -163,7 +163,7 @@ SEXP MLEln2p (SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4)
 	error=arma::as_scalar(sum(pow((v.row(1)-P2avg),2.0)/n));			
 	DFrow(0)=v(0,vs);			
 	DFrow(1)=v(1,vs);			
-	DFrow(2)=f(vs);			
+	DFrow(2)=-f(vs);			
 	DFrow(3)=error;			
 	DF=join_cols(DF,DFrow);			
 				

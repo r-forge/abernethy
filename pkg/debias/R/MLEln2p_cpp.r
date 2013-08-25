@@ -46,7 +46,7 @@ limit<-1.0e-6
 
 result<-.Call("MLEln2p",Data,Nf,vstart,limit,PACKAGE="debias")
 nr<-length(result[,1])
-outvec<-c(Mulog=result[nr,1],Sigmalog=result[nr,2],negLL=result[nr,3])
+outvec<-c(Mulog=result[nr,1],Sigmalog=result[nr,2],LL=result[nr,3])
 
 outvec
 }

@@ -40,7 +40,7 @@ controlvec<-c(vstart,limit)
 
 resultvec<-.Call("MLEw2p",Data,Nf,controlvec,PACKAGE="debias")
 
-outvec<-c(Eta=resultvec[1],Beta=resultvec[2],negLL=resultvec[3])
+outvec<-c(Eta=resultvec[1],Beta=resultvec[2],LL=resultvec[3])
 
 outvec
 }

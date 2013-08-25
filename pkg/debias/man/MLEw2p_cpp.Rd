@@ -21,7 +21,7 @@
 }
 
 \value{
-   A vector containing results in the following order: Eta (scale), Beta (shape), negative Log-Likelihood.
+   A vector containing results in the following order: Eta (scale), Beta (shape), Log-Likelihood.
 }
 
 \details{

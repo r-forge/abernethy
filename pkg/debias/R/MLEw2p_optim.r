@@ -44,7 +44,7 @@ if(missing(MRRfit))  {
 }		
 	optout<-optim(vstart,minusLLweibull2,x=x,s=s)	
 		
-	outvec<- c(Eta=optout$par[2], Beta=optout$par[1], negLL=optout$value)	
+	outvec<- c(Eta=optout$par[2], Beta=optout$par[1], LL=-optout$value)	
 		
 outvec		
 }		

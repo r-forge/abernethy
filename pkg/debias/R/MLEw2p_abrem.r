@@ -73,7 +73,7 @@ if(missing(MRRfit))  {
 	}		
 	negLL<-failcomp+suscomp		
 			
-	outvec<-c(Eta=Eta,Beta=X0,negLL=negLL)
+	outvec<-c(Eta=Eta,Beta=X0,LL=-negLL)
 	if(listout==TRUE)  {
 		outlist<-list(outvec,outDF)
 		return(outlist)

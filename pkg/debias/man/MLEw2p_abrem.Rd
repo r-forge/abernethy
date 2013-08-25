@@ -24,7 +24,7 @@
 }
 
 \value{
-   A vector containing results in the following order: Eta (scale), Beta (shape), negative Log-Likelihood).  This
+   A vector containing results in the following order: Eta (scale), Beta (shape), Log-Likelihood).  This
    vector is returned by default and also as list item [[1]] depending on the listout argument.  The second optional
    list item is a dataframe providing details of the optimization search.
 }
