@@ -12,6 +12,7 @@ RcppExport SEXP medianRank1 (SEXP arg1);
 RcppExport SEXP MRRw2pXonY (SEXP arg1, SEXP arg2);
 RcppExport SEXP MRRln2pXonY (SEXP arg1, SEXP arg2);
 RcppExport SEXP MRRln2pYonX (SEXP arg1, SEXP arg2, SEXP arg3);
+RcppExport SEXP MRRw3pXonY (SEXP arg1, SEXP arg2, SEXP arg3);
 
 
 #endif
