@@ -1,6 +1,6 @@
-## RBAw.r
-## This implementation of the Reduced Bias Adjustement is to be depreciated in favor of RBAbeta.r
-##  As Dr. Abernethy explains, this is an adjustment for the MEDIAN bias (C4^3.5).  Many other sources 
+## RBAbeta.r
+## This is an implementation of the Reduced Bias Adjustement for Weibull MLE beta on small samples.
+##  As Dr. Abernethy explains, the prefereed basis is the MEDIAN bias (C4^3.5).  Many other sources 
 ## refer to correction for MEAN bias (C4^6).
 ## 
 ## (C) Jacob T. Ormerod 2013
@@ -21,11 +21,14 @@
 ##
 ## This function is consistent with The Weibull Handbook, Fifth Edition and SuperSMITH software.
 
-RBAw<-function(Nx)  {
+RBAbeta<-function(Nx,basis="median")  {
 ## factorial(x) is simply gamma(1+x)
-##	num<-gamma(1+(Nx-2)/2)	
-##	den<-gamma(1+(Nx-3)/2)	
-##	C4<-sqrt(2/(Nx-1))*num/den	
-##return(C4^3.5)
-return(RBAbeta(Nx))		
+	num<-gamma(1+(Nx-2)/2)	
+	den<-gamma(1+(Nx-3)/2)	
+	C4<-sqrt(2/(Nx-1))*num/den	
+	if(basis=="mean")  {
+	return(C4^6)
+	}else{
+    return(C4^3.5)	
+    }	
 }		

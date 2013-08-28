@@ -21,7 +21,8 @@
 }
 
 \details{
-  Many references discuss the bias reduction in terms of mean reduction.  The RBA addresses median bias reduction.
+  This function is to be depreciated in favor of RBAbeta.
+  This function currently simply calls for return of RBAbeta(Nx) with bais at default of "median")
 }
 
 \references{
