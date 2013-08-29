@@ -40,88 +40,65 @@
 # +-----------------------------------+
 #
 abrem.fit <- function(x,...){
-    args <- splitargs(list(...))
-    opp <- options.abremplot()
-    opa <- options.abrem()
-#    opp <- ifelse(is.null(args$opp),NULL,modifyList(opp, args$opp))
-    # TODO: check for argument "add": this shoudn'gt be supplied here
-    if(length(args$opp)==0){opp <- NULL
-    }else{opp <- modifyList(opp, args$opp)}
-        # opp is NULL when no graphical parameters
-        # have been passed through the function.
-    opa <- modifyList(opa, args$opa)
-    if(!missing(x)){
-        if(identical(class(x),"abrem")){
-            if(is.null(x$fit)){
-                # create the first fit in the abrem object
-                i <- 1
-                x$fit <- list()
+    # x is a single Abrem or a list of Abrem objects
+    supported_dist <- c(
+        "weibull","weibull2p","weibull-2","weibull2p-2",
+        "weibull3p",
+        "lognormal","lognormal2p","lognormal-2","lognormal2p-2",
+        "lognormal3p")
+    supported_fit <-  c("rr","mle","mle-rba","mle2","mle2-rba")
+        # TODO: expand with choices between "pivotals", CPP and internal code
+    if(missing(x)){
+        stop("Argument \"x\" is missing.")
+    }else{
+        if(identical(class(x),"abrem")) x <- list(x)
+        if(!all(sapply(x,function(x)identical(class(x),"abrem")))){
+            stop("\"x\" argument is not of class \"abrem\" or ",
+            "a list of \"abrem\" objects.")
+        }
+        # from here on, x is a list of one or more abrem object
+        if(!is.null(x[[1]]$options)){
+            opa <- x[[1]]$options
+            # use the options of the first abrem object in the list
+        }else stop("Abrem object has not options set.")
+        opa <- modifyList(opa, list(...))
+        if(is.null(opa$dist)){
+            if(opa$verbosity >= 1)message("abrem.fit : ",
+                ": Target distribution defaults to Weibull 2P.")
+                opa$dist <- "weibull2"
+        }else{
+            if(length(opa$dist)>1)
+                stop("Too many target distributions supplied.")
+            if(!any(tolower(opa$dist) %in% supported_dist)){
+                stop(paste0(opa$dist," is not a supported target fit method."))
             }else{
-                i <- length(x$fit)+1
-                # append a new fit to the existing object
-            }
-            x$fit[[i]] <- list()
-            #opa <- options.abrem()
-            #opa <- modifyList(opa, list(...))
-            x$fit[[i]]$options <- opa
-            if(!is.null(args$opp)) x$fit[[i]]$options.abremplot <- args$opp
-                # save the graphical settings explicitly specified
-                # in the function call into the fit
-                # this means tha NOT ALL graphical options are saved,
-                # just the ones that differ from the standard settings.
-            x$fit[[i]]$n <- length(x$data$time)
-                # this assumes that any NA time in the time column
-                # of d is there for a good reason:
-                # accompanied with a censoring indicator (0 or FALSE)
-            x$fit[[i]]$fail <- sum(x$data$event)
-            x$fit[[i]]$cens <- x$fit[[i]]$n-x$fit[[i]]$fail
-            if(all(c("mrr","xony") %in% tolower(opa$method.fit)) &&
-                (tolower(opa$dist) %in% c("weibull","weibull2p"))){
-                    x$fit[[i]]$data  <- mrank.data(x$data,method = opa$method.fit)
-                        # just pass the whole vector for further processing
-                    #x$fit[[i]]$lm  <- mrr(x$fit[[i]]$data)
-                    x$fit[[i]]$lm  <- lm(log(x$fit[[i]]$data$time) ~
-                        F0inv(x$fit[[i]]$data$mrank),x$fit[[i]]$data)
-                    x$fit[[i]]$beta <- 1/coef(x$fit[[i]]$lm)[2]
-                    x$fit[[i]]$eta  <- exp(coef(x$fit[[i]]$lm)[1])
-            }
-            if("surv" %in% tolower(opa$method.fit)){
-                # expand code to only support this
-                # when survival package is loaded
-                if(require(survival)){
-                    x$fit[[i]]$data <-
-                        Surv(time=x$data$time,event=x$data$event)
-                    x$fit[[i]]$survreg <-
-                        survreg(x$fit[[i]]$data~1,dist=opa$dist)
-                    if(tolower(opa$dist) %in% c("weibull","weibull2p")){
-                        x$fit[[i]]$beta <- 1/x$fit[[i]]$survreg$scale
-                        x$fit[[i]]$eta  <-
-                            exp(x$fit[[i]]$survreg$coefficients[1])
-                    }
-                    if(tolower(opa$dist) %in% c("lognormal","lognormal2")){
-                        x$fit[[i]]$meanlog <- x$fit[[i]]$survreg$coefficients[1]
-                        x$fit[[i]]$sdlog <- x$fit[[i]]$survreg$scale
-                    }
+                if(is.null(opa$method.fit)){
+                    if(opa$verbosity >= 1)message("abrem.fit : ",
+                        ": Fit method defaults to \"rr\", \"xony\".")
+                        opa$method.fit <- c("rr","xony")
                 }else{
-                    warning("Currently, \"surv\" is only supported through ",
-                        "package survival.")
-                        # TODO: check the effect of message() or warning()
-                        # on r-forge building
+                    fits <- length(which(opa$method.fit %in% supported_fit))
+                    if(fits > 1){
+                        stop("Only one fit method should be supplied.")
+                    }else{
+                        if("rr" %in% tolower(opa$method.fit)){
+                            if(!any(c("xony","yonx") %in%
+                                tolower(opa$method.fit))){
+                                if(opa$verbosity >= 1){
+                                    message("abrem.fit : ",
+                                        ": Fit method \"rr\" defaults to \"xony\"")
+                                    opa$method.fit <- c(opa$method.fit,"xony")
+                                }
+                            }
+                        }
+                        x <- lapply(x,calculateSingleFit,...)
+                        # TODO: only one object or list of abrem objects?
+                    }
                 }
             }
-            if("yonx" %in% tolower(opa$method.fit)){
-                warning("Y on X regression is currently not supported, ",
-                    "doing nothing.")
-            }
-            if("prcomp" %in% tolower(opa$method.fit)){
-                warning("Principal component / Single Value Decomposition ",
-                    "is currently not supported, doing nothing.")
-            }
-#           list(data=d,beta=as.double(beta),eta=as.double(eta),
-#              n=n,fail=fail,cens=cens)
-              # the return structure of this function needs to be revised to include
-              # lm() output
-        }else{stop("Input data is not of class \"abrem\".")}
-    }else{stop("No lifetime data provided.")}
-    x
+        }
+    }
+    if(length(x)==1) x[[1]] else x
+        # return list of abrem objects when argument x was a list
+        # otherwise return single abrem object
 }

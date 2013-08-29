@@ -39,17 +39,35 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-F0inv <- function(p,log="x"){
-    # transformation function to plot its argument
-    # on the y-axis of the Weibull plot. This transformation function
-    # lets the Weibull curve appear as a straight line on the weibull paper
-    #
-    # This is also the inverse Cumulative Distribution function of the
-    # standardized Weibull plot with beta=eta=1
-    # comparing  both implementationss of F0inv() with
-    # system.time() does not show any significant difference
-    #   log(log(1/(1-p)))}
-    if(log %in% c("x",""))ret <- log(qweibull(p,1,1)) else ret <- qlnorm(p,0,1)
-    ret
+plotSingleConfBound <- function(blc,opafit,...){
+    if(!is.null(blc$options)){
+        opaconf <- modifyList(opafit,blc$options)
+    }else{opaconf <- opafit}
+    opaconf <- modifyList(opaconf,list(...))
+    if(opaconf$is.plot.cb){
+        if(!is.null(blc$bounds$Median))
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+                x=blc$bounds$Median,
+                col=opaconf$col,lwd=1,lty=2)
+        if(!is.null(blc$bounds$Lower))
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+                x=blc$bounds$Lower,col=opaconf$col,
+                lwd=opaconf$lwd,lty=opaconf$lty)
+        if(!is.null(blc$bounds$Upper))
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+                x=blc$bounds$Upper,col=opaconf$col,
+                lwd=opaconf$lwd,lty=opaconf$lty)
+    }
 }
-   # TODO: add a boolean argument to switch between weibull transformation and lognormal
+
+plotConfsInFit <- function(fit,opadata,...){
+    arg <- list(...)
+    if(!is.null(fit$conf$blives)){
+        if(!is.null(fit$options)){
+            opafit <- modifyList(opadata,fit$options)
+        }else{opafit <- opadata}
+        lapply(fit$conf$blives,plotSingleConfBound,opafit=opafit,...)
+    }
+#    else{if(arg$v >= 1)message(match.call()[[1]],
+#        ": This fit contains no confidence calculations for B-lives.")}
+}

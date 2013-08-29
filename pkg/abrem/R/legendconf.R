@@ -39,21 +39,39 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-.onLoad <- function(libname, pkgname, ...){
-#    packageStartupMessage("Creating CCC2wb2()...")
-    utils::data(CCC2table,package=pkgname,lib.loc=libname)
-    # TODO: change the above and CCC2table itself to use readRDS
-    fun1 <- stats::approxfun(
-        x=CCC2table[,1],
-        y=CCC2table[,2],method="constant",f=1)
-        # 'f=1'ensures that when interpolation is happening,
-        # the returned value is the highest of the possible
-        # two choices -> allows for the most conservative comparison
-    fun2 <- stats::approxfun(
-        x=CCC2table[,1],
-        y=CCC2table[,3],method="constant",f=1)
-    CCC2wb2 <<- function(fail)list(
-        CCC2  =fun1(fail),
-        signif=fun2(fail))
-#    packageStartupMessage("... finished creating CCC2wb2().")
+legendconf <- function(fit,conftype,opadata,...){
+    if(!is.null(fit$options)){
+        opafit <- modifyList(opadata,fit$options)
     }
+    opafit <- modifyList(opafit,list(...))
+    if(identical(tolower(conftype),"blives")){
+        if(!is.null(fit$conf$blives)){
+            for.each.blicon <- function(blicon){
+                if(!is.null(blicon$options)){
+                    opaconf <- modifyList(opafit,blicon$options)
+                }else{opaconf <- opafit}
+                li <- list()
+                li[[1]] <-  bsll(legend=paste0("B-lives, type = ",
+                    ifelse(is.null(blicon$type),"NA",
+                    paste0("\"",blicon$type,"\""))),
+                    col=opaconf$col,lwd=opaconf$lwd,lty=opaconf$lty)
+                li[[2]] <- bsll(legend=paste0("  CL = ",
+                    ifelse(is.null(blicon$cl),"NA",
+                        paste0(signif(blicon$cl*100,4)," [%]")),
+                    ifelse(is.null(blicon$S),"",
+                        paste0(", S = ",blicon$S))))
+                if(opaconf$is.legend.blives){
+                    params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
+                        meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
+                    if(is.null(bl <- blicon$blives))bl <- opaconf$blives
+                    fu <- function(bl){
+                        bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
+                    }
+                    c(li,lapply(bl,fu))
+                }else(li)
+            }
+            unlist(lapply(fit$conf$blives,for.each.blicon),FALSE)
+                # TODO: replace by do.call ?
+        }else{NULL}
+    }
+}

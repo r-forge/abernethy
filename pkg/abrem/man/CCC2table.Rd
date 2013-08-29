@@ -22,9 +22,9 @@
 \source{
     CCC2 concept: Robert B. Abernethy, Wes Fulton and others.
 
-    This table was created by Jurgen Symynck <jurgen.symynck @nospam@ kahosl.be>
+    This table was created by Jurgen Symynck <jurgen.symynck@kahosl.be>
 
-    and Jacob Ormerod <jtormerod @nospam@ gmail.com>
+    and Jacob Ormerod <jtormerod@gmail.com>
 }
 \section{Warning}{
     This dataset is currently experimental and NOT suitable for usage.
@@ -34,7 +34,7 @@
 
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
-    \code{\link{CCC2wb2}}
+%    \code{\link{CCC2wb2}}
 }
 
 \references{

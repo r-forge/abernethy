@@ -1,14 +1,13 @@
 Package: abrem
 Type: Package
 Title: Abernethy Reliability Methods
-Version: 0.1.4
-Date: June 6, 2013
+Version: 0.1.5
+Date: August 29, 2013
 Author: Jurgen Symynck <jurgen.symynck@kahosl.be>
 Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
-Depends: pivotals
-Suggests: abremout, survival
-Description: This package calculates fits and confidence intervals from (life-)time observations, following the methods of "The New Weibull Handbook", Fifth Edition by Dr. Robert B. Abernethy.
+Depends: pivotals  (>= 0.1.7) , debias (>= 0.1.4)
+Description: This package calculates fits and confidence intervals from (life-)time observations, following the methods of "The New Weibull Handbook", Fifth Edition by Dr. Robert B. Abernethy. Calculation results can be displayed in Weibull and Lognormal plots.
 License: GPL-3
 URL: http://r-forge.r-project.org/projects/abernethy/
-BugReports: email the authors at <jurgen.symynck@kahosl.be> and <jtormerod@gmail.com>
+BugReports: email the author at <jurgen.symynck@kahosl.be> 
 LazyLoad: yes

@@ -6,9 +6,12 @@
     Abernethy Reliability Methods
 }
 \description{
-    This package calculates fits and confidence intervals from (life-)time observations, following the methods of \dQuote{The New Weibull Handbook}, Fifth Edition by Dr. Robert B. Abernethy. It is based on the now outdated and unmaintained
-    \pkg{weibulltoolkit} package, still available from
-    \url{http://sourceforge.net/projects/Weibulltoolkit}.
+    This package calculates fits and confidence intervals from (life-)time
+    observations, following the methods of \dQuote{The New Weibull Handbook},
+    Fifth Edition by Dr. Robert B. Abernethy. It is based on the now outdated
+    and unmaintained \pkg{weibulltoolkit} package, still available from
+
+    \url{http://sourceforge.net/projects/weibulltoolkit}.
 }
 \author{
 Jurgen Symynck <jurgen.symynck@kahosl.be>
@@ -44,8 +47,8 @@ Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
             (New Technologies and Products in Machine Manufacturing Technology,
             Stefan cel Mare University of Suceava, 2010).
 
-            Available on
-\url{http://mechanics.kahosl.be/fatimat/index.php/downloads-and-information/40/171}.
+%            Available on
+%\url{http://mechanics.kahosl.be/fatimat/index.php/downloads-and-information/40/171}.
         \item Jurgen Symynck, Filip De Bal,
         \emph{Monte Carlo pivotal confidence bounds for Weibull analysis,
             with implementations in R} (New Technologies and Products in
@@ -54,12 +57,11 @@ Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
 
             Available on
 \url{http://www.fim.usv.ro/conf_1/tehnomusjournal/pagini/journal2011/files/7.pdf}
-and \url{http://mechanics.kahosl.be/fatimat/index.php/downloads-and-information/40/198}.
+%and \url{http://mechanics.kahosl.be/fatimat/index.php/downloads-and-information/40/198}.
         
         \item
             \emph{SuperSMITH(TM) Weibull},
             \url{http://www.Weibullnews.com/contents.htm}
-        \item \url{http://mechanics.kahosl.be/fatimat}
         \item \url{http://r-forge.r-project.org/projects/abernethy/}
         \item \url{http://sourceforge.net/projects/weibulltoolkit/}
     }

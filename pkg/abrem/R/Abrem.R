@@ -40,42 +40,81 @@
 # +-----------------------------------+
 #
 Abrem <- function(x,...){
-    args <- list(...)
-    ret <-list()
+    #arg <- list(...)
+    arg <- splitargs(...)
+        # TODO: check effect on c(...) or (...)
+#    arg2 <- arg[!(names(arg) %in% names(options.abrem()))]
+        # extract the arguments that are NOT abrem options.
+    opa <- modifyList(options.abrem(), arg$opa)
+    ret <- list()
     class(ret) <- "abrem"
     timeorder <- c()
+#    lowest <- 1
     if(!missing(x)){
         ret$data <- NULL
         if(is.vector(x)){
-            # assuming vector of lifetimes
-            timeorder <- order(x)
+            if(opa$verbosity >= 2)message(match.call()[[1]],
+                ": Argument \"x\" is a vector of (life-)time observations...")
+            if(any(is.na(x))) timeorder <- 1:length(x)
+            else timeorder <- order(x)
+                # the above is tp prevens ordering attempts when NA values are
+                # present in the lifetime observation vector.
+                # having NA values implies that the data must be ordered.
             ret$data <- data.frame(time=x[timeorder],event=1)
         }
         if(is.data.frame(x)){
             if(!is.null(x$time) && !is.null(x$event)){
-                # dataframe is formatted appropriate
-                # extra info is also copied
-            timeorder <- order(x$time)
-            ret$data <- x[timeorder,]
+                if(opa$verbosity >= 2)message(match.call()[[1]],
+                    ": Argument \"x\" is a dataframe with $time and $event ",
+                        "columns...")
+                if(any(is.na(x$time))) timeorder <- 1:length(x$time)
+                else timeorder <- order(x$time)
+                ret$data  <- as.data.frame(x[timeorder,])
+#                ret$data$event <- 1
+#                    # temporarily set event vector to 1
+            }else{
+                stop(": Argument \"x\" is missing $time and/or ",
+                    "$event columns...")
             }
         }
     }else{
-        if(!is.null(args$time)){
-            if(is.vector(args$time)){
-                # assuming vector of lifetimes
-                timeorder <- order(args$time)
-                ret$data  <- data.frame(time=args$time[timeorder],event=1)
+        if(!is.null(arg$rem$time)){
+            if(is.vector(arg$rem$time)){
+                if(opa$verbosity >= 2)message(match.call()[[1]],
+                    ": Argument \"time\" is vector of complete (life-)time observations...")
+                if(any(is.na(arg$rem$time))) timeorder <- 1:length(arg$rem$time)
+                else timeorder <- order(arg$rem$time)
+                ret$data  <- data.frame(time=arg$rem$time[timeorder],event=1)
             }
-        }else{stop("No lifetime data was provided.")}
+        }else{stop("No (life-)time observations were provided.")}
     }
-    if(!is.null(args$event) && !is.null(ret$data)){
-        if(is.vector(args$event)){
-            # assuming event vector
-#            ret$data <- cbind(ret$data,event=args$event[order(timeorder)])
-            ret$data$event <- args$event[timeorder]
+    
+    ### setting the event vector correctly ###
+    if(!is.null(arg$rem$event) && !is.null(ret$data)){
+        if(is.vector(arg$rem$event)){
+            if(opa$verbosity >= 2)message(match.call()[[1]],
+                ": Argument \"event\" is event vector...")
+            ret$data$event <- arg$rem$event[timeorder]
         }
     }
+    if("median" %in% opa$pp){
+            if(opa$verbosity >= 2)message(match.call()[[1]],
+            ": Adding exact median ranks to (life-)time observations ...")
+        ret$data <- cbind(ret$data,rank.median=NA)
+        ret$data[ret$data$event==1,'rank.median'] <-
+            .Call("medianRank1",ret$data$event, PACKAGE= "pivotals")
+#        lowest <- min(c(lowest, na.omit(ret$data$rank.median)))
+    }
+    if("bernard" %in% opa$pp){
+            if(opa$verbosity >= 2)message(match.call()[[1]],
+            ": Adding Bernards ranks to (life-)time observations ...")
+        ret$data <- cbind(ret$data,rank.bernard=NA)
+        ret$data[ret$data$event==1,'rank.bernard'] <-
+            .Call("medianRank",ret$data$event, PACKAGE= "pivotals")
+#        lowest <- min(c(lowest, na.omit(ret$data$rank.bernard)))
+    }
+    ret$options <- opa
+        # always store a full copy of the options.abrem structure here
     ret
-    # TODO: check what to do with the automatically added row names that
-    # are sometimes out of order
+    # TODO: check what to do with the automatically added row names that are sometimes out of order
 }

@@ -40,30 +40,13 @@
 # +-----------------------------------+
 #
 splitargs <- function(...){
-    # (1) split the ... argument in opp options and opa options
-    # (2) assign the above to either opp and opa
-
-    args <- (...)
-    #args <- as.list(substitute(list(...)))[-1L]
-        # TODO: what is the difference with the above?
-    argsnames <- names(args)
-        # TODO: what is the difference with names(args) ?
+    arg         <- list(...)
+    argnames    <- names(arg)
     parplot     <- plot_default_args()
     ret         <- list()
-    oppnames    <- names(options.abremplot())
     opanames    <- names(options.abrem())
-    ret$opp     <- args[argsnames %in% unique(c(parplot,oppnames))]
-    ret$opa     <- args[tolower(argsnames) %in% tolower(opanames)]
-        # the above can be empty lists but NOT NULL.
-#    if(lvec <- argsnames %in% parplot){
-#        ret$opp     <- args[lvec]
-#    }else{
-#        ret$opp <- NULL
-#    }
-#    if(lvec <- tolower(argsnames) %in% tolower(opanames)){
-#        ret$opa     <- args[lvec]
-#    }else{
-#        ret$opa <- NULL
-#    }
+    ret$opa     <- arg[tolower(argnames) %in% tolower(opanames)]
+        # ret$opa can be an emply list, which is compatible with modifyList()
+    ret$rem     <- arg[!(tolower(argnames) %in% tolower(opanames))]
     ret
 }

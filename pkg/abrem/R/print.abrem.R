@@ -39,17 +39,23 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-F0inv <- function(p,log="x"){
-    # transformation function to plot its argument
-    # on the y-axis of the Weibull plot. This transformation function
-    # lets the Weibull curve appear as a straight line on the weibull paper
-    #
-    # This is also the inverse Cumulative Distribution function of the
-    # standardized Weibull plot with beta=eta=1
-    # comparing  both implementationss of F0inv() with
-    # system.time() does not show any significant difference
-    #   log(log(1/(1-p)))}
-    if(log %in% c("x",""))ret <- log(qweibull(p,1,1)) else ret <- qlnorm(p,0,1)
-    ret
+
+print.abrem <- function(x,...){
+    if(!is.null(x$data)){
+        cat("\n$data :\n")
+        print(x$data)
+    }
+    if(!is.null(x$options)){
+        cat("\n$options\n ")
+        if((le <- length(x$options)) >=1){
+            cat(paste0("   named list of ",le," items.\n"))
+        }else{
+            cat("   empty list.\n")
+        }
+    }
+    if(!is.null(x$fit)){
+        cat("\n$fit(s)\n ")
+        print(x$fit)
+    }
+    invisible(x)
 }
-   # TODO: add a boolean argument to switch between weibull transformation and lognormal

@@ -39,17 +39,25 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-F0inv <- function(p,log="x"){
-    # transformation function to plot its argument
-    # on the y-axis of the Weibull plot. This transformation function
-    # lets the Weibull curve appear as a straight line on the weibull paper
-    #
-    # This is also the inverse Cumulative Distribution function of the
-    # standardized Weibull plot with beta=eta=1
-    # comparing  both implementationss of F0inv() with
-    # system.time() does not show any significant difference
-    #   log(log(1/(1-p)))}
-    if(log %in% c("x",""))ret <- log(qweibull(p,1,1)) else ret <- qlnorm(p,0,1)
-    ret
-}
-   # TODO: add a boolean argument to switch between weibull transformation and lognormal
+
+#for.fits.in.abrem <- function(x,func,...){
+#    # +-----------------------------------+
+#    # |  run a function over all fits in  |
+#    # |  a single  Abrem object           |
+#    # +-----------------------------------+
+#
+#    # x is a single abrem object!
+#    ret <- NULL
+#    arg <- list(...)
+#    opadata <- x$options
+#    if(!is.null(x$fit)){
+#        for.each.fit <- function(fit,func){
+#            do.call(func,list(fit,opadata=opadata,...))
+#        }
+#        ret <- lapply(x$fit,for.each.fit,func)
+#    }else{
+#        if(!is.null(opa)) if(opa$verbosity >= 1)message(
+#            "for.fits.in.abrem : This Abrem object contains no fits.")
+#    }
+#    ret
+#}

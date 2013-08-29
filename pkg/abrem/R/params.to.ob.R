@@ -39,7 +39,7 @@
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
 #
-params.to.ft <- function(dist, ... ){
+params.to.ob <- function(dist, ... ){
     # function to generate test data that result in a perfect fit
     # (when using MRR)
     # beta,eta:  slope and shape parameters of 2 parameter Weibull
@@ -49,9 +49,6 @@ params.to.ft <- function(dist, ... ){
     # datasets corresponding to type2 censoring data
     # scheme. This will be especially necessary when
     # method.reg = "surv" will be implemented
-    opp <- options.abremplot()
-    opp <- modifyList(opp, list(...))
-
     opa <- options.abrem()
     opa <- modifyList(opa, list(...))
     if(!missing(dist)){
@@ -60,11 +57,11 @@ params.to.ft <- function(dist, ... ){
                 if(is.null(opa$event)){
                     opa$event <- rep(1,opa$n)
                 }else{
-                    stop(match.call()[[1]],": Either \"n\" or \"event\" ",
+                    stop("Either Argument \"n\" or \"event\" ",
                         "should be supplied, not both.")
-                    }
+                }
             }else{
-                stop(match.call()[[1]],": Number of failures (\"n\") must be ",
+                stop("Argument \"n\" (number of failures) must be ",
                     "at least 2.")
             }
         }
@@ -72,40 +69,56 @@ params.to.ft <- function(dist, ... ){
         if(!is.null(opa$event)){
             if(length(opa$event) >= 2){
             }else{
-                stop(match.call()[[1]],": Number of failures (\"n\") must be ",
-                    "at least 2.")
+                stop("Argument \"n\" (number of failures) must be ",
+                                    "at least 2.")
             }
         }else{
-            stop(match.call()[[1]],": (\"event\") vector must have length ",
-                "of at least 2.")
+            stop("Argument \"event\" should havel length of at least 2.")
         }
         if(all(opa$event==0)){
-            stop(match.call()[[1]],": There are only censored events in ",
-                "the \"event\" vector.")
+            stop("Argument \"event\"contains only censored events.")
         }
-        if("mrr" %in% tolower(opa$method.fit)){
-            if(tolower(dist) %in% c("weibull","weibull2p")){
+        if("rr" %in% tolower(opa$method.fit)){
+            if(tolower(dist) %in% c("weibull","weibull2p","weibull-2","weibull2p-2")){
                 if(!is.null(opa$beta) && !is.null(opa$eta)){
-                    ranks <- abrem:::mrank.data(
-                        data.frame(time=1:length(opa$event),event=opa$event),
-                            method.fit=opa$method.fit)$mrank
-                    ret <- data.frame(time=qweibull(ranks,opa$beta,opa$eta),event=opa$event)
-                        # a good thing that qweibull deals nicely with NA's!
-                }else{stop(match.call()[[1]],": \"beta\" and/or \"eta\" arguments not supplied.")}
+                    if("median" %in% opa$pp){
+                        ranks <- rep(NA,length(opa$event))
+                        ranks[opa$event==1] <- .Call("medianRank1",opa$event,
+                            PACKAGE= "pivotals")
+                        ret <- data.frame(time=qweibull(ranks,opa$beta,opa$eta),event=opa$event)
+                            # a good thing that qweibull deals nicely with NA's!
+
+                    }else{
+                        stop("Currently, only \"median\" rank regression is supported.")
+                    }
+#                        if("bernard" %in% opa$pp){
+#                            ret$data <- cbind(ret$data,bernard=NA)
+#                            ret$data[ret$data$event==1,'bernard'] <- .Call("medianRank",opa$event,
+#                                PACKAGE= "pivotals")
+                }else{stop("Arguments \"beta\" and/or \"eta\" not supplied.")}
             }
             if(tolower(dist) %in% c("lognormal","lognormal2p")){
                 #message("Currently only \"weibull\" is supported, doing nothing.")
                 if(!is.null(opa$meanlog) && !is.null(opa$sdlog)){
-                    ranks <- abrem:::mrank.data(
-                        data.frame(time=1:length(opa$event),event=opa$event),
-                            method.fit=opa$method.fit)$mrank
-                    ret <- data.frame(time=qlnorm(ranks,opa$meanlog,opa$sdlog),event=opa$event)
-                        # a good thing that qweibull deals nicely with NA's!
-                }else{stop(match.call()[[1]],": \"meanlog\" and/or \"sdlog\" arguments not supplied.")}
+                    if("median" %in% opa$pp){
+                        ranks <- rep(NA,length(opa$event))
+                        ranks[opa$event==1] <- .Call("medianRank1",opa$event,
+                            PACKAGE= "pivotals")
+                        #ret <- data.frame(time=qweibull(ranks,opa$beta,opa$eta),event=opa$event)
+                        ret <- data.frame(time=qlnorm(ranks,opa$meanlog,opa$sdlog),event=opa$event)
+                            # a good thing that qweibull deals nicely with NA's!
+
+                    }else{
+                        stop("Currently, only \"median\" rank regression is supported.")
+                    }
+#                    ranks <- rank.data(
+#                        data.frame(time=1:length(opa$event),event=opa$event),
+#                            method.fit=opa$method.fit)$mrank
+#                    ret <- data.frame(time=qlnorm(ranks,opa$meanlog,opa$sdlog),event=opa$event)
+                }else{stop("Arguments \"meanlog\" and/or \"sdlog\" not supplied.")}
             }
         }else{
-            stop(match.call()[[1]],": Currently, only median rank ",
-                "regression (mrr) is supported.")
+            stop("Currently, only rank regression is supported.")
             ret <- NULL
         }
             # TODO: here the old code using nlm() that was used in  older
@@ -113,7 +126,7 @@ params.to.ft <- function(dist, ... ){
             # for the 'Surv' method
         ret
     }else{
-        stop(match.call()[[1]],": Target distribution \"dist\" is missing.")
+        stop("Argument \"dist\" is missing.")
         ret <- NULL
     }
 }

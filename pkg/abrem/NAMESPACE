@@ -3,14 +3,17 @@ export(
 #	F0,
 #	F0inv,
 #	bbb,
-#	mrank.data,
+#	rank.data,
 #	mrank.observation,
 #	mrr,
 #	splitargs,
 	Abrem,
 	abrem.fit,
 	abrem.conf,
-	params.to.ft,
+	params.to.ob,
 	options.abrem,
-	options.abremplot
-	)
+#	options.abremplot,
+	plot.abrem,
+	print.abrem)
+S3method(plot, abrem) 
+S3method(print, abrem) 

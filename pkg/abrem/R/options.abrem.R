@@ -42,6 +42,10 @@
 options.abrem <- function(...){
     # function to handle the many options of the weibull toolkits functions
     # the option list should only be manipulated through this function!
+    
+    # TODO: WARNING: partial matching is in effect!
+    # options.abrem()$ylim will return options.abrem()$ylim.default if
+    # $ylim was set to NULL!
 
     single <- FALSE
     args <- list(...)
@@ -52,16 +56,47 @@ options.abrem <- function(...){
         # message ("Resetting Weibulltoolkit options to default values...")
         options_abrem <<- list(
             dist="weibull",
-            method.fit=c("mrr","qbeta","xony"),
+            method.fit=c("rr","xony"),
             conf.what="blives",
             conf.blives.sides="double",
             conf.n=25,
-            method.conf.blives=c("mcpivotal","bbb"),
+            method.conf.blives="mcpivotals",
+            pp="median",#,"bernard"),#,"bernard_cpp","hazen","mean"),
             S=1e4,
             pivotals=FALSE,
             cl=0.9,
             blives=c(0.1,0.05,0.01),
-            verbosity=0)
+            verbosity=0,
+
+            main="Probability Plot\n",
+            sub=NULL,
+            xlim=NULL,
+            ylim=NULL,
+            xlab="Time To Failure",
+            ylab="Unreliability [%]",
+            log="x",
+            coordinate.text.size=0.7,
+            signif=4,
+            pch=1,
+            lwd=2,
+            lwd.points=2,
+            cex.points=1,
+            lty=1,
+            col="black",
+            col.grid="gray",
+            is.plot.grid=TRUE,
+            is.plot.fit=TRUE,
+            is.plot.pp=TRUE,
+            is.plot.ppcoordinates=FALSE,
+            is.plot.legend=TRUE,
+            #         legend.position="bottomright",
+            legend.text.size=0.7,
+            label="",
+            is.legend.blives=TRUE,
+            is.legend.gof=TRUE,
+            is.plot.cb = TRUE,
+            persistent=TRUE)
+            
     if (!length(args))
         args <- options_abrem
            # return the current option list
@@ -72,17 +107,28 @@ options.abrem <- function(...){
             args <- as.list(unlist(args))
         if (length(args) == 1) {
             if (is.list(args[[1L]]) | is.null(args[[1L]]))
-               args <- args[[1L]]
-               # unlist the first (and only) argument to a string
-         else if(is.null(names(args)))
-            # if there is no name to args then
-            # the arg itself is the name (?)
+                args <- args[[1L]]
+                # unlist the first (and only) argument to a string
+            else if(is.null(names(args)))
+                # if there is no name to args then
+                # the arg itself is the name (?)
             single <- TRUE
-         }}
-   options_abrem <<-
-      modifyList(options_abrem, value <- args)
-   if (is.null(names(args)))
-      value <- options_abrem[match(args,names(options_abrem))]
-   if (single) value <- value[[1L]]
-   value}
-# note that options that are NULL are not shown in the printout -> needs to change
+        }
+    }
+    value <- args
+    if(options_abrem$persistent){
+        options_abrem <<-modifyList(options_abrem, value)
+    }
+    if(!is.null(args$persistent)){
+        value <- args
+        if(args$persistent){
+            options_abrem <<-modifyList(options_abrem, value)
+        }
+    }
+    # make the options stick between calls of options.abrem()
+    if(is.null(names(args)))
+        value <- options_abrem[match(args,names(options_abrem))]
+    if(single) value <- value[[1L]]
+    value
+}
+# TODO :options that are NULL are not shown in the printout
