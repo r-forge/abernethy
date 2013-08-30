@@ -1,4 +1,0 @@
-export(
-#	mark,
-	plot.abrem)
-S3method(plot, abrem) 
