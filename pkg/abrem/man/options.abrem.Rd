@@ -66,11 +66,16 @@
         \item{\code{options.abrem()}}{
             Returns the currently used options and there values.
         }
-        \item{\code{options.abrem()$dist}\cr\code{options.abrem("dist")}}{
+        \item{
+            \code{options.abrem()$dist}
+
+            \code{options.abrem("dist")}}{
             Returns the current value of an option.
         }
-        \item{\code{options.abrem(cl=0.95)}\cr
-        \code{options.abrem(list(cl=0.95,S=5e4))}}{
+        \item{
+            \code{options.abrem(cl=0.95)}
+        
+            \code{options.abrem(list(cl=0.95,S=5e4))}}{
             Sets the specified options.
         }
     }
@@ -125,7 +130,7 @@
         }
         \item{\code{method.fit}}{
             A vector of class \code{"character"} with fitting options.
-            See section "details" for in-depth discussion of the settings.
+            See section "Details" for in-depth discussion of the settings.
         }
         \item{\code{conf.what}}{
             A vector of class \code{"character"} describing for which entities
@@ -161,14 +166,15 @@
             Defaults to \code{c("mcpivotals")}.
         }
         \item{\code{pp}}{
-            \code{pp} is short for "(probability) plot postions". A vector of
+            \code{pp} is short for "probability plot postions". A vector of
             class \code{"character"} describing the type of plot positions to be
             calculated.
             Possible values are \code{"median"} (exact median plot postions
             calculated using the Incomplete Beta function) and  \code{"bernard"}
-            (a good approximation to the 'median' plot positions). Both options
+            (a good approximation to the median plot positions). Both options
             can be supplied at the same time but currently, only the first
-            element in the \code{\link{pp}} vector will be used for further fitting.
+            element in the \code{\link{pp}} vector will be used for
+            further fitting by \code{\link\{abrem.fit}}
             
             Currently, there are no plans to implement less useful
             \code{"hazen"} and \code{"mean"} plotting positions.
@@ -191,13 +197,12 @@
         }
         \item{\code{cl}}{
             Confidence level: A number from the interval \code{[0,[1}
-            determining the width of the calculated confidence intervals
-            for various entities.
+            specifying the confidence level for various confidence calculations.
 
             Defaults to \code{0.9}.
         }
         \item{\code{blives}}{
-            A numeric vector indicating unreliability levels for which
+            An unordered numeric vector with unreliability levels for which
             B-life confidence will be calculated.
 
             Defaults to \code{c(0.1,0.05,0.01)}.
@@ -237,14 +242,16 @@
             from the interval \code{]0,1[}. \code{plot.abrem} calculates
             vertical limits automatically from its data argument; if vertical
             plotting positions do not exceed the standard range of
-            \code{c(0.01,0.99)}, then this standard range is used.
+            \code{c(0.01,0.99)}, then the latter is used.
             Otherwise, the standard range is expanded to include the
             extreme plot positions.
+
+            The standard vertical range is currently hardcoded to \code{c(0.01,0.99)}.
 
             Defaults to \code{NULL}.
         }
         \item{\code{xlab}, \code{ylab}}{
-            Character strings containing the labels for the X and Y axis.
+            Character strings with the labels for the X and Y axis.
 
             Default to \code{"Time To Failure"} and
             \code{"Unreliability [\%]"} respectively.
@@ -298,7 +305,7 @@
             Defaults to \code{2}.
         }
         \item{\code{cex.points}}{
-            An number describing the relative size of the datapoint glyphs.
+            A number describing the relative size of the datapoint glyphs.
 
             Defaults to \code{1}.
         }
@@ -315,47 +322,47 @@
             Defaults to \code{"gray"}.
         }
         \item{\code{is.plot.grid}}{
-            Boolean switch controlling the plotting of the grid.
+            Logical value controlling the plotting of the grid.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.plot.fit}}{
-            Boolean switch controlling the plotting of the fitted line.
+            Logical value controlling the plotting of the fitted line.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.plot.pp}}{
-            Boolean switch controlling the plotting of the
-            (life-)time observations plot positions.
+            Logical value controlling the plotting of the
+            (life-)time observations' probability plot positions.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.plot.ppvalues}}{
-            Boolean switch controlling the plotting of the text labels
+            Logical value controlling the plotting of the text labels
             (the coordinates on the plot) next to the plot positions.
 
             Defaults to \code{FALSE}.
         }
         \item{\code{is.plot.legend}}{
-            Boolean switch controlling the plotting of the legend.
+            Logical value controlling the plotting of the legend.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.legend.blives}}{
-            Boolean switch controlling the plotting of B-life confidence bounds
+            Logical value controlling the plotting of B-life confidence bounds
             in the legend.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.legend.gof}}{
-            Boolean switch controlling the plotting of goodness-of-fit
+            Logical value controlling the plotting of goodness-of-fit
             indicators in the legend.
 
             Defaults to \code{TRUE}.
         }
         \item{\code{is.plot.cb}}{
-            Boolean switch controlling the plotting of various types of
-            confidence bounds (if they are present in the \code{abrem} object).
+            Logical value controlling the plotting of various types of
+            confidence bounds (if any present in the \code{abrem} object).
 
             Defaults to \code{TRUE}.
         }
@@ -368,7 +375,7 @@
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
 \note{
-    Typical usage of \pkg{abrem} involves calling a chain of functions like:
+    Typical usage of \pkg{abrem} involves calling a sequence of functions like:
 
     \code{da <- Abrem(c(10,11,27))}\cr
     \code{da <- abrem.fit(da)}\cr
@@ -381,10 +388,10 @@
     
     The correct time to specify an option is when it is needed for the first
     time. For example, when the color setting option \code{col = "red"} is
-    supplied as an option of function \code{Abrem}, it will be used for
+    passed as an argument of function \code{Abrem}, it will be used for
     datapoints, fits and confidence bounds. If supplied to \code{\link{abrem.conf}},
     only the confidence bounds will have the specified color, hereby overriding
-    any previously inherited color setting from \code{\link{abrem.fit}}
+    any previously inherited color settings from \code{\link{abrem.fit}}
     or \code{\link{Abrem}}.
 }
 \section{To Do}{
@@ -408,7 +415,7 @@ abrem.defaults <- options.abrem()
 
 ## setting new options ##
 options.abrem(S=5e5,cl=0.99)
-%options.abrem(sub="Testing options.abrem()")
+%%options.abrem(sub="Testing options.abrem()")
 
 ## listing options ##
 options.abrem()

@@ -5,8 +5,7 @@
     Create an \code{abrem} Object for Lifetime and Reliability Analysis
 }
 \description{
-    This function creates an object of class \code{"abrem"} for further processing
-    by the other functions of \pkg{abrem}.
+    This function creates an object of class \code{"abrem"} for further processing.
 }
 \usage{Abrem(x,\dots)}
 \arguments{
@@ -38,20 +37,21 @@
             serial numbers to be included.
     }
     
-    Note that is is currently allowed to have \code{NA} values in the
-    \code{time} argument. In that case, the vector is expected to be
+    Note that is is currently possible to have \code{NA} values in the
+    (life-)time observations. In that case, the vector is expected to be
     ordered and no ordering will be applied by \code{Abrem}. This feature is
     useful in combination with the output of \code{\link{params.to.ob}}
 
-    \code{Abrem} always generates (probability) plot positions for graphically
+    \code{Abrem} always generates probability plot positions for graphically
     displaying the (life-)time observations and for later usage
     by \code{\link{abrem.fit}}. The type of plot positions is
     controlled with the \code{\link{pp}} argument.
     See \code{\link{options.abrem}} for more details.
 
-    Additionally, one can supply any options available from \code{\link{options.abrem}},
-    such as \code{\link{col}} or \code{\link{is.plot.legend}}. Some of these options
+    Additionally, one can pass any options available from \code{\link{options.abrem}},
+    such as \code{\link{col}} or \code{\link{is.plot.legend}}. The graphical options
     will be used when plotting the (life-)time observations using \code{\link{plot.abrem}}.
+    
     Subsequent calls to \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
     will inherit these options.
 
@@ -65,18 +65,18 @@
             An ordered vector with (life-)time observations.
         }
         \item{\code{$event}}{
-            A vector of class \code{"numeric"} with right-censoring indicators.
+            A vector of class \code{"numeric"} with right censoring indicators.
             Values of \code{1} mean "dead" or "failed" while \code{0}
-            mean "alive" or "right-censored"/"suspended" observations.
+            mean "alive" or "right censored"/"suspended" observations.
             This censoring indicator scheme is modeled after the
             \code{\link[survival]{Surv}} function of the \pkg{survival}
             package.
         }
-        \item{\code{rank. \ldots }}{
-            Depending on the argument \code{\link{pp}} (either supplied as
+        \item{\code{$rank....}}{
+            Depending on the argument \code{\link{pp}} (either passed as
             an argument or taken from \code{\link{options.abrem}}), a vector
-            of class \code{"numeric"} with exact median ranks
-            (\code{$rank.median}) or Bernard's approximate median ranks
+            of class \code{"numeric"} with exact median ranks named
+            (\code{$rank.median}),or Bernards approximate median ranks named
             (\code{$rank.bernard}).
         }
     }
@@ -89,6 +89,7 @@
         using the format
 
         \code{Abrem(fail=c(500,1200,900),susp=c(1300,510))}.
+        \item Add support for passing event indicators as factors.
     }
 }
 \seealso{
@@ -100,14 +101,15 @@
 Abrem(c(500,1200,900,1300,510))
 Abrem(time=c(500,1200,900,1300,510))
 Abrem(time=c(500,1200,900,1300,510),event=c(1,1,1,1,1))
-# Abrem(fail=c(500,1200,900,1300,510))
-# Abrem(fail=c(500,1200,900,1300,510),susp=c())
+%%# Abrem(fail=c(500,1200,900,1300,510))
+%%# Abrem(fail=c(500,1200,900,1300,510),susp=c())
 da <- data.frame(
     serial=c("S12","S16","S17","S3","S5"),
     time=c(500,1200,900,1300,510),
     event=c(1,1,1,1,1))
 Abrem(da)
-## generate a similar dataset with suspentions ##
+
+## generate a similar dataset with right censoring ##
 Abrem(time=c(500,1200,900,1300,510),event=c(1,1,1,0,0))
 # Abrem(fail=c(500,1200,900),susp=c(1300,510))
 da <- data.frame(time=c(500,1200,900,1300,510),event=c(1,1,1,0,0)); Abrem(da)

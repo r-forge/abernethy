@@ -20,20 +20,23 @@
 }
 \details{
     This function can be used for testing purposes. Internally, it is used for
-    the experimental calculation of Monte Carlo Pivotal Confidence Bounds for
+    the experimental calculation of Monte Carlo Pivotal confidence bounds for
     right censored (life-)time observations.
     
     \describe{
         \item{generating Weibull datasets}{
-
+            \code{params.to.ob("weibull",beta=3,eta=1000,n=5)}
         }
         \item{generating Lognormal datasets}{
-
+            \code{params.to.ob("lognormal",meanlog=log(1000),sdlog=log(2),n=5)}
         }
         \item{censoring, event vector}{
-
+            \code{params.to.ob("weibull",beta=3,eta=1000,event=c(1,1,1,0,0))}
         }
     }
+    When \code{\link{abrem.fit}} is called on an \code{abrem} object based on
+    these (life-)time observations, the same fit parameters will be found as
+    those used to generate the dataset.
 }
 \value{
     A dataframe with two columns:
@@ -45,10 +48,9 @@
             A vector of class \code{"numeric"} with right-censoring indicators.
             See \code{\link{Abrem}} for more details on the indicators.
         }
+        
+%%        If argument \code{x} was a dataframe with additional columns, these will also be returned.
     }
-    When \code{\link{abrem.fit}} is called on an \code{abrem} object based on
-    these (life-)time observations, the same fit parameters will be found as
-    those used to generate the dataset.
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
 \note{

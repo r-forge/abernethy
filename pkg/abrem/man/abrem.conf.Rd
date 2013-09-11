@@ -1,6 +1,6 @@
 \name{abrem.conf}
 \alias{abrem.conf}
-\title{Add Confidence To \code{abrem} Objects}
+\title{Add Confidence to \code{abrem} Objects}
 \description{
     This function adds confidence calculations to
     various entities in \code{abrem} objects.
@@ -9,7 +9,7 @@
 \arguments{
     \item{x}{Object of class \code{"abrem"}.}
     \item{which}{Calculate which fit in the \code{abrem} object will be processed.}
-    \item{\dots}{Options for calculation confidence, and for plotting the results.}
+    \item{\dots}{Options for calculating confidence, and for plotting the results.}
 }
 \details{
     This function adds confidence calculations to various entities in
@@ -21,20 +21,24 @@
     \code{\link{method.conf.blives}} and other arguments;
     see \code{\link{options.abrem}} for more details.
     
-    One can also add any options available from \code{\link{options.abrem}},
-    such as \code{\link{col}} or \code{\link{is.plot.legend}}. These plotting options
-    will be used when plotting the confidence bounds using \code{\link{plot.abrem}}.
+    Additionally, one can pass any options available from \code{\link{options.abrem}},
+    such as \code{\link{col}} or \code{\link{is.plot.legend}}. The graphical options
+    will be used when plotting the (life-)time observations using \code{\link{plot.abrem}}.
+
+    Subsequent calls to \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
+    will inherit these options.
+
 }
 \value{
     The function returns its argument \code{x}, extended with the confidence
-    calculations and the optional graphical and calculation arguments
-    as provided to the function.
+    calculations and any optional graphical and calculation arguments
+    as passed to the function.
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
 \note{
    \itemize{
         \item Currently, only \code{which = "all"} is supported, meaning that a
-            call to \code{abrem.conf} attemps calculation of confidence for all
+            call to \code{abrem.conf} attempts calculation of confidence for all
             fits in the \code{abrem} object.
         \item Currently, only \code{conf.what = "blives"} and
             \code{conf.blives.sides = "double"} are supported.

@@ -22,12 +22,15 @@
     \code{abrem} object and adds them to the object alongside any
     pre-existing fits.
 
-    Fitting options are supplied with the \code{dist} and \code{method.fit}
+    Fitting options are passed with the \code{dist} and \code{method.fit}
     arguments; see \code{\link{options.abrem}} for more details.
 
-    One can also add any options available from \code{\link{options.abrem}},
-    such as \code{\link{col}} or \code{\link{is.plot.legend}}. These plotting options
-    will be used when plotting the fit using \code{plot.abrem}.
+    Additionally, one can pass any options available from \code{\link{options.abrem}},
+    such as \code{\link{col}} or \code{\link{is.plot.legend}}. The graphical options
+    will be used when plotting the (life-)time observations using \code{\link{plot.abrem}}.
+
+    Subsequent calls to \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
+    will inherit these options.
     
     The "prr" goodness-of-fit indicator is also calculated
     here. See the "Examples" section on how to retrieve it, see the "References"

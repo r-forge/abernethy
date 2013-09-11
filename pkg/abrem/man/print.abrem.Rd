@@ -5,8 +5,8 @@
     \code{Abrem} Object Printing
 }
 \description{
-    This function prints the \code{abrem} object while omitting the printing of the
-    long \code{$options} named list (for clarity).
+    This function prints the \code{abrem} object while - for clarity - omitting
+    the long \code{$options} named list.
 }
 \usage{\method{print}{abrem}(x, \dots)}
 \arguments{

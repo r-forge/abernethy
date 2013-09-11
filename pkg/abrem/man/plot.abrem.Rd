@@ -11,7 +11,7 @@
     Currently, the function plots the (life-)time observations, fits (if any)
     and confidence bounds for B-lives (if any) of an
     \code{abrem} object or a list of \code{abrem} objects on Weibull or
-    Lognormal probability 'paper'.
+    Lognormal probability paper.
 
     For each fit in the (list of) \code{abrem} object(s), legends are added to
     the plot, displaying the fit parameters and (if available) goodness-of-fit
@@ -28,12 +28,12 @@
 }
 \details{
     The \code{\dots} argument can be any graphical parameter that can be
-    supplied to \code{\link[graphics]{plot.default}}, and any option that is
+    supplied to \code{\link[graphics]{plot.default}}, and any option that can be
     set by the function \code{\link{options.abrem}}. The options set
     in this way are applied to all graphical elements of the plot, overriding
     any previously supplied options.
     
-    One can pass a list of abrem objects to \code{\link{plot.abrem}}; in
+    One can pass a list of \code{abrem} objects to \code{\link{plot.abrem}}; in
     that case it is mandatory to use the full method name: \code{plot.abrem(\dots)}
     and not \code{plot(\dots)}.
     
