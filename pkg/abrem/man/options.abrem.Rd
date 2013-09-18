@@ -62,23 +62,20 @@
     the \code{\link[graphics]{par}} function of package \pkg{graphics}.
     It can be used in different ways:
 
-    \describe{
-        \item{\code{options.abrem()}}{
-            Returns the currently used options and there values.
-        }
-        \item{
-            \code{options.abrem()$dist}
+        \code{options.abrem()}
 
-            \code{options.abrem("dist")}}{
-            Returns the current value of an option.
-        }
-        \item{
-            \code{options.abrem(cl=0.95)}
-        
-            \code{options.abrem(list(cl=0.95,S=5e4))}}{
-            Sets the specified options.
-        }
-    }
+        Returns the currently used options and there values.
+
+
+        \code{options.abrem()$dist \cr
+              options.abrem("dist")}
+
+        Returns the current value of an option.
+
+        \code{options.abrem(cl=0.95) \cr
+              options.abrem(list(cl=0.95,S=5e4))}
+
+        Sets the specified options.
 
     Currently, there is no way to reset the options to the default values using
     this function.  One might, before changing any options, store the option
@@ -174,7 +171,7 @@
             (a good approximation to the median plot positions). Both options
             can be supplied at the same time but currently, only the first
             element in the \code{\link{pp}} vector will be used for
-            further fitting by \code{\link\{abrem.fit}}
+            further fitting by \code{\link{abrem.fit}}
             
             Currently, there are no plans to implement less useful
             \code{"hazen"} and \code{"mean"} plotting positions.
