@@ -17,7 +17,8 @@ prrVal(x, Rsqr, S = 10^4, model = "w2", seed=1234, options=NULL, ProgRpt = FALSE
 \item{x}{The quantity of complete failures for evaluation, or an event vector}
 \item{Rsqr}{The variance (R squared) from a linear regression of a data sample of interest having size=x or event vector represented by x.}
 \item{S}{The number of random samples to be drawn for Monte Carlo simulation. S must be a multiple 
-of 10, not less than 1,000.  The default of 10^4 is adequate for most instances.}
+of 10, not less than 1,000.  The default of 10^4 is adequate for most instances. S is implemented as an
+unsigned int in C++ code.  The maximum limit is 4x10^9 if system memory permits.}
 \item{model}{A character string representing the model of interest.  The default value of "w2" is for the
 2-parameter Weibull. "ln2" or "n" for 2-parameter lognormal or normal, executed by the same code.} 
 \item{seed}{an integer used to set the RNG seed.  Default = 1234}

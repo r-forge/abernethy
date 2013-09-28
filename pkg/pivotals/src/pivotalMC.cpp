@@ -42,7 +42,8 @@ SEXP pivotalMCw2p(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP ar
 	int prrout=0;
 	int pivout=0;
 
-	int S = as<int>(arg3);
+	unsigned int S = as<unsigned int>(arg3);
+	unsigned int Spct = S/100;
 	int seed = as<int>(arg4);
 // get the descriptive quantiles for pivitals
 	Rcpp::NumericVector dq(arg5);
@@ -87,7 +88,7 @@ int LastPct=0;
 	arma::mat qpiv(S,ndq);
 
 
-	for(int i=0; i<S; i++)  {
+	for(unsigned int i=0; i<S; i++)  {
 		y = Rcpp::as<arma::colvec>(rweibull(F, Beta, Eta));
 		y = arma::sort(y);
 		y=log(y);
@@ -115,9 +116,9 @@ int LastPct=0;
 
 	if(ProgRpt) {
 // Progress report
-ProgPct = (i+1)*100/S;
+ProgPct = (i+1)/Spct;
 if(ProgPct > LastPct)  {
-Rprintf("%3d%% completion",(i+1)*100/S);
+Rprintf("%3d%% completion",(i+1)/Spct);
 Rprintf("\r");
 R_FlushConsole();
 R_ProcessEvents();
@@ -254,7 +255,8 @@ SEXP pivotalMCln2p(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP a
 	int prrout=0;
 	int pivout=0;
 
-	int S = as<int>(arg3);
+	unsigned int S = as<unsigned int>(arg3);
+	unsigned int Spct = S/100;
 	int seed = as<int>(arg4);
 // get the descriptive quantiles for confidence bound pivitals
 	Rcpp::NumericVector dq(arg5);
@@ -299,7 +301,7 @@ int LastPct=0;
 	arma::mat qpiv(S,ndq);
 
 
-	for(int i=0; i<S; i++)  {
+	for(unsigned int i=0; i<S; i++)  {
 		y = Rcpp::as<arma::colvec>(rnorm(F, Mu, Sigma));
 		y = arma::sort(y);
 //  for lognormal the datum at y is already log(y)
@@ -328,9 +330,9 @@ int LastPct=0;
 
 	if(ProgRpt) {
 // Progress report
-ProgPct = (i+1)*100/S;
+ProgPct = (i+1)/Spct;
 if(ProgPct > LastPct)  {
-Rprintf("%3d%% completion",(i+1)*100/S);
+Rprintf("%3d%% completion",(i+1)/Spct);
 Rprintf("\r");
 R_FlushConsole();
 R_ProcessEvents();

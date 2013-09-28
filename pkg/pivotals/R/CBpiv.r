@@ -28,11 +28,13 @@ CBpiv<-function	(x, CI, S=10^4, Bval=mrank(rep(1,15)),Eta=1.0,Beta=1.0, model="w
 	    if (CI <= 0|| CI>=1) stop("Invalid Confidence Interval")
 	        	
 	    
-	    S = as.integer(S/10)*10	
-	    if (S < 10^3) {	
-	        stop("Insufficient samples")	
-	    }	
-		
+	S = as.integer(S/10)*10	
+	if (S < 10^3) {	
+	    stop("Insufficient samples")	
+	   }	
+	if(S>4*10^9)   {
+		stop("Samples beyond MAX_INT")
+	}		
 		R2=0.0  ## this diables p-value calculations for this specific CB function run
 		#seed=1234
 		

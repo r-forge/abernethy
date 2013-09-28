@@ -18,7 +18,8 @@ CBpiv(x, CI, S = 10^4, Bval=mrank(rep(1,15)), Eta=1.0, Beta=1.0, model = "w2", s
 \item{x}{The quantity of complete failures for evaluation, or an event vector}
 \item{CI}{The double sided confidence interval of interest. }
 \item{S}{The number of random samples to be drawn for Monte Carlo simulation. S must be a multiple 
-of 10, not less than 1,000.  The default of 10^4 is adequate for most instances.}
+of 10, not less than 1,000.  The default of 10^4 is adequate for most instances. S is implemented as an
+unsigned int in C++ code.  The maximum limit is 4x10^9 if system memory permits.}
 \item{Bval}{A vector of B-values at which to determine the confidence bounds.}
 \item{Eta}{The Eta parameter to be used in random sampling.  Default = 1.0}
 \item{Beta}{The Beta parameter to be used in random sampling. Default = 1.0}

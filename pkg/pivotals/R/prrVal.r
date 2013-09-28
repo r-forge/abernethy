@@ -29,7 +29,10 @@ prrVal<-function(x, Rsqr, S=10^4, model="w2", seed=1234, options=NULL, ProgRpt=F
 	    S = as.integer(S/10)*10			
 	if(S<10^3)  {			
 	stop("Insufficient samples")			
-	}			
+	}
+		if(S>4*10^9)   {
+	stop("Samples beyond MAX_INT")
+	}
 				
 	#seed=1234			
 	Bval=.5   ## just to be some value, not used			
