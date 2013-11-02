@@ -1,11 +1,16 @@
 \name{abrem.fit}
 \alias{abrem.fit}
+\alias{dist}
+\alias{method.fit}
+\alias{prr}
+\alias{P-value}
+
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-    Fit Distributions to \code{abrem} Objects
+    Fit Distributions to \code{Abrem} Objects
 }
 \description{
-   This function fits probability distributions to \code{abrem} objects.
+   This function fits probability distributions to \code{Abrem} objects.
 }
 \usage{abrem.fit(x,\dots)}
 \arguments{
@@ -23,19 +28,74 @@
     pre-existing fits.
 
     Fitting options are passed with the \code{dist} and \code{method.fit}
-    arguments; see \code{\link{options.abrem}} for more details.
-
-    Additionally, one can pass any options available from \code{\link{options.abrem}},
-    such as \code{\link{col}} or \code{\link{is.plot.legend}}. The graphical options
-    will be used when plotting the (life-)time observations using \code{\link{plot.abrem}}.
-
-    Subsequent calls to \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
-    will inherit these options.
+    arguments:
     
-    The "prr" goodness-of-fit indicator is also calculated
-    here. See the "Examples" section on how to retrieve it, see the "References"
-    section for additional information on the prr and pve value.
-    % \code{\link[abremout:plot.abrem]{plot.abrem}}.
+    \describe{
+        \item{\code{dist}}{
+            A character string with the target distribution for fitting.
+            Possible values are \code{"weibull"} or \code{"weibull2p"},
+            \code{"weibull3p"} (three parameter Weibull), \code{"lognormal"}
+            or \code{"lognormal2p"}.
+
+
+            Currently, some unsupported values can be passed:
+            \code{"weibull-2"},
+            \code{"weibull2p-2"},
+            \code{"lognormal-2"} and
+            \code{"lognormal2p-2"}. These differentiate between R-based
+            and C++ based implementations of the rank regression code. Check
+            the code of function \code{\link{calculateSingleFit}} for implementation details.
+            
+            Defaults to \code{"weibull"}.
+        }
+        \item{\code{method.fit}}{
+            A vector of class \code{"character"} with fitting options.
+            
+            Defaults to \code{c("rr","xony")}.
+            
+            
+            \itemize{
+                \item \code{"rr"}: Rank Regression (RR). Depending on the method for
+                calculating probability plot positions chosen during the creation of the
+                \code{Abrem} object (see option \code{\link{pp}} and
+                function \code{\link{Abrem}}), this can
+                either be "exact median rank regression" or
+                "Bernard's approximate median rank regression".
+                If this method is used then it is mandatory to additionally specify
+                either X-on-Y or Y-on-X regression.
+
+                \item \code{"xony"},\code{"yonx"}: Differentiate between X-on-Y and Y-on-X
+                regression, respectively. For rank regression in lifetime analysis,
+                it is best practice to use the X values ((life-)time observations)
+                as the response variables whose horizontal distance to the fit line
+                must be minimized, and the Y values (unreliabilities) as the
+                explanatory variable.
+
+                \item \code{"mle"}: Maximum Likelihood Estimation (MLE), currently using
+                function \code{\link[debias]{MLEw2p_abrem}} of the \pkg{debias} package.
+                %%Currently, MLE is only possible for two-parameter Weibull distributions.
+
+                \item \code{"mle-rba"}: Maximum Likelihood Estimation with Reduced Bias
+                based on the median bias of the weibull MLE.
+                This options uses function \code{\link[debias]{RBAbeta}} of the
+                \pkg{debias} package, and is therefore limited to
+                two-parameter Weibull distributions at the moment. In the future,
+                choosing between different implementations of the MLE code and
+                support for other distributions (already available in package
+                \pkg{debias}) will be possible.
+            }
+        }
+
+        Additionally, one can pass any options available from \code{options.abrem},
+        such as \code{col} or \code{is.plot.legend}. The graphical options
+        will be used when plotting the (life-)time observations using \code{plot.abrem}.
+        Subsequent calls to \code{abrem.conf} will inherit these options.
+
+        The "prr" goodness-of-fit indicator is also calculated
+        here. See the "Examples" section on how to retrieve it, see the "References"
+        section for additional information on the prr and pve value.
+        % \code{\link[abremout:plot.abrem]{plot.abrem}}.
+    }
 }
 \value{
     The function returns its argument \code{x}, extended with the

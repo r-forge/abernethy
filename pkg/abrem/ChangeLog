@@ -1,0 +1,8 @@
+2013-11-02 Jurgen Symynck <jurgen.symynck@kahosl.be>
+
+        * upgraded abrem 0.1.7 to 0.1.8:
+        Added missing information (specifically about dist and method.fit) in several man pages.
+        General man page cleanup and reorganization.
+        Change dependencies to debias (>= 0.1.7) and pivotals (>= 0.1.9)
+        
+        * calculatesinglefit.R (CalculateSingleFit): replaced RBAw() with RBAbeta()

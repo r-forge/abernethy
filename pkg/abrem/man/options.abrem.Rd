@@ -40,10 +40,11 @@
 \alias{is.legend.gof}
 \alias{is.plot.cb}
 \alias{persistent}
+\alias{calculateSingleFit}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-    \pkg{Abrem} Options
+    \pkg{abrem} Options
 }
 \description{
     This function handles the various calculation, printing and plotting options
@@ -89,28 +90,8 @@
     holding the options.  One should always use the  \code{options.abrem}
     function to access the option list, do not access this list directly.
 
-%            Possible values are \code{"rr"} for Rank Regression,
-%            \code{"mle"} for Maximum Likelihood Estimation (MLE) by means of
-%            \code{\link[survival]{survreg}}, \code{"qbeta"} for exact ranking,
-%            \code{"bernard"} for Bernards approximation to exact ranking,
-%            \code{"xony"} and \code{"yonx"} for X-on-Y regression or
-%            Y-on-X regression, respectively.
-%            Defaults to \code{c("mrr","xony","qbeta")}.%
-
-%            Note that currently, ALL relevant settings must be supplied for the
-%            fitting to succeed, if one supplies \code{"bernard"} then one must
-%            supply \code{"mrr"} and \code{"xony"} also. Also, only sensible
-%            combinations of method arguments will result in a fit. For instance,
-%            \code{"surv"} and \code{"xony"} do not match together because MLE
-%            uses no rank regression.
-
 }
-\value{
-   Executing \code{options.abrem} without arguments returns a named list
-   containing the currently active global options of the \pkg{abrem} package.
-   
-   When arguments were supplied, these are returned in a named list.
-}
+
 \section{Abrem options}{
 
             Calculation oriented options:
@@ -118,16 +99,15 @@
     \describe{
         \item{\code{dist}}{
             A character string with the distribution target for fitting.
-            Possible values are \code{"weibull"} or \code{"weibull2p"},
-            \code{"weibull3p"} (three parameter Weibull), \code{"lognormal"}
-            or \code{"lognormal2p"}
-            % some undocumented values are
+            See \code{\link{abrem.fit}} for in-depth discussion of the settings.
 
             Defaults to \code{"weibull"}.
         }
         \item{\code{method.fit}}{
             A vector of class \code{"character"} with fitting options.
-            See section "Details" for in-depth discussion of the settings.
+            See \code{\link{abrem.fit}} for in-depth discussion of the settings.
+            
+            Defaults to \code{c("rr","xony")}.
         }
         \item{\code{conf.what}}{
             A vector of class \code{"character"} describing for which entities
@@ -369,6 +349,13 @@
             Defaults to \code{TRUE}.
         }
     }
+}
+
+\value{
+   Executing \code{options.abrem} without arguments returns a named list
+   containing the currently active global options of the \pkg{abrem} package.
+
+   When arguments were supplied, these are returned in a named list.
 }
 \author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
 \note{

@@ -290,7 +290,7 @@ calculateSingleFit <- function(x,...){
                     x$fit[[i]]$options$method.fit <- "mle-rba"
                     if(opafit$verbosity >= 2)message("calculateSingleFit",
                     ": Applying Abernethy's Median Bias Reduction ...")
-                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAw(length(fa))
+                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAbeta(length(fa))
                 }
             }else{
                 warning("calculateSingleFit: Fitting failed.")
@@ -318,7 +318,7 @@ calculateSingleFit <- function(x,...){
 #                    x$fit[[i]]$options$method.fit <- "mle-rba"
 #                    if(opafit$verbosity >= 2)message("calculateSingleFit",
 #                    ": Applying Abernethy's Median Bias Reduction ...")
-#                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAw(length(fa))
+#                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAbeta(length(fa))
 #                }
             }else{
                 warning("calculateSingleFit: Fitting failed.")

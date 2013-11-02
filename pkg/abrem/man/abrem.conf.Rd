@@ -21,12 +21,9 @@
     \code{\link{method.conf.blives}} and other arguments;
     see \code{\link{options.abrem}} for more details.
     
-    Additionally, one can pass any options available from \code{\link{options.abrem}},
-    such as \code{\link{col}} or \code{\link{is.plot.legend}}. The graphical options
-    will be used when plotting the (life-)time observations using \code{\link{plot.abrem}}.
-
-    Subsequent calls to \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
-    will inherit these options.
+    Additionally, one can pass any options available from \code{options.abrem},
+    such as \code{col} or \code{is.plot.legend}. The graphical options
+    will be used when plotting the (life-)time observations using \code{plot.abrem}.
 
 }
 \value{
