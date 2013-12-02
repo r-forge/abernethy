@@ -3,7 +3,7 @@ Title: Functions implementing MLE,its bias reduction for small samples and relat
 Version: 0.1.7
 Date: 2013-8-28
 Author: Jacob T. Ormerod
-Maintainer: David Silkworth <davidsilkworth@openreliability.me>
+Maintainer: David Silkworth <djsilk@openreliability.org>
 Description: Reliability Analysis Methods
 License: GPL (>= 2)
 LazyLoad: yes

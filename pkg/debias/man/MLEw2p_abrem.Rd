@@ -2,7 +2,8 @@
 
 \alias{MLEw2p_abrem}
 
-\title{Weibull 2-parameter MLE calculation using optim} 
+\title{Weibull 2-parameter MLE calculation using differentiation of the likelihood function to separate the 
+		parameters for more direct determination.} 
 
 \description{
 \code{MLEw2p_abrem} fits a set of data consisting of failures, or alternatively failures and suspensions,

@@ -2,10 +2,10 @@
 
 \alias{RBAsigma}
 
-\title{Reduced Bias Adjustment for Weibull MLE} 
+\title{Reduced Bias Adjustment for lognormal MLE} 
 
 \description{
-\code{RBAsigma} generates the reduction factor based on the median bias of the weibull MLE (C4^3.5)
+\code{RBAsigma} generates the reduction factor based on the median bias of the lognormal MLE (C4^3.5)
 }
 
 \usage{

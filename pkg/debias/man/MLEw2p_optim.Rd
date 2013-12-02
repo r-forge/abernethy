@@ -2,7 +2,7 @@
 
 \alias{MLEw2p_optim}
 
-\title{Weibull 2-parameter MLE calculation using optim} 
+\title{Weibull 2-parameter MLE calculation using the default Simplex algorithm in optim} 
 
 \description{
 \code{MLEw2p_optim} fits a set of data consisting of failures, or alternatively failures and suspensions,
