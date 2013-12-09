@@ -14,6 +14,8 @@
 \alias{verbosity}
 \alias{main}
 \alias{sub}
+\alias{main.contour}
+\alias{sub.contour}
 \alias{xlim}
 \alias{ylim}
 \alias{xlab}
@@ -36,8 +38,9 @@
 %\alias{#legend.position}
 \alias{legend.text.size}
 \alias{label}
-\alias{is.legend.blives}
-\alias{is.legend.gof}
+\alias{in.legend}
+\alias{in.legend.blives}
+\alias{in.legend.gof}
 \alias{is.plot.cb}
 \alias{persistent}
 \alias{calculateSingleFit}
@@ -113,59 +116,50 @@
             A vector of class \code{"character"} describing for which entities
             that confidence should be calculated.
 
-            Defaults to \code{c("blives")}, the only type currently supported.
+            Defaults to \code{c("blives")}.
         }
         \item{\code{conf.blives.sides}}{
             Either \code{"lower"},  \code{"upper"} or \code{"double"},
             specifying the type of bound(s) to be calculated.
 
-            Defaults to \code{c("double")}, the other options are currently
-            not implemented.
+            Defaults to \code{c("double")}.
         }
         \item{\code{conf.n}}{
             An integer controlling the amount of unreliability levels for
             which confidence bounds are calculated and ultimately plotted.
-            Higher numbers will result in smoother confidence bounds. In any
-            case, confidence intervals will be calculated for:
-            \itemize{
-                \item the B-lives specified with option \code{\link{blives}}
-                \item the B-life at \code{50 [\%]} unreliability
-                \item the B-life at the calculcate characteristic life
-                    or logmean (depending on the fitted distribution)
-            }
+            See \code{\link{abrem.conf}} for more details.
+
+            Defaults to \code{25}
         }
         \item{\code{method.conf.blives}}{
             A vector of class \code{"character"} describing the techniques used
-            for calculating confidence for B-lives. Possible values are
-            \code{"mcpivotals"} (Monte Carlo Pivotal confidence bounds)
-            and \code{"bbb"} (Beta Binomial confidence bounds).
+            for calculating confidence for B-lives. 
+            See \code{\link{abrem.conf}} for in-depth discussion of the settings.
 
             Defaults to \code{c("mcpivotals")}.
         }
         \item{\code{pp}}{
-            \code{pp} is short for "probability plot postions". A vector of
+            \code{pp} is short for "probability plot postions", it is a vector of
             class \code{"character"} describing the type of plot positions to be
             calculated.
             Possible values are \code{"median"} (exact median plot postions
             calculated using the Incomplete Beta function) and  \code{"bernard"}
             (a good approximation to the median plot positions). Both options
             can be supplied at the same time but currently, only the first
-            element in the \code{\link{pp}} vector will be used for
+            element in the \code{pp} vector will be used for
             further fitting by \code{\link{abrem.fit}}
             
-            Currently, there are no plans to implement less useful
+            Currently, there are no plans to implement
             \code{"hazen"} and \code{"mean"} plotting positions.
 
             Defaults to \code{c("median")}.
         }
         \item{\code{S}}{
             An integer describing the number of Monte Carlo simulations on
-            which the Monte Carlo pivotal confidence bounds AND calculation
-            of the "prr" goodness-of-fit indicator are based.
-            High values are needed for good confidence bounds at the lower
-            end of the fitted model, especially for data with heavy censoring.
-            
-            Note that \code{S >= 1000} and that \code{S} must be divisible by 10.
+            which the Monte Carlo pivotal confidence bounds and calculation
+            of the "prr" goodness-of-fit indicator are based (See
+            \code{\link[pivotals]{prrVal}} of package \pkg{pivotals}for more
+            details).
 
             Defaults to \code{1e4}.
         }
@@ -173,7 +167,7 @@
             Currently unused. Defaults to \code{FALSE}.
         }
         \item{\code{cl}}{
-            Confidence level: A number from the interval \code{[0,[1}
+            Confidence level: A single number from the interval \code{[0,[1}
             specifying the confidence level for various confidence calculations.
 
             Defaults to \code{0.9}.
@@ -195,13 +189,13 @@
 
             Defaults to \code{1}.
         }
-        \item{\code{main}}{
-            A character string; the main title of the plot.
+        \item{\code{main}, \code{main.contour}}{
+            A character string; the main title of the plot or contour plot.
 
             Defaults to \code{"Probability Plot\\n"}.
         }
-        \item{\code{sub}}{
-            A character string; the subtitle of the plot.
+        \item{\code{sub},\code{sub.contour}}{
+            A character string; the subtitle of the plot or contour plot.
 
             Defaults to \code{NULL}.
         }
@@ -232,6 +226,7 @@
 
             Default to \code{"Time To Failure"} and
             \code{"Unreliability [\%]"} respectively.
+            For contour plots, Default to \code{"Eta"} and \code{"Beta"} respectively.
         }
         \item{\code{log}}{
             A character string describing the type of plotting canvas to use.
@@ -239,7 +234,10 @@
             (Lognormal canvas), \code{""} (Weibull Y axis, linear X axis)
             and \code{"y"} (Lognormal Y axis, linear X axis).
 
+
             Defaults to \code{"x"}, Weibull canvas.
+            For contour plots, \code{log} is always \code{""} and cannot be set.
+
         }
         \item{\code{coordinate.text.size}}{
             A number determining the relative coordinate text label size.
@@ -325,14 +323,14 @@
 
             Defaults to \code{TRUE}.
         }
-        \item{\code{is.legend.blives}}{
-            Logical value controlling the plotting of B-life confidence bounds
+        \item{\code{in.legend.blives}}{
+            Logical value controlling the inclusion of B-life confidence bounds
             in the legend.
 
             Defaults to \code{TRUE}.
         }
-        \item{\code{is.legend.gof}}{
-            Logical value controlling the plotting of goodness-of-fit
+        \item{\code{in.legend.gof}}{
+            Logical value controlling the inclusion of goodness-of-fit
             indicators in the legend.
 
             Defaults to \code{TRUE}.

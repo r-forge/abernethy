@@ -78,15 +78,26 @@ Abrem <- function(x,...){
             }
         }
     }else{
-        if(!is.null(arg$rem$time)){
-            if(is.vector(arg$rem$time)){
+        ti <- c(arg$rem$time,arg$rem$fail)
+        if(xor(!is.null(arg$rem$time), !is.null(arg$rem$fail))){
+            if(is.vector(ti)){
                 if(opa$verbosity >= 2)message(match.call()[[1]],
-                    ": Argument \"time\" is vector of complete (life-)time observations...")
-                if(any(is.na(arg$rem$time))) timeorder <- 1:length(arg$rem$time)
-                else timeorder <- order(arg$rem$time)
-                ret$data  <- data.frame(time=arg$rem$time[timeorder],event=1)
-            }
-        }else{stop("No (life-)time observations were provided.")}
+                    ": Argument \"time\" or \"fail\" is vector of complete (life-)time observations...")
+                if(any(is.na(ti))) timeorder <- 1:length(arg$rem$time)
+                else timeorder <- order(ti)
+                ret$data  <- data.frame(time=ti[timeorder],event=1)
+            }else{stop("Argument \"time\" or fail\" must be vector.")}
+        }
+        if(!is.null(arg$rem$susp)){
+            if(is.vector(arg$rem$susp)){
+                if(opa$verbosity >= 2)message(match.call()[[1]],
+                    ": Argument \"susp\" is vector of right-censored (suspended) (life-)time observations...")
+                timeorder <- order(c(ti,arg$rem$susp))
+                ret$data  <- data.frame(time=c(ti,arg$rem$susp)[timeorder],
+                    event=c(rep(1,length(ti)),rep(0,length(arg$rem$susp)))[timeorder])
+            }else{stop("Argument \"susp\" must be a vector.")}
+        }
+        #else{stop("No (life-)time observations were provided.")}
     }
     
     ### setting the event vector correctly ###

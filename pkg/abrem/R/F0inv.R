@@ -52,4 +52,3 @@ F0inv <- function(p,log="x"){
     if(log %in% c("x",""))ret <- log(qweibull(p,1,1)) else ret <- qlnorm(p,0,1)
     ret
 }
-   # TODO: add a boolean argument to switch between weibull transformation and lognormal

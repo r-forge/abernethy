@@ -41,20 +41,21 @@
 #
 calculateSingleFit <- function(x,...){
     # x is a single Abrem object
-    
+    # TODO: WAY to much duplicated code!
+    #########################
+    #  auxiliary functions  #
+    #########################
     opadata <- x$options
     opafit <- modifyList(opadata,list(...))
-    debug1 <- function(){
-        if(opafit$verbosity >= 2)message(paste0(
+    vm <- function(vlevel,mess)if(opafit$verbosity >= vlevel)message(mess)
+    debug1 <- function()vm(2,paste0(
             "calculateSingleFit: Attempting ",opafit$dist," (",
             paste0(opafit$method.fit,collapse=", "),
             "), pp = \"",opafit$pp,"\" fit..."))
-    }
-    debug2 <- function(){
-        if(opafit$verbosity >= 2)message(paste0(
+    debug2 <- function()vm(2,paste0(
             "calculateSingleFit: Attempting ",opafit$dist," (",
             paste0(opafit$method.fit,collapse=", "),") fit..."))
-    }
+    #ds <- function(level,mess)if(opafit$verbosity >= level)stop(mess)
     neededcolumns <- function(ppp=NULL){
         rankcolumn <- function(colname,ppp){
             na <- unlist(strsplit(tolower(colname),".",TRUE))
@@ -68,17 +69,44 @@ calculateSingleFit <- function(x,...){
             cbind(basis,rank=x$data[,wh])
         }
     }
+    goodness_of_fit <- function(){
+        if(is.null(x$fit[[i]]$gof)){
+            vm(2,"calculateSingleFit: calculating r^2 using cor()...")
+            x$fit[[i]]$gof <<- list()
+            x$fit[[i]]$gof$r2 <<- cor(times, ranks, use = "complete.obs")^2
+        }else vm(2,"calculateSingleFit: r^2 was already set...")
+            # if !NULL, then it was already set by the cpp version of the fitting method
 
+        if(identical(x$fit[[i]]$gof$r2,1)){
+            vm(2,"calculateSingleFit: r^2 is exactly 1, bypassing prr and ccc^2 calculations...")
+                x$fit[[i]]$gof$prr <<- Inf
+        }else{
+            vm(2,"calculateSingleFit: r^2 is lower than 1 ...")
+            x$fit[[i]]$gof$S <<- opafit$S
+                # TODO: $S should be moved to a better location in the frame
+            vm(2,"calculateSingleFit: Calculating prr and ccc^2...")
+            prrval <- .Call("pivotalMCw2p",
+                # TODO: takes into account xony and yonx?
+                na.omit(x$fit[[i]]$data$rank),
+                c(x$fit[[i]]$gof$r2,0.0,1.0,1.0),S=x$fit[[i]]$gof$S,
+                seed=sample.int(.Machine$integer.max,1),
+                Bval=0.5,ProgRpt=FALSE,PACKAGE= "pivotals")
+            x$fit[[i]]$gof$prr  <<- prrval[[1]]
+            x$fit[[i]]$gof$ccc2 <<- prrval[[2]]
+        }
+    }
+    
+    ########################
+    #  main function body  #
+    ########################
     i <- 1
     atleastonefit <- FALSE
     if(is.null(x$fit)){
-        if(opafit$verbosity >= 2)message(
-            "calculateSingleFit: Creating the first fit in the abrem object...")
+        vm(2,"calculateSingleFit: Creating the first fit in the abrem object...")
         i <- 1
         x$fit <- list()
     }else{
-        if(opafit$verbosity >= 2)message(
-            "calculateSingleFit: Appending a new fit to the existing abrem object...")
+        vm(2,"calculateSingleFit: Appending a new fit to the existing abrem object...")
         i <- length(x$fit)+1
     }
     x$fit[[i]] <- list()
@@ -101,234 +129,207 @@ calculateSingleFit <- function(x,...){
     x$fit[[i]]$cens <- x$fit[[i]]$n-x$fit[[i]]$fail
 
     if("rr" %in% tolower(opafit$method.fit)){
-        # +-------------------+
-        # |  rank regression  |
-        # +-------------------+
-        if(tolower(opafit$dist) %in% c("weibull","weibull2p",
-            "weibull-2","weibull2p-2")){
+        #  ____             _                                       _
+        # |  _ \ __ _ _ __ | | __  _ __ ___  __ _ _ __ ___  ___ ___(_) ___  _ __
+        # | |_) / _` | '_ \| |/ / | '__/ _ \/ _` | '__/ _ \/ __/ __| |/ _ \| '_ \
+        # |  _ < (_| | | | |   <  | | |  __/ (_| | | |  __/\__ \__ \ | (_) | | | |
+        # |_| \_\__,_|_| |_|_|\_\ |_|  \___|\__, |_|  \___||___/___/_|\___/|_| |_|
+        #                                   |___/
+        if(tolower(opafit$dist) %in% c("weibull","weibull2p","weibull-2","weibull2p-2")){
+            # __        __   _ _           _ _
+            # \ \      / /__(_) |__  _   _| | |
+            #  \ \ /\ / / _ \ | '_ \| | | | | |
+            #   \ V  V /  __/ | |_) | |_| | | |
+            #    \_/\_/ \___|_|_.__/ \__,_|_|_|
             #prepfitlist()
             debug1()
             x$fit[[i]]$data <- neededcolumns(opafit$pp[1])
             times <- log(x$fit[[i]]$data$time)
             ranks <- log(qweibull(x$fit[[i]]$data$rank,1,1))
-            if("xony" %in% tolower(opafit$method.fit)){
-                x$fit[[i]]$options$method.fit <- c("rr","xony")
+            rr_weibull2p <- function(is_xony){
+                x$fit[[i]]$options$method.fit <<- c("rr",ifelse(is_xony,"xony","yonx"))
                 if(any(c("weibull","weibull2p") %in% tolower(opafit$dist))){
-                    atleastonefit <- TRUE
-                    x$fit[[i]]$options$dist <- "weibull2p"
-                    x$fit[[i]]$lm  <- lm(times ~ ranks,x$fit[[i]]$data)
+                    atleastonefit <<- TRUE
+                    x$fit[[i]]$options$dist <<- "weibull2p"
+                    if(is_xony) x$fit[[i]]$lm  <<- lm(times ~ ranks,x$fit[[i]]$data)
+                    else        x$fit[[i]]$lm  <<- lm(ranks ~ times,x$fit[[i]]$data)
                         # TODO: add error checking
-                    x$fit[[i]]$beta <- 1/coef(x$fit[[i]]$lm)[[2]]
-                    x$fit[[i]]$eta  <- exp(coef(x$fit[[i]]$lm)[[1]])
+                    B <- coef(x$fit[[i]]$lm)[[2]]
+                    A <- coef(x$fit[[i]]$lm)[[1]]
+                    x$fit[[i]]$beta <<- ifelse(is_xony,1/B,B)
+                    x$fit[[i]]$eta  <<- ifelse(is_xony,exp(A),exp(-A/B))
                 }
                 if(any(c("weibull-2","weibull2p-2") %in% tolower(opafit$dist))){
-                    x$fit[[i]]$options$dist <- "weibull2p-2"
-                    try(ret <- .Call("MRRw2pXonY",
+                    x$fit[[i]]$options$dist <<- "weibull2p-2"
+                    ret <- NULL
+                    try(ret <- .Call(ifelse(is_xony,"MRRw2pXonY","MRRw2pYonX"),
                         x$fit[[i]]$data$time,
                         x$fit[[i]]$data$event,
-                        method=1, PACKAGE= "pivotals")
+                        method=1, PACKAGE= "pivotals"))
                         # TODO: method=1 -> exact, method=0 -> bernard
-                    )
                     if(!is.null(ret)){
-                        atleastonefit       <- TRUE
-                        x$fit[[i]]$eta      <- ret[[1]]
-                        x$fit[[i]]$beta     <- ret[[2]]
-                        x$fit[[i]]$gof      <- list()
-                        x$fit[[i]]$gof$r2   <- ret[[3]]
-                    }else{
-                        warning("calculateSingleFit: Fitting failed.")
-                    }
+                        atleastonefit       <<- TRUE
+                        x$fit[[i]]$eta      <<- ret[[1]]
+                        x$fit[[i]]$beta     <<- ret[[2]]
+                        x$fit[[i]]$gof      <<- list()
+                        x$fit[[i]]$gof$r2   <<- ret[[3]]
+                    }#else warning("calculateSingleFit: Fitting failed.")
                 }
             }
-            if("yonx" %in% tolower(opafit$method.fit)){
-                atleastonefit <- TRUE
-                x$fit[[i]]$options$method.fit <- c("rr","yonx")
-                x$fit[[i]]$options$dist <- "weibull2p"
-                x$fit[[i]]$lm  <- lm(ranks ~ times,x$fit[[i]]$data)
-                x$fit[[i]]$beta <- coef(x$fit[[i]]$lm)[[2]]
-                x$fit[[i]]$eta  <-
-                    exp(-coef(x$fit[[i]]$lm)[[1]]/coef(x$fit[[i]]$lm)[[2]])
-            }
-            x$fit[[i]]$gof <- list()
-            x$fit[[i]]$gof$r2 <- cor(times, ranks, use = "complete.obs")^2
-            atleastonefit <- TRUE
-            if(identical(x$fit[[i]]$gof$r2,1)){
-                if(opafit$verbosity >= 2)message("calculateSingleFit ",
-                    ": r^2 is exactly 1, bypassing prr and ccc^2 calculations...")
-                    x$fit[[i]]$gof$prr <- Inf
-            }else{
-                if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": r^2 is lower than 1 ...")
-                x$fit[[i]]$gof$S <- opafit$S
-                # TODO: $S should be moved to a better location in the frame
-                if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": Calculating prr and ccc^2...")
-                prrval <- .Call("pivotalMCw2p",
-                    # TODO: takes into account xony and yonx?
-                    na.omit(x$fit[[i]]$data$rank),
-                    c(x$fit[[i]]$gof$r2,0.0,1.0,1.0),S=x$fit[[i]]$gof$S,
-                    seed=sample.int(.Machine$integer.max,1),
-                    Bval=0.5,ProgRpt=FALSE,PACKAGE= "pivotals")
-                x$fit[[i]]$gof$prr <- prrval[[1]]
-                x$fit[[i]]$gof$ccc2 <- prrval[[2]]
-            }
+            if("xony" %in% tolower(opafit$method.fit)) rr_weibull2p(TRUE)
+            if("yonx" %in% tolower(opafit$method.fit)) rr_weibull2p(FALSE)
+                # TODO: MRRw2pYonX does not exists, so an error will be generated.
+                # TODO: this is also called when x$fit[[i]]$options$dist <- "weibull2p-2"
+            goodness_of_fit()
         }
-        if(tolower(opafit$dist) %in% c("lognormal","lognormal2p",
-            "lognormal-2","lognormal2p-2")){
+        if(tolower(opafit$dist) %in% c("lognormal","lognormal2p","lognormal-2","lognormal2p-2")){
+            #  _                                                 _
+            # | |    ___   __ _ _ __   ___  _ __ _ __ ___   __ _| |
+            # | |   / _ \ / _` | '_ \ / _ \| '__| '_ ` _ \ / _` | |
+            # | |__| (_) | (_| | | | | (_) | |  | | | | | | (_| | |
+            # |_____\___/ \__, |_| |_|\___/|_|  |_| |_| |_|\__,_|_|
+            #             |___/
             debug1()
 #            message("EXPERIMENTAL CODE! -> NEEDS TO BE VERIFIED!")
             x$fit[[i]]$data <- neededcolumns(opafit$pp[[1]])
             times <- log(x$fit[[i]]$data$time)
             ranks <- log(qlnorm(x$fit[[i]]$data$rank, 0, 1))
-            if("xony" %in% tolower(opafit$method.fit) &&
-                any(c("lognormal","lognormal2p") %in% tolower(opafit$dist))){
-                atleastonefit <- TRUE
-                x$fit[[i]]$options$dist <- "lognormal2p"
-                x$fit[[i]]$options$method.fit <- c("rr","xony")
-                x$fit[[i]]$lm  <- lm(times ~ ranks,x$fit[[i]]$data)
-                x$fit[[i]]$meanlog  <- coef(x$fit[[i]]$lm)[[1]]
-                x$fit[[i]]$sdlog    <- coef(x$fit[[i]]$lm)[[2]]
-            }
-            if("yonx" %in% tolower(opafit$method.fit)){
+
+            rr_lognormal2p <- function(is_xony){
+                x$fit[[i]]$options$method.fit <<- c("rr",ifelse(is_xony,"xony","yonx"))
                 if(any(c("lognormal","lognormal2p") %in% tolower(opafit$dist))){
-                    atleastonefit <- TRUE
-                    x$fit[[i]]$options$dist <- "lognormal2p"
-                    x$fit[[i]]$options$method.fit <- c("rr","yonx")
-                    x$fit[[i]]$lm  <- lm(ranks ~ times,x$fit[[i]]$data)
-                    x$fit[[i]]$meanlog  <- -coef(x$fit[[i]]$lm)[[1]]/
-                        coef(x$fit[[i]]$lm)[[2]]
-                    x$fit[[i]]$sdlog    <- 1/coef(x$fit[[i]]$lm)[[2]]
-                }
-                if(any(c("lognormal-2","lognormal2p-2") %in% tolower(opafit$dist))){
-                    x$fit[[i]]$options$dist <- "lognormal2p-2"
-                    x$fit[[i]]$options$method.fit <- c("rr","yonx")
-                    try(ret <- .Call("MRRln2pYonX",
-                        x$fit[[i]]$data$time,
-                        x$fit[[i]]$data$event,
-                        method=1, PACKAGE= "pivotals")
-                        # TODO: method=1 -> exact, method=0 -> bernard
-                    )
-                    if(!is.null(ret)){
-                        atleastonefit <- TRUE
-                        x$fit[[i]]$meanlog  <- ret[[1]]
-                        x$fit[[i]]$sdlog    <- ret[[2]]
-                        x$fit[[i]]$gof      <- list()
-                        x$fit[[i]]$gof$r2   <- ret[[3]]
+                    atleastonefit <<- TRUE
+                    x$fit[[i]]$options$dist <<- "lognormal2p"
+                    
+                    if(is_xony) x$fit[[i]]$lm  <<- lm(times ~ ranks,x$fit[[i]]$data)
+                    else        x$fit[[i]]$lm  <<- lm(ranks ~ times,x$fit[[i]]$data)
+                    A <- coef(x$fit[[i]]$lm)[[1]]
+                    B <- coef(x$fit[[i]]$lm)[[2]]
+                    if(is_xony){
+                        x$fit[[i]]$meanlog  <<- A
+                        x$fit[[i]]$sdlog    <<- B
                     }else{
-                        warning("calculateSingleFit: Fitting failed.")
+                        x$fit[[i]]$meanlog  <<- -A/B
+                        x$fit[[i]]$sdlog    <<- 1/B
                     }
                 }
-            }
-            x$fit[[i]]$gof <- list()
-            x$fit[[i]]$gof$r2 <- cor(ranks, times, use = "complete.obs")^2
-            atleastonefit <- TRUE
-            if(identical(x$fit[[i]]$gof$r2,1)){
-                if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": r^2 is exactly 1, bypassing prr and ccc^2 calculations...")
-                    x$fit[[i]]$gof$prr <- Inf
-            }else{
-                if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": r^2 is lower than 1 ...")
-                x$fit[[i]]$gof$S <- opafit$S
-                # TODO: $S should be moved to a better location in the frame
-                if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": Calculating prr and ccc^2...")
-                prrval <- .Call("pivotalMCln2p",
-                    na.omit(x$fit[[i]]$data$rank),
-                    c(x$fit[[i]]$gof$r2,0.0,1.0,1.0),S=x$fit[[i]]$gof$S,
-                    seed=sample.int(.Machine$integer.max,1),
-                    Bval=0.5,ProgRpt=FALSE,PACKAGE= "pivotals")
-                x$fit[[i]]$gof$prr <- prrval[[1]]
-                x$fit[[i]]$gof$ccc2 <- prrval[[2]]
-            }
-        }
-        if("xony" %in% tolower(opafit$method.fit)){
-            if(tolower(opafit$dist) %in% "weibull3p"){
-                #prepfitlist()
-                debug1()
-                x$fit[[i]]$options$dist <- "weibull3p"
-                x$fit[[i]]$options$method.fit <- c("rr","xony")
-                x$fit[[i]]$data <- neededcolumns(opafit$pp[1])
-                ret <- NULL
-                fa <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==1]
-                su <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==0]
-                debug1()
-                try(ret <- MRRw3pxy(fa,s=su))
-                if(!is.null(ret)){
-                    atleastonefit       <- TRUE
-                    x$fit[[i]]$beta     <- ret[[2]]
-                    x$fit[[i]]$eta      <- ret[[1]]
-                    x$fit[[i]]$t0       <- ret[[3]]
-                    x$fit[[i]]$gof      <- list()
-                    x$fit[[i]]$gof$r2   <- ret[[4]]
-                }else{
-                    warning("calculateSingleFit: Fitting failed.")
+                if(any(c("lognormal-2","lognormal2p-2") %in% tolower(opafit$dist))){
+                    x$fit[[i]]$options$dist <<- "lognormal2p-2"
+                    ret <- NULL
+                    try(ret <- .Call(ifelse(is_xony,"MRRln2pXonY","MRRln2pYonX"),
+                        x$fit[[i]]$data$time,
+                        x$fit[[i]]$data$event,
+                        method=1, PACKAGE= "pivotals"))
+                        # TODO: method=1 -> exact, method=0 -> bernard
+                    if(!is.null(ret)){
+                        atleastonefit       <<- TRUE
+                        x$fit[[i]]$meanlog  <<- ret[[1]]
+                        x$fit[[i]]$sdlog    <<- ret[[2]]
+                        x$fit[[i]]$gof      <<- list()
+                        x$fit[[i]]$gof$r2   <<- ret[[3]]
+                    }#else warning("calculateSingleFit: Fitting failed.")
                 }
             }
+            if("xony" %in% tolower(opafit$method.fit)) rr_lognormal2p(TRUE)
+            if("yonx" %in% tolower(opafit$method.fit)) rr_lognormal2p(FALSE)
+            goodness_of_fit()
+        }
+        if(tolower(opafit$dist) %in% "weibull3p"){
+            # __        __   _ _           _ _ _____
+            # \ \      / /__(_) |__  _   _| | |___ / _ __
+            #  \ \ /\ / / _ \ | '_ \| | | | | | |_ \| '_ \
+            #   \ V  V /  __/ | |_) | |_| | | |___) | |_) |
+            #    \_/\_/ \___|_|_.__/ \__,_|_|_|____/| .__/
+            #                                       |_|
+            rr_weibull3p <- function(is_xony){
+                x$fit[[i]]$options$method.fit <<- c("rr",ifelse(is_xony,"xony","yonx"))
+                #prepfitlist()
+                debug1()
+                x$fit[[i]]$options$dist <<- "weibull3p"
+                x$fit[[i]]$data <<- neededcolumns(opafit$pp[1])
+                ret <- NULL
+                try(ret <- .Call(ifelse(is_xony,"MRRw3pXonY","MRRw3pYonX"),
+                    x$fit[[i]]$data$time,
+                    x$fit[[i]]$data$event,limit = 1e-5, PACKAGE= "pivotals"))
+                    ## TODO: incorporate LIMIT argument in another way
+                if(!is.null(ret)){
+                    atleastonefit       <<- TRUE
+                    x$fit[[i]]$beta     <<- ret[[2]]
+                    x$fit[[i]]$eta      <<- ret[[1]]
+                    x$fit[[i]]$t0       <<- ret[[3]]
+                    x$fit[[i]]$gof      <<- list()
+                    x$fit[[i]]$gof$r2   <<- ret[[4]]
+                }#else warning("calculateSingleFit: Fitting failed.")
+            }
+            if("xony" %in% tolower(opafit$method.fit)) rr_weibull3p(TRUE)
+            if("yonx" %in% tolower(opafit$method.fit))
+                vm(0,"calculateSingleConf: Currently, c(\"rr\", \"yonx\") for three-parameter Weibull is not supported.")
         }
     }
     if(any(c("mle","mle-rba") %in% tolower(opafit$method.fit))){
-        # +----------------------+
-        # |  Maximum Likelihood  |
-        # +----------------------+
+        #  __  __ _     _____
+        # |  \/  | |   | ____|
+        # | |\/| | |   |  _|
+        # | |  | | |___| |___
+        # |_|  |_|_____|_____|
+
+        debug2()
+        x$fit[[i]]$data <- neededcolumns()
+        x$fit[[i]]$options$method.fit <- "mle"
+        fa <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==1]
+        su <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==0]
+        ret <- NULL
+        is_3p <- FALSE
         if(tolower(opafit$dist) %in% c("weibull","weibull2p")){
-            #prepfitlist()
-            debug2()
-            x$fit[[i]]$data <- neededcolumns()
-            fa <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==1]
-            su <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==0]
-            try(ret <- MLEw2p_abrem(fa,s=su))
-            if(!is.null(ret)){
-                atleastonefit <- TRUE
-                x$fit[[i]]$options$dist <- "weibull2p"
-                x$fit[[i]]$options$method.fit <- "mle"
-                x$fit[[i]]$beta <- ret[[2]]
-                x$fit[[i]]$eta  <- ret[[1]]
-                x$fit[[i]]$gof <- list()
-                x$fit[[i]]$gof$loglik <- ret[[3]]
-                if("mle-rba" %in% tolower(opafit$method.fit)){
-                    x$fit[[i]]$options$method.fit <- "mle-rba"
-                    if(opafit$verbosity >= 2)message("calculateSingleFit",
-                    ": Applying Abernethy's Median Bias Reduction ...")
-                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAbeta(length(fa))
-                }
-            }else{
-                warning("calculateSingleFit: Fitting failed.")
-            }
+            x$fit[[i]]$options$dist <- "weibull2p"
+            try(ret <- debias::MLEw2p_abrem(fa,s=su))
         }
         if(tolower(opafit$dist) %in% c("weibull3p")){
-            #prepfitlist()
-            debug2()
-            x$fit[[i]]$data <- neededcolumns()
-            fa <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==1]
-            su <- x$fit[[i]]$data$time[x$fit[[i]]$data$event==0]
-            try(ret <- MLEw3p_secant(fa,s=su))
-            if(!is.null(ret)){
-                atleastonefit <- TRUE
-                x$fit[[i]]$options$dist <- "weibull3p"
-                x$fit[[i]]$options$method.fit <- "mle"
-                x$fit[[i]]$beta <- ret[[2]]
-                x$fit[[i]]$eta  <- ret[[1]]
+            is_3p <- TRUE
+            x$fit[[i]]$options$dist <- "weibull3p"
+            try(ret <- debias::MLEw3p_secant(fa,s=su))
+        }
+        if(!is.null(ret)){
+            atleastonefit <- TRUE
+            x$fit[[i]]$beta <- ret[[2]]
+            x$fit[[i]]$eta  <- ret[[1]]
+            if(is_3p){
                 x$fit[[i]]$t0   <- ret[[3]]
                 x$fit[[i]]$gof  <- list()
                 x$fit[[i]]$gof$loglik <- ret[[4]]
-                # TODO: here, ret[[4]] is positive LL?
-#                if("mle-rba" %in% tolower(opafit$method.fit)){
-                    # TODO: check if this is appropriate with WB3P
-#                    x$fit[[i]]$options$method.fit <- "mle-rba"
-#                    if(opafit$verbosity >= 2)message("calculateSingleFit",
-#                    ": Applying Abernethy's Median Bias Reduction ...")
-#                    x$fit[[i]]$beta <- ret[[2]]*debias::RBAbeta(length(fa))
-#                }
             }else{
-                warning("calculateSingleFit: Fitting failed.")
+                x$fit[[i]]$gof <- list()
+                x$fit[[i]]$gof$loglik <- ret[[3]]
             }
+            if("mle-rba" %in% tolower(opafit$method.fit)){
+                x$fit[[i]]$options$method.fit <- "mle-rba"
+                vm(2,"calculateSingleFit: Applying Abernethy's Bias Reduction ...")
+                x$fit[[i]]$beta <- ret[[2]]*debias::RBAbeta(length(fa))
+                    # TODO: set the option: median or mean bias reduction
+            }
+        }#else warning("calculateSingleFit: Fitting failed.")
+
+        if(tolower(opafit$dist) %in% c("lognormal","lognormal2p")){
+            x$fit[[i]]$options$dist <- "lognormal2p"
+            try(ret <- debias::MLEln2p_cpp(fa,s=su))
+            if(!is.null(ret)){
+                atleastonefit <- TRUE
+                x$fit[[i]]$meanlog  <- ret[[1]]
+                x$fit[[i]]$sdlog    <- ret[[2]]
+                x$fit[[i]]$gof      <- list()
+                x$fit[[i]]$gof$loglik <- ret[[3]]
+                if("mle-rba" %in% tolower(opafit$method.fit)){
+                    x$fit[[i]]$options$method.fit <- "mle-rba"
+                    vm(2,"calculateSingleFit: Applying Abernethy's Median Bias Reduction ...")
+                    x$fit[[i]]$sdlog <- ret[[2]]*debias::RBAsigma(length(fa))
+                        # with RBAsigma, there are no options...
+                }
+            }#else warning("calculateSingleFit: Fitting failed.")
         }
-        
     }
     if(!atleastonefit){
-        message("*** calculateSingleFit: Nothing has been fitted. ***\n",
-        "    Does \"method.fit\" include sensible options?")
+        message("*** calculateSingleFit: Nothing has been fitted.  ***\n",
+                "*** Does \"method.fit\" include sensible options?   ***")
         # x$fit[[i]] <- NULL
     }
     x

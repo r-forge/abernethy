@@ -1,3 +1,16 @@
+2013-12-09 Jurgen Symynck <jurgen.symynck@kahosl.be>
+
+        * upgraded abrem 0.1.8 to 0.1.10:
+        General man page cleanup and reorganization. Moved the detailed description of some options to the manpage of the most approporiate function.
+        added support for contour calculation.
+        removed abrem:::MLEw3p_secant.r; now calling the version in package debias.
+        removed abrem:::MRRw3pxy; now calling the version in package debias.
+        
+        * Abrem.R (Abrem): added fail and susp argument options
+        * options.abrem.R (options.abrem): added in.legend logical option for
+        * calculateSingleConf.R (calculateSingleConf): named likelihood ratio bounds to "lrb" instead of "lira"
+        * calculateSingleFit.R (calculateSingleFit): reduced length of file; more efficient code reusage.
+        
 2013-11-02 Jurgen Symynck <jurgen.symynck@kahosl.be>
 
         * upgraded abrem 0.1.7 to 0.1.8:

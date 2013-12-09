@@ -135,6 +135,21 @@ plot.abrem <- function(x,...){
         }
     }
     lapply(x,plotConfsInAbrem)
+    
+    # +-------------+
+    # |  plot fits  |
+    # +-------------+
+    plotFitsInAbrem <- function(abrem){
+        opadata <- modifyList(abrem$options,list(opa$xlim,opa$ylim))
+        if(!is.null(abrem$fit)){
+            ret <- lapply(abrem$fit,plotSingleFit,
+                opadata=opadata,...)
+        }else{
+            if(!is.null(opa)) if(opa$verbosity >= 1)message(
+                "plotFitsInAbrem: This Abrem object contains no fits.")
+        }
+    }
+    lapply(x,plotFitsInAbrem)
 
     # +-----------------------+
     # |  plot plot positions  |
@@ -156,21 +171,6 @@ plot.abrem <- function(x,...){
         }
     }
     lapply(x,plotSingleDataSet)
-    
-    # +-------------+
-    # |  plot fits  |
-    # +-------------+
-    plotFitsInAbrem <- function(abrem){
-        opadata <- modifyList(abrem$options,list(opa$xlim,opa$ylim))
-        if(!is.null(abrem$fit)){
-            ret <- lapply(abrem$fit,plotSingleFit,
-                opadata=opadata,...)
-        }else{
-            if(!is.null(opa)) if(opa$verbosity >= 1)message(
-                "plotFitsInAbrem: This Abrem object contains no fits.")
-        }
-    }
-    lapply(x,plotFitsInAbrem)
 
     # +----------------+
     # |  plot legends  |
@@ -195,6 +195,7 @@ plot.abrem <- function(x,...){
     if(opa$is.plot.legend){
         plotSingleLegend <- function(le,x,y){
             if(identical(label <- le$label,""))label <- NULL
+            if(is.null(le$legend))le$legend <- ""
             legend(
                 x=x,
                 y=y,
@@ -202,7 +203,6 @@ plot.abrem <- function(x,...){
                 title=label,
 #                title.col=le$lcol,
                 cex = le$legend.text.size,
-                    # TODO change opp to something else
                 bg = "white",
                 lty = unlist(le$lty),
                 lwd = unlist(le$lwd),
@@ -210,7 +210,7 @@ plot.abrem <- function(x,...){
                 col = unlist(le$col),
 #                inset=0.1,
                 text.col = "black",
-                xpd=TRUE,
+                xpd=TRUE
 #                merge = TRUE
                 )
                 # TODO: Warning: unlist coerces numeric colors to character!

@@ -45,9 +45,9 @@ plotSingleConfBound <- function(blc,opafit,...){
     }else{opaconf <- opafit}
     opaconf <- modifyList(opaconf,list(...))
     if(opaconf$is.plot.cb){
-        if(!is.null(blc$bounds$Median))
+        if(!is.null(blc$bounds$Datum))
             lines(y=F0inv(blc$bounds$unrel,opaconf$log),
-                x=blc$bounds$Median,
+                x=blc$bounds$Datum,
                 col=opaconf$col,lwd=1,lty=2)
         if(!is.null(blc$bounds$Lower))
             lines(y=F0inv(blc$bounds$unrel,opaconf$log),

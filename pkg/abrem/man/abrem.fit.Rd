@@ -79,10 +79,12 @@
                 based on the median bias of the weibull MLE.
                 This options uses function \code{\link[debias]{RBAbeta}} of the
                 \pkg{debias} package, and is therefore limited to
-                two-parameter Weibull distributions at the moment. In the future,
-                choosing between different implementations of the MLE code and
-                support for other distributions (already available in package
-                \pkg{debias}) will be possible.
+                two-parameter Weibull distributions at the moment.
+
+                %% In the future,
+                %% choosing between different implementations of the MLE code and
+                %% support for other distributions (already available in package
+                %% \pkg{debias}) will be possible.
             }
         }
 

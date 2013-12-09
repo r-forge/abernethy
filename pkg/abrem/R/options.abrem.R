@@ -69,7 +69,9 @@ options.abrem <- function(...){
             verbosity=0,
 
             main="Probability Plot\n",
+            main.contour="Contour Plot\n",
             sub=NULL,
+            sub.contour=NULL,
             xlim=NULL,
             ylim=NULL,
             xlab="Time To Failure",
@@ -89,11 +91,13 @@ options.abrem <- function(...){
             is.plot.pp=TRUE,
             is.plot.ppcoordinates=FALSE,
             is.plot.legend=TRUE,
+
             #         legend.position="bottomright",
             legend.text.size=0.7,
             label="",
-            is.legend.blives=TRUE,
-            is.legend.gof=TRUE,
+            in.legend=TRUE,
+            in.legend.blives=TRUE,
+            in.legend.gof=TRUE,
             is.plot.cb = TRUE,
             persistent=TRUE)
             

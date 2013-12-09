@@ -50,26 +50,30 @@ legendconf <- function(fit,conftype,opadata,...){
                 if(!is.null(blicon$options)){
                     opaconf <- modifyList(opafit,blicon$options)
                 }else{opaconf <- opafit}
-                li <- list()
-                li[[1]] <-  bsll(legend=paste0("B-lives, type = ",
-                    ifelse(is.null(blicon$type),"NA",
-                    paste0("\"",blicon$type,"\""))),
-                    col=opaconf$col,lwd=opaconf$lwd,lty=opaconf$lty)
-                li[[2]] <- bsll(legend=paste0("  CL = ",
-                    ifelse(is.null(blicon$cl),"NA",
-                        paste0(signif(blicon$cl*100,4)," [%]")),
-                    ifelse(is.null(blicon$S),"",
-                        paste0(", S = ",blicon$S))))
-                if(opaconf$is.legend.blives){
-                    params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
-                        meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
-                    if(is.null(bl <- blicon$blives))bl <- opaconf$blives
-                    fu <- function(bl){
-                        bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
-                    }
-                    c(li,lapply(bl,fu))
-                }else(li)
+                if(opaconf$in.legend){
+                        # TODO: correct usage of this logical value?
+                    li <- list()
+                    li[[1]] <-  bsll(legend=paste0("B-lives, type = ",
+                        ifelse(is.null(blicon$type),"NA",
+                        paste0("\"",blicon$type,"\""))),
+                        col=opaconf$col,lwd=opaconf$lwd,lty=opaconf$lty)
+                    li[[2]] <- bsll(legend=paste0("  CL = ",
+                        ifelse(is.null(blicon$cl),"NA",
+                            paste0(signif(blicon$cl*100,4)," [%]")),
+                        ifelse(is.null(blicon$S),"",
+                            paste0(", S = ",blicon$S))))
+                    if(opaconf$in.legend.blives){
+                        params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
+                            meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
+                        if(is.null(bl <- blicon$blives))bl <- opaconf$blives
+                        fu <- function(bl){
+                            bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
+                        }
+                        c(li,lapply(bl,fu))
+                    }else(li)
+                }else NULL
             }
+            #mtrace(for.each.blicon)
             unlist(lapply(fit$conf$blives,for.each.blicon),FALSE)
                 # TODO: replace by do.call ?
         }else{NULL}

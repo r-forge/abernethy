@@ -34,7 +34,8 @@ findMaxDataRange <- function(x,v){
     if(all(sapply(x,function(x)identical(class(x),"abrem")))){
         ret <- do.call("rbind",lapply(x,findrange))
     }else{
-        stop("\"x\" argument is no list of \"abrem\" objects.")
+        stop("Argument \"x\" is no list of \"abrem\" objects.")
     }
+    # TODO: the above still needed? because x is always lost of abrems?
     ret
 }

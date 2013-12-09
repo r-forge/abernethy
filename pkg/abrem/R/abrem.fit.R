@@ -48,6 +48,7 @@ abrem.fit <- function(x,...){
         "lognormal3p")
     supported_fit <-  c("rr","mle","mle-rba","mle2","mle2-rba")
         # TODO: expand with choices between "pivotals", CPP and internal code
+        # TODO: this should probably change to "rr-2" and "mle-2"!
     if(missing(x)){
         stop("Argument \"x\" is missing.")
     }else{

@@ -108,6 +108,12 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                         }
                         fit$conf$blives[[i]] <- list()
                         if("bbb" %in% tolower(opaconf$method.conf.blives)){
+                            #  ____  ____  ____
+                            # | __ )| __ )| __ )
+                            # |  _ \|  _ \|  _ \
+                            # | |_) | |_) | |_) |
+                            # |____/|____/|____/
+
                             if(opaconf$verbosity >= 1)message(
                                 "calculateSingleConf: Calculating bbb confidence bounds.")
                             ### bbb is unsupported as long as adjusted ranks are unavailable
@@ -163,7 +169,61 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                                 fit$conf$blives[[i]]$options <- li
                             }
                         }
-                        if("mcpivotals" %in% tolower(opaconf$method.conf.blives)){
+                        if("lrb" %in% tolower(opaconf$method.conf.blives)){
+                            #  _     ____  ____
+                            # | |   |  _ \| __ )
+                            # | |   | |_) |  _ \
+                            # | |___|  _ <| |_) |
+                            # |_____|_| \_\____/
+                            
+                            if(opaconf$verbosity >= 1)message(
+                                "calculateSingleConf: Calculating Likelihod Ratio confidence bounds.")
+                            fail <- fit$data$time[fit$data$event==1]
+                            susp <- fit$data$time[fit$data$event==0]
+                                # this implies only right censoring !
+                            fit$conf$blives[[i]]        <- list()
+                            fit$conf$blives[[i]]$type   <- "lrb"
+                            fit$conf$blives[[i]]$cl     <- opaconf$cl
+                            fit$conf$blives[[i]]$sides  <- opaconf$conf.blives.sides
+                            fit$conf$blives[[i]]$blives <- opaconf$blives
+                            is_debias <- ifelse("mle" %in% tolower(fit$options$method.fit),FALSE,TRUE)
+                            ret <- NULL; con <- NULL
+                            try(con <- debias::MLEw2pContour(fail,susp,CL=opaconf$cl,debias=is_debias,show=FALSE))
+                            if(!is.null(con)){
+                                fit$conf$blives[[i]]$MLEXContour <- con
+                                retfit <- abrem.fit(Abrem(fail=fail,susp=susp),method.fit=ifelse(is_debias,"mle-rba","mle"))
+                                fit$conf$blives[[i]]$MLEXContour$MLEpoint <-
+                                    data.frame(Eta=retfit$fit[[1]]$eta,Beta=retfit$fit[[1]]$beta)
+#                                MLEpoint <- data.frame(Eta=fit$Eta,Beta=fit$Beta)
+#                                fit$conf$blives[[i+1]] <- list()
+#                                fit$conf$blives[[i+1]]$MLEXContour <-
+#                                    list(Upper=MLEpoint,Lower=MLEpoint,Right=MLEpoint,Left=MLEpoint)
+#                                    # TODO: this hack should produce a point at the MLE location
+                                try(ret <- debias::MLEw2pBounds(fail,susp,Blives=unrel,MLEcontour=con,debias=is_debias,show=FALSE))
+                                    # debias is true in all cases except for regulaer MLE
+                                if(!is.null(ret)){
+                                    atLeastOneBLifeConf <- TRUE
+                                    fit$conf$blives[[i]]$bounds <- cbind(unrel,exp(ret[,-1]))
+                                }
+                            }
+                                # TODO: request Jacob Odmerod for cleaning up his return dataframe
+                            op <- unique(c(names(opafit),names(opaconf)))
+                                # this is needed to add options from opafit into li that
+                                # are NULL in opafit
+                                # TODO:tolower() not needed?
+                            if(length(li <- opaconf[sapply(op,function(y){
+                                !identical(opafit[[y]], opaconf[[y]])})]) > 0){
+                                fit$conf$blives[[i]]$options <- li
+                            }
+                        }
+                        if(any(c("mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf.blives))){
+                            #                       _            _        _
+                            #  _ __ ___   ___ _ __ (_)_   _____ | |_ __ _| |___
+                            # | '_ ` _ \ / __| '_ \| \ \ / / _ \| __/ _` | / __|
+                            # | | | | | | (__| |_) | |\ V / (_) | || (_| | \__ \
+                            # |_| |_| |_|\___| .__/|_| \_/ \___/ \__\__,_|_|___/
+                            #                |_|
+                            
                             if(opaconf$verbosity >= 1)message(
                                 "calculateSingleConf: Calculating Monte Carlo Pivotal confidence bounds.")
 #                            i <- length(fit$conf$blives)
@@ -184,6 +244,11 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                             fit$conf$blives[[i]]$sides  <- opaconf$conf.blives.sides
                             fit$conf$blives[[i]]$blives <- opaconf$blives
                             ret <- NULL
+                            if(fit$cens != 0){
+                                warning(
+                                "calculateSingleConf: Currently, MC Pivotal bounds for (heavily) censored data\n",
+                                "are still experimental and probably too optimistic.")
+                            }
                             if(is.null(fit$data$rank)){
                                 warning("calculateSingleConf: Currently, only rank regression is supported.")
                             }else{
@@ -197,6 +262,8 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                                 atLeastOneBLifeConf <- TRUE
                                 fit$conf$blives[[i]]$bounds <- cbind(unrel,
                                     exp(log(fit$eta)+ ret/fit$beta))
+                                names(fit$conf$blives[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")
+                                    # TODO: submit bug report about Datum <-> Median
                                 op <- unique(c(names(opafit),names(opaconf)))
                                     # this is needed to add options from opafit into li that
                                     # are NULL in opafit
