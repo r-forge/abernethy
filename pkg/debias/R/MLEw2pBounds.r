@@ -40,13 +40,13 @@ MLEw2pBounds<-function(x, s=NULL, CL=0.9, Blives=(c(1,5,10,20,30,40,50,60,80,90,
 	}				
 					
 	ypts<-log(qweibull(Blives,1,1))				
-		i=1			
+##		i=1			
 		j=1			
 					
 	yval<-c(Blife=ypts)				
 					
-	Eta<-MLEcontour[[i]][j,1]				
-	Beta<-MLEcontour[[i]][j,2]				
+	Eta<-MLEcontour[j,1]				
+	Beta<-MLEcontour[j,2]				
 		xvals=NULL			
 	for(k in 1:length(ypts) ) {				
 					
@@ -57,11 +57,11 @@ MLEw2pBounds<-function(x, s=NULL, CL=0.9, Blives=(c(1,5,10,20,30,40,50,60,80,90,
 					
 	outmat<-rbind(yval,xlo=xvals, Eta=rep(Eta,length(ypts)),Beta=rep(Beta,length(ypts)),				
 		xhi=xvals, Eta=rep(Eta,length(ypts)),Beta=rep(Beta,length(ypts)))			
-	for(i in 1:4)  {				
-			clen=length(MLEcontour[[i]][,1])		
+##	for(i in 1:4)  {				
+			clen=length(MLEcontour[,1])		
 		for(j in 1:clen)  {			
-			Eta<-MLEcontour[[i]][j,1]		
-			Beta<-MLEcontour[[i]][j,2]		
+			Eta<-MLEcontour[j,1]		
+			Beta<-MLEcontour[j,2]		
 				xvals=NULL	
 			for(k in 1:length(ypts) ) {		
 					
@@ -79,7 +79,7 @@ MLEw2pBounds<-function(x, s=NULL, CL=0.9, Blives=(c(1,5,10,20,30,40,50,60,80,90,
 				}	
 			}		
 		}			
-	}				
+##	}				
 					
 ## calculate the Datum vector					
 	MLEfit<-MLEw2p_cpp(x,s)				
