@@ -22,10 +22,10 @@
 
 HRBU<-function(Nx,Ns=NULL)  {
 	r<-Nx
-	n<-r+length(Ns)
+	n<-r+Ns
 	if(n==r)  {
 ## This is the Hirose Beta Unbias factor for complete failure samples	
-	BU<-1/( 1.0115+1.278/r+2.001/r^2+20.35/r^3-46.98/r^4 )
+	BU<-1/( 1.00115+1.278/r+2.001/r^2+20.35/r^3-46.98/r^4 )
 	}else{
 ## This is the Ross Beta Unbias factor for samples with suspensions	
 	BU<- 1/(1+1.37/(r-1.92)*sqrt(n/r))
