@@ -150,7 +150,7 @@ MLEw2pContour<-function(x,s=NULL,CL=0.9,DF=1,MLEfit=NULL,ptDensity=100,RadLimit=
 	 		
 	rba<-1		
 	if(debias==TRUE)  {		
-	rba<-RBAw(length(x))		
+	rba<-RBAbeta(length(x))		
 	Contour[2]<-Contour[2]*rba		
 	}		
 			
