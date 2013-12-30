@@ -10,7 +10,8 @@
 }
 
 \usage{
-MLEw2pContour(x,s=NULL,CL=0.9,DF=1,MLEfit=NULL,ptDensity=100,RadLimit=1e-5,debias=FALSE,show=FALSE)
+MLEw2pContour(x,s=NULL,CL=0.9,DF=1,MLEfit=NULL,ptDensity=100,RadLimit=1e-5,debias=FALSE,
+   show=FALSE)
 }
 
 \arguments{
@@ -19,6 +20,7 @@ MLEw2pContour(x,s=NULL,CL=0.9,DF=1,MLEfit=NULL,ptDensity=100,RadLimit=1e-5,debia
   \item{CL}{a two-sided confidence limit.}
   \item{DF}{an integer value indicating degrees of freedom to apply to the Chi square test, which defaults to DF=1 for
   confidence bound use. Should be set to 2 for comparison of two models each with 2 parameters.}
+  \item{MLEfit}{an optional argument to use a fit made external to the function.}
   \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
   \item{RadLimit}{a convergence limit for the contour radials based on specific units of Eta/Eta_hat and Beta/Beta_hat.}
   \item{debias}{a logical value indicating whether the RBA and FF adjustments should be applied to output.}

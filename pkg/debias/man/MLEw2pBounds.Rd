@@ -10,7 +10,8 @@
 }
 
 \usage{
-MLEw2pBounds(x, s=NULL, CL=0.9, Blives=(c(1,5,10,20,30,40,50,60,80,90,95,99)/100),  MLEcontour=NULL, debias=FALSE,show=FALSE) 
+MLEw2pBounds(x, s=NULL, CL=0.9, Blives=(c(1,5,10,20,30,40,50,60,80,90,95,99)/100),
+  MLEcontour=NULL, debias=FALSE,show=FALSE) 
 }
 
 \arguments{
