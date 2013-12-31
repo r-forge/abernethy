@@ -23,7 +23,7 @@
 HRBU<-function(Nx,Ns=NULL)  {
 	r<-Nx
 	n<-r+Ns
-	if(n==r)  {
+    if (length(Ns)==0) {
 ## This is the Hirose Beta Unbias factor for complete failure samples	
 	BU<-1/( 1.00115+1.278/r+2.001/r^2+20.35/r^3-46.98/r^4 )
 	}else{
