@@ -1,5 +1,10 @@
 2014-03-23 Jurgen Symynck <jusy@openreliability.org>
 
+        * added useDynLib() entry in NAMESPACE to attempt solving package building errors on r-forge
+
+
+2014-03-23 Jurgen Symynck <jusy@openreliability.org>
+
         * upgraded abrem 0.1.10 to 0.1.12:
         Nothing changed, using this version for debugging svn.
 
