@@ -1,8 +1,38 @@
-    # +-------------------------------------------+
-    # |  find absolute maximum and minimum range  |
-    # |     over the (list of) abrem objects      |
-    # +-------------------------------------------+
-findMaxDataRange <- function(x,v){
+# R package 'abrem'
+# Abernethy Reliability Methods
+# Implementations of lifetime data analysis methods described in
+# 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
+#
+# For the latest version of this file, check the Subversion repository at
+# http://r-forge.r-project.org/projects/abernethy/
+#
+# Disclaimer:
+#    The author is not affiliated with Dr. Abernethy or Wes Fulton - CEO of
+#    Fulton Findings(TM) and author of the software package SuperSMITH
+#-------------------------------------------------------------------------------
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# +-----------------------------------+
+# |  execute this software with R:    |
+# |  http://www.r-project.org/        |
+# +-----------------------------------+
+
+findMaxDataRange <- function(x,v,log=""){
     # +-------------------------------------------+
     # |  find absolute maximum and minimum range  |
     # |     over the (list of) abrem objects      |
@@ -16,14 +46,14 @@ findMaxDataRange <- function(x,v){
                 stop("$data contains no \"$time\" column -> ",
                     "cannot create plot canvas.")
             }
-            if(!is.null(abrem$data$rank.median)){
-                ret <- cbind(ret,yrange=range(abrem$data$rank.median,na.rm=TRUE))
-                    # TODO: replace above testcode
+            if(!is.null(abrem$data$rank.median) || !is.null(abrem$data$rank.benard)){
+                ret <- cbind(ret,yrange=range(
+                    c(abrem$data$rank.median,abrem$data$rank.benard),na.rm=TRUE))
             }else{
                 stop("$data contains no rank column -> ",
                     "cannot create plot canvas.")
             }
-        }else{stop("Argument \"x\" contains no \"$data\" dataframe.")}
+        }else{stop('Argument \"x\" contains no \"$data\" dataframe.')}
         ret
     }
 #    if(identical(class(x),"abrem")){
@@ -36,6 +66,11 @@ findMaxDataRange <- function(x,v){
     }else{
         stop("Argument \"x\" is no list of \"abrem\" objects.")
     }
-    # TODO: the above still needed? because x is always lost of abrems?
+    # TODO: the above still needed? because x is always list of abrems?
+    if(tolower(log) %in% c("x","xy","yx")){
+        # if log scale is to be used then omit zero and negative time values 
+        # from the range dataset
+        ret[ret$xrange <=0,1] <- NA
+    }
     ret
 }

@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
 
 plot.abrem <- function(x,...){
     # +------------------------------+
@@ -55,33 +47,35 @@ plot.abrem <- function(x,...){
     # +------------------------------------+
     # |  create default options arguments  |
     # +------------------------------------+
-#    arg <- splitargs(list(...))
-        # TODO: check effect on c(...) or (...)
-    #arg <- list(...)
     opa <- x[[1]]$options
     opa <- modifyList(opa, list(...))
 
+    # +--------------------------------------+
+    # |  dealing with  threshold parameters  |
+    # +--------------------------------------+
+
+    if(!is.null(list(...)$threshold))
+        message("Currently, passing the \'threshold\' argument to plot.abrem is not supported. Proceeding...")
+    #T0 <- unlist(lapply(x,function(x)return(x$threshold)))
+        # a list of thresholds to be applied to the pp
+  #x$threshold <- tail(findThresholds(x,opa$verbosity),1)
+    
     # +--------------------------+
     # |  create new plot canvas  |
     # +--------------------------+
-    ra <- findMaxDataRange(x,opa$verbosity)
+    ra <- findMaxDataRange(x,opa$verbosity,opa$log)
+        # NA values can be part of ra, when log scales are to be used
+        # and there are negative failure times
     xlimits <- range(ra$xrange,na.rm=TRUE)
     ylimits <- range(ra$yrange,na.rm=TRUE)
-#    if(is.null(opa$xlim)){
-#        opa$xlim <- c(10^(round(log10(xlimits[1]))-1),
-#            10^(round(log10(xlimits[2]))+1))
-#        # TODO: rewrite in function of the width of the range
-#    }
     if(is.null(opa$xlim)){
         opa$xlim <- c(10^(log10(xlimits[1])-0.5),
             10^(log10(xlimits[2])+1))
-        # TODO: rewrite in function of the width of the range
     }
     if(is.null(opa$ylim)){
         if(ylimits[1] < 0.01) opa$ylim <- c(signif(ylimits[1],1),0.99)
         else opa$ylim <- c(0.01,0.99)
         # do not care about the upper limit
-        # TODO: a problem remains with ylim and calculating confidence bounds
     }
     opanames <- names(opa)
     plotargs <- c(list(x=NA,axes=FALSE),
@@ -89,6 +83,10 @@ plot.abrem <- function(x,...){
     if(!is.null(plotargs$ylim)){
         plotargs$ylim <- F0inv(plotargs$ylim,opa$log)
     }
+    plotargs$main <- NULL
+        # do not plot "main" just yet...
+    if(!is.null(opa$mar))par(mar=opa$mar)
+    if(!is.null(opa$mai))par(mai=opa$mai)
     do.call(plot.default,plotargs)
     if(opa$is.plot.grid){
         abline(
@@ -97,28 +95,26 @@ plot.abrem <- function(x,...){
             col = opa$col.grid)
     }
     r <- seq.log(opa$xlim[1]/10,opa$xlim[2]*10,c(1,5))
-    lin <- 0.0
+    #lin <- 0.0
     for(t in c(1,3)){
         axis(t,at=seq.log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,0.2)),
-        labels=NA,line=lin,tcl=-0.25)
-        # plot top and bottom axis tickmarks
-        # BUG: when the labels of the x-axis are written using
-        # exponential notation, the excessive tickmarks and labels
-        # are not clipped and are printed outside the plotting region
-        axis(t,at=r,labels=r,line=lin,tcl=-0.75)
-        # plot top and bottom axis labels
+            labels=NA,tcl=-0.25)#,line=0.0
+            # plot top and bottom axis tickmarks
+        axis(t,at=r,labels=r,tcl=-0.75)#,line=0.0
+            # plot top and bottom axis labels
     }
     r <- c(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10,c(1,2,5)),0.9)
     for(t in c(2,4)){
         # TODO: rewrite as do.call() or apply()
         axis(t,at=F0inv(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),
-            opa$log),labels=NA,line=lin,tcl=-0.25)
+            opa$log),labels=NA,tcl=-0.25)#,line=0.0
             # plot left and right axis tickmarks
         axis(t,at=F0inv(r,opa$log),
-            labels=r*100,line=lin,tcl=-0.75)
+            labels=r*100,tcl=-0.75)#,line=0.0
             # plot left and right axis labels
     }
     abline(h=0,lty = 3,col = opa$col.grid)
+    title(main=opa$main,line=3)
     # plot the 63.2 [%] rank line
 
     # +--------------------------+
@@ -135,7 +131,7 @@ plot.abrem <- function(x,...){
         }
     }
     lapply(x,plotConfsInAbrem)
-    
+
     # +-------------+
     # |  plot fits  |
     # +-------------+
@@ -160,9 +156,16 @@ plot.abrem <- function(x,...){
             opadata <- modifyList(x$options,list(...))
             if(!is.null(x$data) &&
                 !is.null(ti <- x$data$time) &&
-                !is.null(ra <- x$data[,paste0("rank.",opa$pp[1])])){
+                !is.null(ra <- x$data[,paste0("rank.",opadata$pp[1])])){
                 # TODO: add support for plotting all rank columns, not just the first one
-                points(ti,F0inv(ra,opa$log),pch = opadata$pch,
+#                if(opadata$log %in% c("x","xy","yx")){
+#                    replace
+#                }
+                t0 <- 0
+                if(is.logical(opadata$threshold))if(opadata$threshold)
+                    warning ("opadata$threshold is a logical value but numeric value was expected. Proceeding...")
+                if(is.numeric(opadata$threshold))t0 <- opadata$threshold
+                points(ti-t0,F0inv(ra,opadata$log),pch = opadata$pch,
                     col = opadata$col,lwd = opadata$lwd.points,cex=opadata$cex.points)
                     # option "log" should only be set and read from either
                     # the arguments of plot.abrem
@@ -177,59 +180,72 @@ plot.abrem <- function(x,...){
     # +----------------+
     lolegends <- NULL
     buildListOfLegends <- function(abrem){
-        #opadata <- modifyList(x$options, arg)
-        if(!is.null(abrem$fit)){
-#            ret <- unlist(lapply(x$fit,buildSingleFitLegend,
-#                opadata=x$options,...),FALSE)
+        ret <- NULL
+#        if(abrem$options$is.plot.legend && opa$is.plot.legend){
+        if(!is.null(abrem$fit) && any(sapply(abrem$fit,function(fi)!is.null(fi)))){
+                # TODO:
+#            if(!is.null(abrem$fit)){
+            # check if any non-NULL list holds only NULL items
+            # this is needed for deamling with failed fit attempts
+            # that currently take the form of
+            # abrem$fit[i] <- list(NULL)
+    #            ret <- unlist(lapply(x$fit,buildSingleFitLegend,
+    #                opadata=x$options,...),FALSE)
             ret <- lapply(abrem$fit,buildSingleFitLegend,
                 opadata=abrem$options,...)
         }else{
-            ret <- NULL
-            if(!is.null(opa)) if(opa$verbosity >= 1)message(
-                "buildListOfLegends: This Abrem object contains no fits.")
+            if(abrem$options$is.plot.legend && opa$is.plot.legend){
+                ret <- list(buildSingleDataLegend(abrem,opadata=abrem$options,...))
+                if(!is.null(opa)) if(opa$verbosity >= 1)message(
+                    "buildListOfLegends: This Abrem object contains no fits.")
+            }
         }
         ret
     }
     lolegends <- unlist(lapply(x,buildListOfLegends),FALSE)
+        # TODO: likely, unlist is NOT the best way to go here, investigate
+    lolegends <- lolegends[sapply(lolegends,function(lol)!is.null(lol))]
+        # omit any list entries that contain only NULL
 
-    if(opa$is.plot.legend){
-        plotSingleLegend <- function(le,x,y){
-            if(identical(label <- le$label,""))label <- NULL
-            if(is.null(le$legend))le$legend <- ""
-            legend(
-                x=x,
-                y=y,
-                legend=le$legend,
-                title=label,
+#    if(opa$is.plot.legend){
+    plotSingleLegend <- function(le,x,y){
+        if(identical(label <- le$label,""))label <- NULL
+        if(is.null(le$legend))le$legend <- ""
+        legend(
+            x=x,
+            y=y,
+            legend=le$legend,
+            title=label,
 #                title.col=le$lcol,
-                cex = le$legend.text.size,
-                bg = "white",
-                lty = unlist(le$lty),
-                lwd = unlist(le$lwd),
-                pch = unlist(le$pch),
-                col = unlist(le$col),
+            cex = le$legend.text.size,
+            bg = "white",
+            lty = unlist(le$lty),
+            lwd = unlist(le$lwd),
+            pch = unlist(le$pch),
+            col = unlist(le$col),
 #                inset=0.1,
-                text.col = "black",
-                xpd=TRUE
+            text.col = "black",
+            xpd=TRUE
 #                merge = TRUE
-                )
-                # TODO: Warning: unlist coerces numeric colors to character!
+            )
+            # TODO: Warning: unlist coerces numeric colors to character!
+    }
+    #if(!is.null(lolegends)){
+    if(!is.null(lolegends) && any(sapply(lolegends,function(lol)!is.null(lol)))){
+        lx <- rep(lolegends[[1]]$rect$left,length(lolegends))
+        ly <- lolegends[[1]]$rect$top +
+            c(0,cumsum(sapply(lolegends,function(le)le$rect$h)[-1]))
+        if(opa$log %in% c("x","xy","yx")) lx <- 10^lx
+        if(opa$log %in% c("y","xy","yx")) ly <- 10^ly
+            # TODO: F0(ly): looks very suspicious that this works -> investigate!
+        for(i in 1:length(lolegends)){
+            plotSingleLegend(lolegends[[i]],lx[i],ly[i])
+            # TODO: replace with lapply
         }
-        if(!is.null(lolegends)){
-            lx <- rep(lolegends[[1]]$rect$left,length(lolegends))
-            ly <- lolegends[[1]]$rect$top +
-                c(0,cumsum(sapply(lolegends,function(le)le$rect$h)[-1]))
-            if(opa$log %in% c("x","xy","yx")) lx <- 10^lx
-            if(opa$log %in% c("y","xy","yx")) ly <- 10^ly
-                # TODO: F0(ly): looks very suspicious that this works -> investigate!
-            for(i in 1:length(lolegends)){
-                plotSingleLegend(lolegends[[i]],lx[i],ly[i])
-                # TODO: replace with lapply
-            }
-        }else{
-            if(opa$verbosity >= 1)message(
-                "plot.abrem: There is no legend to plot.")
-        }
+    }else{
+        if(opa$verbosity >= 1)message(
+            "plot.abrem: There is no legend to plot.")
+#    }
     }
 #    if(opa$log == "x") legend("top",legend=NA,title="Weibull",bg="white")
 #    if(opa$log == "xy") legend("top",legend=NA,title="Lognormal",bg="white")

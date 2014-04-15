@@ -60,7 +60,7 @@
     Currently, the function returns no value. 
 }
 
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 
 \seealso{
     \code{\link{options.abrem}}

@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,30 +27,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 abrem.fit <- function(x,...){
     # x is a single Abrem or a list of Abrem objects
+#    supported_dist <- c(
+#        "weibull","weibull2p","weibull-2","weibull2p-2",
+#        "weibull3p",
+#        "lognormal","lognormal2p","lognormal-2","lognormal2p-2",
+#        "lognormal3p")
+#    supported_fit <-  c("rr","mle","mle-rba","mle2","mle2-rba",)
+
+
     supported_dist <- c(
-        "weibull","weibull2p","weibull-2","weibull2p-2",
-        "weibull3p",
-        "lognormal","lognormal2p","lognormal-2","lognormal2p-2",
-        "lognormal3p")
-    supported_fit <-  c("rr","mle","mle-rba","mle2","mle2-rba")
-        # TODO: expand with choices between "pivotals", CPP and internal code
-        # TODO: this should probably change to "rr-2" and "mle-2"!
+        "weibull","weibull2p","weibull3p",
+        "lognormal","lognormal2p","lognormal3p")
+    supported_fit <-  c("rr","rr2","mle","mle2","mle3","mle-rba","mle2-rba","mle3-rba")
+
+
     if(missing(x)){
         stop("Argument \"x\" is missing.")
     }else{
@@ -66,7 +65,7 @@ abrem.fit <- function(x,...){
         if(is.null(opa$dist)){
             if(opa$verbosity >= 1)message("abrem.fit : ",
                 ": Target distribution defaults to Weibull 2P.")
-                opa$dist <- "weibull2"
+                opa$dist <- "weibull2p"
         }else{
             if(length(opa$dist)>1)
                 stop("Too many target distributions supplied.")
@@ -75,7 +74,7 @@ abrem.fit <- function(x,...){
             }else{
                 if(is.null(opa$method.fit)){
                     if(opa$verbosity >= 1)message("abrem.fit : ",
-                        ": Fit method defaults to \"rr\", \"xony\".")
+                        ': Fit method defaults to \"rr\", \"xony\".')
                         opa$method.fit <- c("rr","xony")
                 }else{
                     fits <- length(which(opa$method.fit %in% supported_fit))
@@ -87,7 +86,7 @@ abrem.fit <- function(x,...){
                                 tolower(opa$method.fit))){
                                 if(opa$verbosity >= 1){
                                     message("abrem.fit : ",
-                                        ": Fit method \"rr\" defaults to \"xony\"")
+                                        ': Fit method \"rr\" defaults to \"xony\"')
                                     opa$method.fit <- c(opa$method.fit,"xony")
                                 }
                             }

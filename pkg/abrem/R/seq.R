@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
+seq.wb <- function(from,to,base=seq(1,9,1)){
+   # define gridline positions for 'Median Rank' axis (= y axis)
+   r <- c(seq.log(from,.9,base),rev(1-seq.log(1-to,0.1,base))[-1])
+   r[r >= from & r<=to]}
+
 seq.log <- function(from,to,base=c(1,2,5)){
    r <- NULL
    for(i in floor(log10(from)):floor(log10(to)))r <- c(r,base*10^i)

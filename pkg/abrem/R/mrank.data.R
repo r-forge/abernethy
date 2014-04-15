@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 mrank.data <- function(x, ...){
     # TODO: error checking
     opa <- options.abrem()
@@ -78,8 +71,8 @@ mrank.data <- function(x, ...){
             # (reversed rank * previous adj. rank + n + 1)/(reversed rank + 1)
             # see "The new Weibull handbook, fifth edition" p. 2-7, formula 2-5        }
     }
-    if("bernard" %in% tolower(opa$method)){
-        if(opa$verbosity >= 1)message("mrr ranking using Bernards approximation...")
+    if("benard" %in% tolower(opa$method)){
+        if(opa$verbosity >= 1)message("mrr ranking using Benards approximation...")
         #    mrank.observation(sx$arank,n,method=opa$method.rank)
         sx$mrank <- (sx$arank-0.3)/(n+0.4)
     }else{

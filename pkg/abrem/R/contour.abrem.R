@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# November 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
 
 contour.abrem <- function(x,...){
     # +------------------------------+
@@ -55,9 +47,6 @@ contour.abrem <- function(x,...){
     # +------------------------------------+
     # |  create default options arguments  |
     # +------------------------------------+
-#    arg <- splitargs(list(...))
-        # TODO: check effect on c(...) or (...)
-    #arg <- list(...)
     opa <- x[[1]]$options
     opa <- modifyList(opa, list(...))
 
@@ -79,10 +68,7 @@ contour.abrem <- function(x,...){
         plotargs$log <- ""
         plotargs$xlab <- "Eta"
         plotargs$ylab <- "Beta"
-            # TODO: add support for meanlog vs. sdlog contours
 
-        #if(tolower(opafit$dist) %in% c("weibull","weibull2p","weibull-2","weibull2p-2","weibull3p")){
-            # TODO: the above not needed here?
         do.call("plot.default",plotargs)
         if(opa$is.plot.grid){
             abline(
@@ -97,8 +83,6 @@ contour.abrem <- function(x,...){
     # +------------------+
     # |  plot contours   |
     # +------------------+
-    # TODO: differentiate between contour plots based on mean vs. sdlog and eta vs. beta
-
     plotContours <- function(abrem){
         if(!is.null(abrem$fit)){
             plotContours2 <- function(fit){
@@ -113,10 +97,10 @@ contour.abrem <- function(x,...){
                         }else{opaconf <- opafit}
                         opaconf <- modifyList(opaconf,list(...))
                         if(!is.null(blicon$MLEXContour)){
-                            con <- rbind(blicon$MLEXContour$Lower,
-                                blicon$MLEXContour$Right,
-                                blicon$MLEXContour$Upper[nrow(blicon$MLEXContour$Upper):1,],
-                                blicon$MLEXContour$Left[nrow(blicon$MLEXContour$Left):1,])
+#                            con <- rbind(blicon$MLEXContour$Lower,
+#                                blicon$MLEXContour$Right,
+#                                blicon$MLEXContour$Upper[nrow(blicon$MLEXContour$Upper):1,],
+#                                blicon$MLEXContour$Left[nrow(blicon$MLEXContour$Left):1,])
                                 # shuffeling quadrant names and reversing the rows
                             #con2 <- lapply(con,function(x)do.call("rbind",x))
     #                            if(!("mle-rba" %in% tolower(opafit$method.fit))){
@@ -130,7 +114,7 @@ contour.abrem <- function(x,...){
                             if(all(c(!is.null(fit$beta),!is.null(fit$eta))))
                                 points(x=fit$eta,y=fit$beta,pch=abrem$options$pch,col=abrem$options$col,
                                     lwd=abrem$options$lwd.points,cex=abrem$options$cex.points)
-                            points(con,type="l",lwd=opaconf$lwd,lty=opaconf$lty,col=opaconf$col)
+                            points(blicon$MLEXContour[[1]],type="l",lwd=opaconf$lwd,lty=opaconf$lty,col=opaconf$col)
                         }
                     }
                     #mtrace(plotContours3)
@@ -145,60 +129,5 @@ contour.abrem <- function(x,...){
         }
     }
     if(!is.null(contourRanges)) lapply(x,plotContours)
-
-    # +----------------+
-    # |  plot legends  |
-    # +----------------+
-#    # TODO: much of this code can be merged with legend code from plot.abrem
-#    lolegends <- NULL
-#    buildListOfLegends <- function(abrem){
-#        #opadata <- modifyList(x$options, arg)
-#        if(!is.null(abrem$fit)){
-#            ret <- lapply(abrem$fit,buildSingleContourLegend,opadata=abrem$options,...)
-#        }else{
-#            ret <- NULL
-#            if(!is.null(opa)) if(opa$verbosity >= 1)message(
-#                "contour.abrem:::buildListOfLegends: This Abrem object contains no fits.")
-#        }
-#        ret
-#    }
-#    lolegends <- unlist(lapply(x,buildListOfLegends),FALSE)
-#    if(opa$is.plot.legend){
-#        plotSingleContourLegend <- function(le,x,y){
-#            if(identical(label <- le$label,""))label <- NULL
-#            legend(
-#                x=x,
-#                y=y,
-#                legend=le$legend,
-#                title=label,
-##                title.col=le$lcol,
-#                cex = le$legend.text.size,
-#                    # TODO change opp to something else
-#                bg = "white",
-#                lty = unlist(le$lty),
-#                lwd = unlist(le$lwd),
-#                pch = unlist(le$pch),
-#                col = unlist(le$col),
-#                text.col = "black",
-#                xpd=TRUE,
-#                )
-#                # TODO: Warning: unlist coerces numeric colors to character!
-#        }
-#        if(!is.null(lolegends)){
-#            lx <- rep(lolegends[[1]]$rect$left,length(lolegends))
-#            ly <- lolegends[[1]]$rect$top +
-#                c(0,cumsum(sapply(lolegends,function(le)le$rect$h)[-1]))
-#            if(opa$log %in% c("x","xy","yx")) lx <- 10^lx
-#            if(opa$log %in% c("y","xy","yx")) ly <- 10^ly
-#                # TODO: F0(ly): looks very suspicious that this works -> investigate!
-#            for(i in 1:length(lolegends)){
-#                plotSingleContourLegend(lolegends[[i]],lx[i],ly[i])
-#                # TODO: replace with lapply
-#            }
-#        }else{
-#            if(opa$verbosity >= 1)message(
-#                "contour.abrem: There is no legend to plot.")
-#        }
-#    }
     invisible()
 }

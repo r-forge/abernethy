@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,30 +27,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 params.to.ob <- function(dist, ... ){
     # function to generate test data that result in a perfect fit
-    # (when using MRR)
+    # (when using RR; X-on-Y, median plot positions)
     # beta,eta:  slope and shape parameters of 2 parameter Weibull
     # event: either an integer with the number of complete observations, or
     # a vector with censoring information (e.g.: c(1,1,1,0,0,0,1)
-    #TODO: the code should also generate
-    # datasets corresponding to type2 censoring data
-    # scheme. This will be especially necessary when
-    # method.reg = "surv" will be implemented
+
     opa <- options.abrem()
     opa <- modifyList(opa, list(...))
     if(!missing(dist)){
@@ -73,7 +63,7 @@ params.to.ob <- function(dist, ... ){
                                     "at least 2.")
             }
         }else{
-            stop("Argument \"event\" should havel length of at least 2.")
+            stop("Argument \"event\" should have length of at least 2.")
         }
         if(all(opa$event==0)){
             stop("Argument \"event\"contains only censored events.")
@@ -87,13 +77,20 @@ params.to.ob <- function(dist, ... ){
                             PACKAGE= "pivotals")
                         ret <- data.frame(time=qweibull(ranks,opa$beta,opa$eta),event=opa$event)
                             # a good thing that qweibull deals nicely with NA's!
+#                        if(!is.null(opa$return.na))
+#                            if(!opa$return.na){
+#                                if(!is.null(opa$return.na))
+#                                    if(!opa$return.na){
+#
+#                            }
+#
 
                     }else{
                         stop("Currently, only \"median\" rank regression is supported.")
                     }
-#                        if("bernard" %in% opa$pp){
-#                            ret$data <- cbind(ret$data,bernard=NA)
-#                            ret$data[ret$data$event==1,'bernard'] <- .Call("medianRank",opa$event,
+#                        if("benard" %in% opa$pp){
+#                            ret$data <- cbind(ret$data,benard=NA)
+#                            ret$data[ret$data$event==1,'benard'] <- .Call("medianRank",opa$event,
 #                                PACKAGE= "pivotals")
                 }else{stop("Arguments \"beta\" and/or \"eta\" not supplied.")}
             }
@@ -121,9 +118,6 @@ params.to.ob <- function(dist, ... ){
             stop("Currently, only rank regression is supported.")
             ret <- NULL
         }
-            # TODO: here the old code using nlm() that was used in  older
-            # versions of wbparams.to.ft() should be implemented
-            # for the 'Surv' method
         ret
     }else{
         stop("Argument \"dist\" is missing.")

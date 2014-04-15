@@ -4,13 +4,13 @@
 \alias{method.fit}
 \alias{conf.what}
 \alias{conf.blives.sides}
-\alias{conf.n}
+\alias{unrel.n}
 \alias{method.conf.blives}
 \alias{pp}
 \alias{S}
 \alias{pivotals}
 \alias{cl}
-\alias{blives}
+\alias{unrel}
 \alias{verbosity}
 \alias{main}
 \alias{sub}
@@ -33,7 +33,7 @@
 \alias{is.plot.grid}
 \alias{is.plot.fit}
 \alias{is.plot.pp}
-\alias{is.plot.ppcoordinates}
+%\alias{is.plot.ppcoordinates}
 \alias{is.plot.legend}
 %\alias{#legend.position}
 \alias{legend.text.size}
@@ -44,6 +44,7 @@
 \alias{is.plot.cb}
 \alias{persistent}
 \alias{calculateSingleFit}
+\alias{threshold}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -118,19 +119,6 @@
 
             Defaults to \code{c("blives")}.
         }
-        \item{\code{conf.blives.sides}}{
-            Either \code{"lower"},  \code{"upper"} or \code{"double"},
-            specifying the type of bound(s) to be calculated.
-
-            Defaults to \code{c("double")}.
-        }
-        \item{\code{conf.n}}{
-            An integer controlling the amount of unreliability levels for
-            which confidence bounds are calculated and ultimately plotted.
-            See \code{\link{abrem.conf}} for more details.
-
-            Defaults to \code{25}
-        }
         \item{\code{method.conf.blives}}{
             A vector of class \code{"character"} describing the techniques used
             for calculating confidence for B-lives. 
@@ -138,21 +126,24 @@
 
             Defaults to \code{c("mcpivotals")}.
         }
-        \item{\code{pp}}{
-            \code{pp} is short for "probability plot postions", it is a vector of
-            class \code{"character"} describing the type of plot positions to be
-            calculated.
-            Possible values are \code{"median"} (exact median plot postions
-            calculated using the Incomplete Beta function) and  \code{"bernard"}
-            (a good approximation to the median plot positions). Both options
-            can be supplied at the same time but currently, only the first
-            element in the \code{pp} vector will be used for
-            further fitting by \code{\link{abrem.fit}}
-            
-            Currently, there are no plans to implement
-            \code{"hazen"} and \code{"mean"} plotting positions.
+        \item{\code{conf.blives.sides}}{
+            Either \code{"lower"},  \code{"upper"} or \code{"double"},
+            specifying the type of bound(s) to be calculated.
 
-            Defaults to \code{c("median")}.
+            Defaults to \code{c("double")}.
+        }
+        \item{\code{unrel}}{
+            An unordered numeric vector with unreliability levels for which
+            B-life confidence will be calculated.
+
+            Defaults to \code{c(0.1,0.05,0.01)}.
+        }
+        \item{\code{unrel.n}}{
+            An integer controlling the amount of unreliability levels for
+            which confidence bounds are calculated and ultimately plotted.
+            See \code{\link{abrem.conf}} for more details.
+
+            Defaults to \code{25}
         }
         \item{\code{S}}{
             An integer describing the number of Monte Carlo simulations on
@@ -172,11 +163,21 @@
 
             Defaults to \code{0.9}.
         }
-        \item{\code{blives}}{
-            An unordered numeric vector with unreliability levels for which
-            B-life confidence will be calculated.
+        \item{\code{pp}}{
+            \code{pp} is short for "probability plot positions", it is a vector of
+            class \code{"character"} describing the type of plot positions to be
+            calculated.
+            Possible values are \code{"median"} (exact median plot postions
+            calculated using the Incomplete Beta function) and  \code{"benard"}
+            (a good approximation to the median plot positions). Both options
+            can be supplied at the same time but currently, only the first
+            element in the \code{pp} vector will be used for
+            further fitting by \code{\link{abrem.fit}}
 
-            Defaults to \code{c(0.1,0.05,0.01)}.
+            Currently, there are no plans to implement
+            \code{"hazen"} and \code{"mean"} plotting positions.
+
+            Defaults to \code{c("median")}.
         }
     }
 
@@ -192,9 +193,9 @@
         \item{\code{main}, \code{main.contour}}{
             A character string; the main title of the plot or contour plot.
 
-            Defaults to \code{"Probability Plot\\n"}.
+            Defaults to \code{"Probability Plot"} or \code{"Contour Plot"} .
         }
-        \item{\code{sub},\code{sub.contour}}{
+        \item{\code{sub}, \code{sub.contour}}{
             A character string; the subtitle of the plot or contour plot.
 
             Defaults to \code{NULL}.
@@ -238,6 +239,27 @@
             Defaults to \code{"x"}, Weibull canvas.
             For contour plots, \code{log} is always \code{""} and cannot be set.
 
+        }
+        \item{\code{threshold}}{
+            A logical value specifying whether a threshold time value should be
+            substracted from the graphical elements before plotting. This is 
+            particulary useful when fitting three parameter models like
+            \code{weibull3p}, where the third model parameter is a threshold value.
+            
+            If \code{TRUE}, the software will subtract the threshold value 
+            (that is to be calculated by \code{abrem.fit}) from its 
+            associated graphical 
+            elements like plot poistions, fits and confidence bounds.
+            
+            If a numeric value is passed, the software will subtract this value 
+            from the appropriate graphical elements. 
+            
+            Note: currently, \code{"threshold"} should only be used in combination with 
+            \code{Abrem} and \code{abrem.fit} and not with 
+            \code{plot.abrem}. See \code{abrem.fit} for more info.
+
+
+            Defaults to \code{FALSE}
         }
         \item{\code{coordinate.text.size}}{
             A number determining the relative coordinate text label size.
@@ -312,14 +334,21 @@
 
             Defaults to \code{TRUE}.
         }
-        \item{\code{is.plot.ppvalues}}{
-            Logical value controlling the plotting of the text labels
-            (the coordinates on the plot) next to the plot positions.
-
-            Defaults to \code{FALSE}.
-        }
+%%        \item{\code{is.plot.ppvalues}}{
+%%            Logical value controlling the plotting of the text labels
+%%            (the coordinates on the plot) next to the plot positions.
+%%
+%%            Defaults to \code{FALSE}.
+%%        }
         \item{\code{is.plot.legend}}{
             Logical value controlling the plotting of the legend.
+
+            Defaults to \code{TRUE}.
+        }
+        \item{\code{in.legend}}{
+            Logical value controlling the inclusion of various elements in 
+            the legend. See \code{\link{abrem.fit}} and \code{\link{abrem.conf}}
+            for more details.
 
             Defaults to \code{TRUE}.
         }
@@ -331,7 +360,9 @@
         }
         \item{\code{in.legend.gof}}{
             Logical value controlling the inclusion of goodness-of-fit
-            indicators in the legend.
+            indicators in the legend. Note that this does \emph{not} prohibit
+            calculation of sometimes time consuming \code{prr} values, it only 
+            prevents inclusion in the legend.
 
             Defaults to \code{TRUE}.
         }
@@ -355,7 +386,7 @@
 
    When arguments were supplied, these are returned in a named list.
 }
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 \note{
     Typical usage of \pkg{abrem} involves calling a sequence of functions like:
 

@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 Blifestring <- function(B,blicon,signif,...){
     # This functions creates a string for displaying the B-lives in the plot's
     # legend. missing input data result in an "NA". For example, the output
@@ -52,7 +45,7 @@ Blifestring <- function(B,blicon,signif,...){
       # shorthand writing of the signif() function
     qfun <- function(B,...){
         args <- as.list(unlist(...))
-            # TODO: this doesn't look very nice, does it? but it works
+
         ret <- NULL
         if(!is.null(args$beta) && !is.null(args$eta)){
             # the fit type was weibull
@@ -60,7 +53,7 @@ Blifestring <- function(B,blicon,signif,...){
             if(!is.null(args$t0)){
                 # the fit type was weibull3p
                 ret <- ret+args$t0
-                # TODO: check if the above code is ok; should not be -?
+
             }
         }
         if(!is.null(args$meanlog) && !is.null(args$sdlog)){

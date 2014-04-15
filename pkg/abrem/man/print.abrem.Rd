@@ -18,10 +18,9 @@
     }
 }
 
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 
 \examples{
-data(p2.2,package="abrem")
-da <- abrem.fit(Abrem(p2.2))
+da <- abrem.fit(Abrem(rweibull(13,3,1000)))
 print(da)
 }

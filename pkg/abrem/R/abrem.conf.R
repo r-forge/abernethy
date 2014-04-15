@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,30 +27,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 abrem.conf <- function(x,which="all",...){
     # x is a single Abrem or a list of Abrem objects
 #    supported_blifeconf  <-  c("mcpivotals","bbb")
     if(missing(x)){
-        stop("Argument \"x\" is missing.")
+        stop('Argument \"x\" is missing.')
     }else{
         if(identical(class(x),"abrem")) x <- list(x)
         if(!all(sapply(x,function(x)identical(class(x),"abrem")))){
-            stop("Argument \"x\" is not of class \"abrem\" or ",
-            "a list of \"abrem\" objects.")
+            stop('Argument \"x\" is not of class \"abrem\" or ",
+            "a list of \"abrem\" objects.')
         }
         dr <- findMaxDataRange(x,0)
             # for reasonably large confidence bounds
@@ -64,7 +57,7 @@ abrem.conf <- function(x,which="all",...){
     }
     if(length(abremlist)==1) abremlist[[1]] else abremlist
 }
-        
+
 #            oppdata <- modifyList(oppdata,x$options.abremplot)
 #            if(!is.null(x$fit)){
 #                for.each <- function(fit){

@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 plotSingleFit <- function(fit,opadata,...){
     opafit <- opadata
     if(!is.null(fit$options)){
@@ -46,22 +39,34 @@ plotSingleFit <- function(fit,opadata,...){
     }
     opafit <- modifyList(opafit,list(...))
     if(opafit$is.plot.fit){
+        t0 <- 0
+        if(is.logical(opafit$threshold))if(opafit$threshold){
+            if(is.logical(opadata$threshold)){if(opadata$threshold)
+                warning("opafit$threshold and opadata$threshold are logical values but numeric values were expected. Proceeding...")
+            }else{
+                # reuse the t0 value from the data level
+                t0 <- opadata$threshold
+            } 
+        }          
+        if(is.numeric(opafit$threshold))t0 <- opafit$threshold
         if(!is.null(fit$beta) && !is.null(fit$eta)){
             if(is.null(fit$t0)){
                 ### weibul 2p ###
                 if(opafit$verbosity >= 1)message(
                     "plotSingleFit: Adding Weibull 2P fit ...")
-                curve(F0inv(pweibull(x,fit$beta,fit$eta),opafit$log),
+                curve(F0inv(pweibull(x+t0,fit$beta,fit$eta),opafit$log),
                     # TODO: opp$log?
                     add=TRUE,
                     col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                     xlim=getPlotRangeX(opafit$log),
                     log=opafit$log)
-                    # TODO: deal with Inf and -Inf values in the curve argument so that the curce always extends to the edges of the plotting regions
+                    # TODO: deal with Inf and -Inf values in the curve argument
+                    # so that the curce always extends to the edges of the plotting regions
             }else{
                 if(opafit$verbosity >= 1)message(
                     "plotSingleFit: Adding Weibull 3P fit ...")
-                cret <- curve(F0inv(pweibull(x-fit$t0,fit$beta,fit$eta),opafit$log),
+                cret <- curve(F0inv(pweibull(x-fit$t0+t0,
+                    fit$beta,fit$eta),opafit$log),
                     add=TRUE,n=1001,
                         # n=1001 is needed for displaying the extreme
                         # curvature towards -Inf with low Beta values
@@ -72,7 +77,7 @@ plotSingleFit <- function(fit,opadata,...){
                 cret$y[is.infinite(cret$y)] <- NA
                     # works for weibull canvas
                 cret$y[cret$y==0] <- NA
-                    # TODO: replacing zero's is needed for lognormal canvas.
+                    # replacing zero's is needed for lognormal canvas.
                 imin <- which.min(cret$y)
                 lines(rep(cret$x[imin],2),
                     y=c(cret$y[imin],getPlotRangeY(opafit$log)[1]),
@@ -84,7 +89,7 @@ plotSingleFit <- function(fit,opadata,...){
             ### lognormal ###
             if(opafit$verbosity >= 1)message(
                 "plotSingleFit: Adding Lognormal fit ...")
-            curve(F0inv(plnorm(x,fit$meanlog,fit$sdlog),opafit$log),
+            curve(F0inv(plnorm(x+t0,fit$meanlog,fit$sdlog),opafit$log),
                 add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
@@ -95,7 +100,7 @@ plotSingleFit <- function(fit,opadata,...){
             ### exponential ###
             if(opafit$verbosity >= 1)message(
                 "plotSingleFit: Adding Exponential fit ...")
-            curve(F0inv(pexp(x,fit$rate),opafit$log),add=TRUE,
+            curve(F0inv(pexp(x+t0,fit$rate),opafit$log),add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
                 log=opafit$log)

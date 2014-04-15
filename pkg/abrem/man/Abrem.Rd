@@ -14,6 +14,8 @@
         Either a dataframe containing at least \code{$time} and \code{$event}
         columns, or a vector of class \code{"numeric"} or \code{"integer"} with
         (life-)time observations.
+        
+        See section "Details" for other data passing arguments.
     }
     \item{\dots}{
         Graphical options for plotting the \code{abrem} object; see section "Details".
@@ -52,7 +54,7 @@
     useful in combination with the output of \code{\link{params.to.ob}}.
 
     \code{Abrem} always generates (probability) plot positions for graphically
-    displaying the (life-)time observations and for later usage
+    displaying the (life-)time observations and for (possible) later usage
     by \code{\link{abrem.fit}}. The type of plot positions is
     controlled with the \code{\link{pp}} argument.
     See \code{\link{options.abrem}} for more details.
@@ -76,7 +78,7 @@
             Values of \code{1} mean "dead" or "failed" while \code{0}
             mean "alive" or "right-censored"/"suspended" observations.
             This censoring indicator scheme is modeled after the
-            \code{\link[survival]{Surv}} function of the \pkg{survival}
+            \code{Surv} function of the \pkg{survival}
             package.
             %% add support for factors
         }
@@ -84,12 +86,12 @@
             Depending on the argument \code{\link{pp}} (either passed as
             an argument or taken from \code{options.abrem}), a vector
             of class \code{"numeric"} with exact median ranks
-            (\code{$rank.median}) or Bernard's approximate median ranks
-            (\code{$rank.bernard}).
+            (\code{$rank.median}) or Benard's approximate median ranks
+            (\code{$rank.benard}).
         }
     }
 }
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 \note{}
 %%\section{To Do}{
 %%    \itemize{
@@ -114,7 +116,7 @@ da1 <- data.frame(
     serial=c("S12","S16","S17","S3","S5"),
     time=c(500,1200,900,1300,510),
     event=c(1,1,1,1,1))
-Abrem(da1,label="complete dataset",pch=1)%da2 <- Abrem(da1,label="complete dataset",pch=4,pp="bernard",col="red")
+Abrem(da1,label="complete dataset",pch=1)%da2 <- Abrem(da1,label="complete dataset",pch=4,pp="benard",col="red")
 da1 <- Abrem(da1,label="complete dataset",pch=3,col="orange3")
 
 ## Generate a similar dataset, but with suspensions ##

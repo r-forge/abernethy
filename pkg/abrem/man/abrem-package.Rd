@@ -10,13 +10,13 @@
     observations, following the methods of \dQuote{The New Weibull Handbook},
     Fifth Edition by Dr. Robert B. Abernethy. It is based on the now outdated
     and unmaintained \pkg{weibulltoolkit} package, still available from
-
-    \url{http://sourceforge.net/projects/weibulltoolkit}.
+    
+    http://sourceforge.net/projects/weibulltoolkit.
 }
 \author{
-Jurgen Symynck <jurgen.symynck@kahosl.be>
+Jurgen Symynck <jusy@openreliability.org>
 
-Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
+Maintainer: Jurgen Symynck <jusy@openreliability.org>
 }
 \note{}
 \references{
@@ -38,10 +38,10 @@ Maintainer: Jurgen Symynck <jurgen.symynck@kahosl.be>
             \emph{A Comparison Between The Weibull And Lognormal Models Used
                 To Analyse Reliability Data}
             (dissertation from University of Nottingham, 1997)
-        \item
-            Efron, B. and Tibshirani, R.,
-            \emph{An Introduction to the Bootstrap}
-            (Chapman & Hall, 1993)
+%        \item
+%            Efron, B. and Tibshirani, R.,
+%            \emph{An Introduction to the Bootstrap}
+%            (Chapman & Hall, 1993)
         \item Jurgen Symynck, Filip De Bal,
             \emph{Weibull analysis using R, in a nutshell}
             (New Technologies and Products in Machine Manufacturing Technology,

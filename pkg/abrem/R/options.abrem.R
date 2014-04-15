@@ -2,8 +2,10 @@
 # Abernethy Reliability Methods
 # Implementations of lifetime data analysis methods described in
 # 'The New Weibull Handbook, Fifth edition' by Dr. Robert B. Abernethy.
-# May 2013, Jurgen Symynck
-# Copyright 2013, Jurgen Symynck
+# April 2014, Jurgen Symynck
+# Copyright 2014, Jurgen Symynck
+#
+# For more info, visit http://www.openreliability.org/
 #
 # For the latest version of this file, check the Subversion repository at
 # http://r-forge.r-project.org/projects/abernethy/
@@ -25,20 +27,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For more info on this software and its predecesser, the "weibulltoolkit",
-#    consult following documents:
-#
-#    - "Weibull analysis using R, in a nutshell",
-#      (Jurgen Symynck, Filip De Bal, 2010)
-#    - "Monte Carlo pivotal confidence bounds for Weibull analysis
-#      with implementations in R",
-#      (Jurgen Symynck, Filip De Bal, 2011)
-#
 # +-----------------------------------+
-# |  execute this program with R:     |
+# |  execute this software with R:    |
 # |  http://www.r-project.org/        |
 # +-----------------------------------+
-#
+
 options.abrem <- function(...){
     # function to handle the many options of the weibull toolkits functions
     # the option list should only be manipulated through this function!
@@ -59,24 +52,26 @@ options.abrem <- function(...){
             method.fit=c("rr","xony"),
             conf.what="blives",
             conf.blives.sides="double",
-            conf.n=25,
+            unrel.n=25,
             method.conf.blives="mcpivotals",
-            pp="median",#,"bernard"),#,"bernard_cpp","hazen","mean"),
+            pp="median",#,"benard"),#,"benard_cpp","hazen","mean"),
             S=1e4,
             pivotals=FALSE,
             cl=0.9,
-            blives=c(0.1,0.05,0.01),
+            unrel=c(0.1,0.05,0.01),
             verbosity=0,
-
-            main="Probability Plot\n",
-            main.contour="Contour Plot\n",
+            mar=c(5.1,4.1,5.1,2.1),
+            main="Probability Plot",
+            main.contour="Contour Plot",
+                # a default title for Contour plots
             sub=NULL,
             sub.contour=NULL,
             xlim=NULL,
             ylim=NULL,
             xlab="Time To Failure",
             ylab="Unreliability [%]",
-            log="x",
+            log="x", # maybe this should be removed in favor of "canvas"
+            #canvas="weibull",
             coordinate.text.size=0.7,
             signif=4,
             pch=1,
@@ -86,6 +81,7 @@ options.abrem <- function(...){
             lty=1,
             col="black",
             col.grid="gray",
+            threshold=FALSE,
             is.plot.grid=TRUE,
             is.plot.fit=TRUE,
             is.plot.pp=TRUE,

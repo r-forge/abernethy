@@ -52,7 +52,7 @@
 %%        If argument \code{x} was a dataframe with additional columns, these will also be returned.
     }
 }
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 \note{
     Currently, only distributions fitted with
     \code{method.fit = c("rr","xony")} 
@@ -82,5 +82,5 @@ print(d3$data)
 message(paste0(
     "  meanlog=",d3$fit[[1]]$meanlog,
     ", sdlog=",d3$fit[[1]]$sdlog))
-plot.abrem(list(d1,d2,d3),main="Demo of params.to.ob()\n")
+plot.abrem(list(d1,d2,d3),main="Demo of params.to.ob()")
 }

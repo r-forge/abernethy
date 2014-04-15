@@ -10,6 +10,7 @@ export(
 S3method(plot, abrem) 
 S3method(print, abrem) 
 S3method(contour, abrem) 
+#useDynLib(pivotals)
+#useDynLib(debias)
 import(pivotals)
 import(debias)
-

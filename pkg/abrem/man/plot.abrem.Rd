@@ -11,7 +11,7 @@
     Currently, the function plots the (life-)time observations, fits (if any)
     and confidence bounds for B-lives (if any) of an
     \code{abrem} object or a list of \code{abrem} objects on Weibull or
-    Lognormal probability paper.
+    Lognormal probability paper. 
 
     For each fit in the (list of) \code{abrem} object(s), legends are added to
     the plot, displaying the fit parameters and (if available) goodness-of-fit
@@ -42,20 +42,24 @@
     \code{\link{log} = "xy"} to the function, Lognormal paper is used
     (see \code{\link{options.abrem}}).
     
+    When a \emph{list} of abrem objects is passed, the plot window is generated
+    with the options of the first \code{abrem} object in the list.
+    % TODO: list these options
+        
 %    A thin dashed line appears close to the fitted line (if any) when confidence
 %    are present and plotted.  
 }
 \value{
     Currently, the function returns no value. 
 }
-\section{To Do/Known issues/Bugs}{
-    \itemize{
-        \item The legend positions are slightly to the right, overlapping the
-            right Y axis (especially for small horizontal ranges).
-        \item Have the function return the updated \code{abrem} arguments.
-   }
-}
-\author{Jurgen Symynck \email{jurgen.symynck@kahosl.be}}
+%\section{To Do/Known issues/Bugs}{
+%    \itemize{
+%        \item The legend positions are slightly to the right, overlapping the
+%            right Y axis (especially for small horizontal ranges).
+%        \item Have the function return the updated \code{abrem} arguments.
+%   }
+%}
+\author{Jurgen Symynck \email{jusy@openreliability.org}}
 
 \seealso{
     \code{\link{options.abrem}}
@@ -69,8 +73,8 @@ da1 <- abrem.fit(da1,dist="lognormal",method.fit=c("rr","xony"),
     col="steelblue3",pch=8)
 da1 <- abrem.conf(da1)
 plot(da1,col="black") # plot all in black
-plot(da1) # plot with specified colors
-
+plot(da1,main="Weibull distributed observations") # plot with specified colors
+    
 ### usage of lists ###
 options.abrem(blives=0.1) # make the legend boxes a bit shorter...
 da2 <- abrem.conf(abrem.fit(Abrem(runif(5,10,100),col="red")))
@@ -78,5 +82,6 @@ da3 <- abrem.conf(abrem.fit(Abrem(rweibull(5,2,1000),col="green4",pch=3)))
 da4 <- abrem.conf(abrem.fit(Abrem(rlnorm(5,log(500),log(2)),col="blue3",pch=8),
     dist="lognormal"))
 
-plot.abrem(list(da2,da3,da4),xlim=c(1,1e6))
+plot.abrem(list(da2,da3,da4),xlim=c(1,1e6),
+    main="Uniformly distributed observations")
 }
