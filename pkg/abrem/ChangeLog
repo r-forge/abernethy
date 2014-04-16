@@ -1,10 +1,11 @@
 2014-04-15 Jurgen Symynck <jusy@openreliability.org>
 
-        * upgraded abrem 0.1.12 to 0.1.14:
 		CHANGELOG NOT COMPLETE YET - STAY TUNED
-		General man page updates and reorganization. More error checking. added support for subtracting threshold parameters
+        * upgraded abrem 0.1.12 to 0.1.14:
+		General man page updates and reorganization. More error checking. added support for subtracting threshold parameters, Replaced 'bernard' with 'benard',...
+		* Abrem.R (Abrem): added support for arguments of class "numeric", 
 		* options.abrem.R (options.abrem): renamed option blives to unrel, renamed options conf.n to unrel.n
-		renamed options 
+
 
 2014-03-23 Jurgen Symynck <jusy@openreliability.org>
 
