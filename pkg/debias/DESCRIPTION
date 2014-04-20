@@ -7,6 +7,5 @@ Maintainer: David Silkworth <djsilk@openreliability.org>
 Description: Reliability Analysis Methods
 License: GPL (>= 2)
 LazyLoad: yes
-Depends: Rcpp (>= 0.9.10), RcppArmadillo (>= 0.3.2.0)
+Imports: Rcpp (>= 0.11.1), RcppArmadillo (>= 0.4.100.2.1)
 LinkingTo: Rcpp, RcppArmadillo
-Packaged: 2013-02-11 05:50:58 UTC; SILKWODJ
