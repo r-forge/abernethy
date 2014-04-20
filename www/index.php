@@ -43,7 +43,7 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> Additional information on this project is provided at <a href="http://www.openreliability.org/decendent_pages/abernethy.html"><strong>OpenReliability.org</strong><a/></p>
+<p> Additional information on this project is provided at <a href="http://www.openreliability.org/HTML/abernethy.html"><strong>OpenReliability.org</strong><a/></p>
 
 <p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 
