@@ -94,9 +94,7 @@ calculateSingleFit <- function(x,...){
                         # TODO: takes into account xony and yonx?
                     x$fit[[i]]$gof$prr  <<- prrval[[1]]
                     x$fit[[i]]$gof$ccc2 <<- prrval[[2]]
-                }else{message("calculateSingleFit:::goodness_of_fit: ",
-                    "Goodness of fit calculation using pivotals:::prrval() for mle fits ",
-                    "is not supported. ")
+                }else{vm(1,"calculateSingleFit:::goodness_of_fit: Goodness of fit calculation using pivotals:::prrval() for mle fits is not supported.")
                 }
             }
         }else{
