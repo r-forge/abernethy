@@ -2,11 +2,11 @@ Package: abrem
 Type: Package
 Title: Abernethy Reliability Methods
 Version: 0.1.14
-Date: April 26, 2014
+Date: April 27, 2014
 Author: Jurgen Symynck <jusy@openreliability.org>
 Maintainer: Jurgen Symynck <jusy@openreliability.org>
 Description: This package applies some of the (technical) reliability methods, proposed in "The New Weibull Handbook", Fifth Edition by Dr. Robert B. Abernethy. It applies the Weibull (two and three parameter) and Lognormal model on (life-)time observations, and calculates confidence bounds for B-lives using a variety of methods. It uses the 'prr' goodness-of-fit indicator (among others) for choosing the best model fit. Most calculation results (including the fits and confidence bounds) are summarized on Weibull or Lognormal probability paper. Full support for parameter contour plots are in development; currently Beta vs. Eta  plots are supported.
-Imports: pivotals  (>= 0.1.9) , debias (>= 0.1.9), Rcpp (>= 0.11.1), RcppArmadillo
+Imports: pivotals  (>= 0.1.9) , debias (>= 0.1.9)
 Suggests: MASS, boot
 License: GPL-3
 URL: http://r-forge.r-project.org/projects/abernethy,     http://www.openreliability.org
