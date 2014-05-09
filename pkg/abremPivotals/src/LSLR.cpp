@@ -1,8 +1,8 @@
-/* MRR.cpp					
+/* LSLR.cpp					
  *					
  * This program is free software; you can redistribute it and/or modify it					
  * under the terms of the GNU General Public License as published by the					
- * Free Software Foundation; either version 2, or (at your option) any					
+ * Free Software Foundation; either version 3, or (at your option) any					
  * later version.					
  *					
  * These functions are distributed in the hope that they will be useful,					
@@ -14,30 +14,30 @@
  *  along with this program; if not, a copy is available at					
  *  http://www.r-project.org/Licenses/					
  *					
- * This collectioin of functions implement Median Rank Regression (MRR). Alternate use of  X~Y ordering					
- * enables comparison, while X on Y has been designated as "best practice"					
- * in "The Weibull Handbook, Fifth Edition" by Dr. Robert B. Abernethy for fitting fatique-life data					
- * to the Weibull distribution.					
- *					
- * Two arguements are required: a vector of data values (often recorded as time), and an equal size					
- * vector signifying event termination, 1 for failure, 0 for suspension (censored).					
- * The vectors must be of equal length and sorted according to ascending data values.					
- * Unchecked disaster will result otherwise.					
- * This function calls the pivotals package C++ function medianRank() directly, so Benard's approximation					
- * is applied to the ranks adjusted as applicable for suspensions.					
- * These functions are consistent with The Weibull Handbook, Fifth Edition and SuperSMITH software.					
- *					
- * This function was developed using the RcppArmadillo library					
+ * This collectioin of functions implement least squares linear regression (LSLR). 
+ * The covered distributions are Weibull, lognormal, and Gumbel (extreme value type 1) due to wide use
+ * in reliability analysis. Probability plotting positions are a required argument vector
+ * therefore permitting	any methodology for point estimation to be employed in pre-processing.
+ * Alternate minimization functions for X or Y axis variances are provided.
+ *				
+ * Two arguments are required: a vector of data values (often recorded as time), and an equally
+ * corresponding vector of plotting positions.  These are accepted without checking of any kind.
+					
+ * These functions are consistent with "The New Weibull Handbook, Fifth Edition" and have been checked
+ * against SuperSMITH and Mintab commercial software packages.					
+ *									
  * Author: Jacob Ormerod					
  *     Copyright (C) 2013-2014 OpenReliability.org					
  */					
 					
 #include "abremPivotals.h"	
-#include <math.h>				
+#include <math.h>	
+
+    using namespace Rcpp ;			
 					
-SEXP MRRw2pXonY (SEXP arg1, SEXP arg2)		
+SEXP LSLRw2pXonY (SEXP arg1, SEXP arg2)		
 {		
-    using namespace Rcpp ;		
+ //   using namespace Rcpp ;		
 		
         Rcpp::NumericVector fail(arg1);		
         Rcpp::NumericVector position(arg2);		
@@ -73,9 +73,9 @@ SEXP MRRw2pXonY (SEXP arg1, SEXP arg2)
         }		
 				
 
-SEXP MRRw2pYonX (SEXP arg1, SEXP arg2)		
+SEXP LSLRw2pYonX (SEXP arg1, SEXP arg2)		
 {		
-    using namespace Rcpp ;		
+ //   using namespace Rcpp ;		
 		
         Rcpp::NumericVector fail(arg1);		
         Rcpp::NumericVector position(arg2);		
@@ -103,8 +103,8 @@ SEXP MRRw2pYonX (SEXP arg1, SEXP arg2)
         R2 = (TVar-Residual)/TVar;		
 // Finally prepare a single vector with each coefficient and the variance (R2)		
         Rcpp::NumericVector outvec(3);		
-        outvec[0]=exp(coef(0));		
-        outvec[1]=1/coef(1);		
+        outvec[0]=exp(-coef(0)/coef(1));		
+        outvec[1]=coef(1);		
         outvec[2]=R2;		
 		
         return outvec;		
@@ -112,9 +112,9 @@ SEXP MRRw2pYonX (SEXP arg1, SEXP arg2)
 
 
 
-SEXP MRRg2pXonY (SEXP arg1, SEXP arg2)		
+SEXP LSLRg2pXonY (SEXP arg1, SEXP arg2)		
 {		
-    using namespace Rcpp ;		
+ //   using namespace Rcpp ;		
 		
         Rcpp::NumericVector fail(arg1);		
         Rcpp::NumericVector position(arg2);		
@@ -142,7 +142,7 @@ SEXP MRRg2pXonY (SEXP arg1, SEXP arg2)
         R2 = (TVar-Residual)/TVar;		
 // Finally prepare a single vector with each coefficient and the variance (R2)		
         Rcpp::NumericVector outvec(3);		
-        outvec[0]=exp(coef(0));		
+         outvec[0]=exp(coef(0));		
         outvec[1]=1/coef(1);		
         outvec[2]=R2;		
 		
@@ -151,9 +151,9 @@ SEXP MRRg2pXonY (SEXP arg1, SEXP arg2)
 		
 
 
-SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)		
+SEXP LSLRg2pYonX (SEXP arg1, SEXP arg2)		
 {		
-    using namespace Rcpp ;		
+//    using namespace Rcpp ;		
 		
         Rcpp::NumericVector fail(arg1);		
         Rcpp::NumericVector position(arg2);		
@@ -166,8 +166,8 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
 // fill the arma objects		
         for(int i=0; i<F; i++)  {		
 	X(i,0)=1.0;	
-	X(i,1)=log(fail[i]);	
-	y(i)=log(log(1/(1-position[i])));	
+    X(i,1)=log(fail[i]);
+    y(i)=log(log(1/(1-position[i])));
         }		
         arma::colvec coef, res;		
         double Residual, TVar, R2;		
@@ -181,8 +181,8 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
         R2 = (TVar-Residual)/TVar;		
 // Finally prepare a single vector with each coefficient and the variance (R2)		
         Rcpp::NumericVector outvec(3);		
-        outvec[0]=exp(coef(0));		
-        outvec[1]=1/coef(1);		
+        outvec[0]=exp(-coef(0)/coef(1));		
+        outvec[1]=coef(1);			
         outvec[2]=R2;		
 		
         return outvec;		
@@ -190,9 +190,9 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
 	
 
 
-        SEXP MRRln2pXonY (SEXP arg1, SEXP arg2)			
+        SEXP LSLRln2pXonY (SEXP arg1, SEXP arg2)			
 {			
-    using namespace Rcpp ;			
+ //   using namespace Rcpp ;			
 			
         Rcpp::NumericVector fail(arg1);			
         Rcpp::NumericVector position(arg2);			
@@ -220,8 +220,8 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
         R2 = (TVar-Residual)/TVar;			
 // Finally prepare a single vector with each coefficient and the variance (R2)			
         Rcpp::NumericVector outvec(3);			
-        outvec[0]=exp(coef(0));			
-        outvec[1]=1/coef(1);			
+        outvec[0]=coef(0);
+        outvec[1]=coef(1);
         outvec[2]=R2;			
 			
         return outvec;			
@@ -229,9 +229,9 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
 	
 
 
-    SEXP MRRln2pYonX (SEXP arg1, SEXP arg2)		
+    SEXP LSLRln2pYonX (SEXP arg1, SEXP arg2)		
     {		
-        using namespace Rcpp ;		
+ //       using namespace Rcpp ;		
 		
         Rcpp::NumericVector fail(arg1);		
         Rcpp::NumericVector position(arg2);		
@@ -259,12 +259,189 @@ SEXP MRRg2pYonX (SEXP arg1, SEXP arg2)
         R2 = (TVar-Residual)/TVar;		
 // Finally prepare a single vector with each coefficient and the variance (R2)		
         Rcpp::NumericVector outvec(3);		
-        outvec[0]=exp(coef(0));		
+         outvec[0]= -coef(0)/coef(1);
         outvec[1]=1/coef(1);		
         outvec[2]=R2;		
 		
         return outvec;		
-        }		
+        }	
+
+// numeric 2-point numerical derivative for secant in discrete Newtonian root finding method
+double dR2dx(double X, NumericVector &data, NumericVector &ppp,double limit, SEXP (*LSLR2p)(SEXP, SEXP) )  {						
+						
+	int F=data.size();					
+	Rcpp::NumericVector mdata(F);					
+	for(int i=0; i<F; i++) {mdata[i]=data[i]-X;}					
+	Rcpp::NumericVector fit1=LSLR2p(mdata,ppp);					
+	for(int i=0; i<F; i++) {mdata[i]=data[i]-(X-0.1*limit);}					
+	Rcpp::NumericVector fit2=LSLR2p(mdata,ppp);					
+	double slope=(fit1[2]-fit2[2])/(0.1*limit);					
+						
+	return slope;					
+}						
+						
+SEXP LSLR3p(SEXP arg1, SEXP arg2, SEXP arg3, SEXP (*LSLR2p)(SEXP, SEXP) )						
+{						
+	        Rcpp::NumericVector fail(arg1);					
+	        Rcpp::NumericVector ppp(arg2);					
+	double DL=as<double>(arg3);					
+	        int F=fail.size();					
+						
+						
+						
+	int maxit=100;					
+ // just get the first failure, they were required to have been sorted						
+	double C1=fail[0];					
+						
+						
+						
+						
+						
+						
+						
+						
+ // Tao Pang's original variable labels from FORTRAN are used where possible						
+ // initial step is based on limit*10,000						
+	double DX=DL*pow(10,4);					
+	double X0=0.0;					
+	int istep=0;					
+	double X1=X0+DX;					
+	if(X1>C1) {X1=X0+0.9*(C1-X0);}					
+						
+	double FX0=dR2dx(X0,fail,ppp,DL, LSLR2p);					
+	double FX1=dR2dx(X1,fail,ppp,DL, LSLR2p);					
+ // FX1 will contain slope sign information to be used only one time to find X2						
+	double D=fabs(FX1-FX0);					
+	double X2=X1+fabs(X1-X0)*FX1/D;					
+	if(X2>C1) {X2=X1+0.9*(C1-X1);}					
+	X0=X1;					
+	X1=X2;					
+ // development diagnostic code						
+ //	arma::rowvec DFrow(4);					
+ //	DFrow(0)=istep;					
+ //	DFrow(1)=X0;					
+ //	DFrow(2)=DX;					
+ //	DFrow(3)=FX1;					
+ //	arma::mat DF;					
+ //	DF=DFrow;					
+						
+						
+ // This is the start of the main loop						
+	while(fabs(DX)>DL&& istep<maxit)  {					
+	FX0=FX1;					
+	 FX1=dR2dx(X1,fail,ppp,DL, LSLR2p);					
+ // FX1 will contain slope sign information to be used only one time to find X2						
+	D=fabs(FX1-FX0);					
+	X2=X1+fabs(X1-X0)*FX1/D;					
+	if(X2>C1) {X2=X1+0.9*(C1-X1);}					
+	X0=X1;					
+	X1=X2;					
+	DX=X1-X0;					
+	istep=istep+1;					
+ // development diagnostic code						
+ //	DFrow(0)=istep;					
+ //	DFrow(1)=X0;					
+ //	DFrow(2)=DX;					
+ //	DFrow(3)=FX1;					
+ //	DF=join_cols(DF,DFrow);					
+	}					
+						
+	Rcpp::NumericVector mdata(F);					
+	for(int i=0; i<F; i++) {mdata[i]=fail[i]-X0;}					
+	Rcpp::NumericVector finalfit=LSLR2p(mdata,ppp);					
+	Rcpp::NumericVector outvec(4);					
+	outvec[0]=finalfit[0];					
+	outvec[1]=finalfit[1];					
+	outvec[2]=X0;					
+	outvec[3]=finalfit[2];					
+						
+	return wrap(outvec);					
+						
+						
+	}					
+						
+SEXP LSLR(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4)				
+{				
+				
+int casenum =as<int>(arg4);				
+				
+Rcpp::NumericVector outvec2p(3);				
+Rcpp::NumericVector outvec3p(4);				
+				
+				
+				
+switch(casenum) {				
+case 0 :				
+outvec2p=LSLRw2pXonY(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 1 :				
+outvec2p=LSLRw2pYonX(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 2 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRw2pXonY);				
+return outvec3p;				
+break;				
+				
+case 3 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRw2pYonX);				
+return outvec3p;				
+break;				
+				
+case 4 :				
+outvec2p=LSLRln2pXonY(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 5 :				
+outvec2p=LSLRln2pYonX(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 6 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRln2pXonY);				
+return outvec3p;				
+break;				
+				
+case 7 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRln2pYonX);				
+return outvec3p;				
+break;					
+
+case 8 :				
+outvec2p=LSLRg2pXonY(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 9 :				
+outvec2p=LSLRg2pYonX(arg1, arg2);				
+return outvec2p;				
+break;				
+				
+case 10 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRg2pXonY);				
+return outvec3p;				
+break;				
+				
+case 11 :								
+outvec3p=LSLR3p(arg1, arg2, arg3, &LSLRg2pYonX);				
+return outvec3p;				
+break;					
+				
+default:				
+outvec2p=LSLRw2pXonY(arg1, arg2);				
+return outvec2p;				
+break;				
+}				
+				
+}				
+		
+		
+		
+	
 	
 		
 		
