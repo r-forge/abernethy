@@ -29,7 +29,7 @@ abremObj<-function(x, s=NULL)  {
 	    time<-sort(x)	
 	    event<-rep(1,length(x))	
 		ret$data$time<-time
-		ret$event$event<-event
+		ret$data$event<-event
 	  }else{	
 	## suspension data has been provided	
 	    time<-c(x,s)	
