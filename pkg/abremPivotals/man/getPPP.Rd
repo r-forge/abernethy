@@ -1,7 +1,7 @@
 \name{getPPP}
 \alias{getPPP}
 
-\title{ determination of probability plotting postions for linear regression with many optional methods}
+\title{Determination of probability plotting postions for linear regression with many optional methods}
 
 \description{
 Determination of plotting postions to be used for linear regression of life data analysis is a highly debated topic.  This function implements a wide assortment of options for the Abernethy Reliability Methods project.
@@ -30,7 +30,9 @@ Returns a dataframe with the failure data (as potentially reduced by ties argume
 }
 
 \examples{
-median_ranks<-getPPP(c(1,0,1,1,0,1,0,0,1,1))[,2]
+failures<-c(90,96,30,49,82)
+suspensions<-c(100,45,10)
+median_ranks<-getPPP(failures, suspensions)[,2]
 }
 
-\keyword{ median ranks }
+\keyword{ regression reliability }
