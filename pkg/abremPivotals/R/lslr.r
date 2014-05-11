@@ -24,15 +24,17 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	resultVec<-.Call("LSLR", x$data, x$ppp, limit, casenum , package="abremPivotals")			
 				
 	if(casenum < 4) {			
-		if(length(resultVec)==3)  {		
-			outVec<-c(Eta=resultVec[1],Beta=resultVec[2],Rsqr=resultVec[3])	
+		if(length(resultVec)==3)  {	
+			prr<-AbPval(dim(x)[1], resultVec[3])
+			outVec<-c(Eta=resultVec[1],Beta=resultVec[2],Rsqr=resultVec[3], AbPval=prr[1])	
 		}else{		
 			outVec<-c(Eta=resultVec[1],Beta=resultVec[2], t0=resultVec[3],Rsqr=resultVec[4])	
 		}		
 	}else{			
 		if(casenum < 8) {		
 			if(length(resultVec)==3)  {	
-				outVec<-c(Mulog=resultVec[1],Sigmalog=resultVec[2],Rsqr=resultVec[3])
+				prr<-AbPval(length(x[,1]), resultVec[3],"lnorm")
+				outVec<-c(Mulog=resultVec[1],Sigmalog=resultVec[2],Rsqr=resultVec[3], AbPval=prr[1])	
 			}else{	
 				outVec<-c(Mulog=resultVec[1],Sigmalog=resultVec[2], t0=resultVec[3],Rsqr=resultVec[4])
 			}	
