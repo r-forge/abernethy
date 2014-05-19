@@ -7,10 +7,13 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
 	}else{			
 		if(names(x)[1]=="data"&&names(x)[2]=="ppp")  {		
-		## will handle the output from getPPP		
-		## nothing else to do		
-		}else{		
-			stop("input format not recognized")	
+		## will handle the output from getPPP				
+		}else{	
+			if(length(x$ppp)<3)  {
+				stop("insufficient failure points")
+			}else{
+				stop("input format not recognized")	
+			}
 		}		
 	}			
 				
@@ -18,7 +21,7 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	if(reg_method=="YonX") casenum=casenum+1			
 	if(npar==3) casenum=casenum+2			
 	if(dist=="lnorm")casenum=casenum+4			
-	if(dist=="gumbell") casenum=casenum+8			
+	if(dist=="gumbel") casenum=casenum+8			
 				
 				
 	resultVec<-.Call("LSLR", x$data, x$ppp, limit, casenum , package="abremPivotals")			
