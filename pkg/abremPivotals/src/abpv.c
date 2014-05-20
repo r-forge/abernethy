@@ -624,8 +624,9 @@ if(F<26)
 		}
 		else
 		{
-            //Aitken_Pvals[j]=M1b[(Aitken_pts[j]-15)][F-3];
-            Aitken_Pvals[j]=M1[(Aitken_pts[j]+1)][F-3];
+            //Bug found testing abremPivotals 5-19-2014
+			//Original code adjusted the index into M1 in the wrong direction
+            Aitken_Pvals[j]=M1[(Aitken_pts[j]-1)][F-3];
 		}
 
 	}
