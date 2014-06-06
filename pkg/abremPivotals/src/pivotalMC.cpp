@@ -14,8 +14,8 @@
  *  along with this program; if not, a copy is available at					
  *  http://www.r-project.org/Licenses/					
  *					
- * This collectioin of functions implementing a fast resampling engine for least squares linear regression
- * models. The covered distributions are Weibull, lognormal, and Gumbel (extreme value type 1) due to
+ * This collection of functions implementing a fast re-sampling engine for least squares linear regression
+ * models. The covered distributions are Weibull, log-normal, and Gumbel (extreme value type 1) due to
  * wide use in reliability analysis. Probability plotting positions are a required argument vector 
  * therefore permitting	any methodology for point estimation to be employed in pre-processing.
  * Alternate minimization functions for X or Y axis variances are provided.
@@ -30,30 +30,36 @@
 			
     using namespace Rcpp ;
 	
-SEXP pivotalMCw2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+SEXP pivotalMCw2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){				
 				
  //	src1<-'			
 // ppp Must be determined in calling code, choices include several point estimation methods				
 // quantity of ppp will identify the number of complete failures.				
 	Rcpp::NumericVector ppp(arg1);			
-	int F=ppp.size();			
-				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+	int F=ppp.size();
+	
+// need the event vector for masking			
+// length of event vector will identify the total number of occurrences.			
+	Rcpp::NumericVector event(arg2);		
+	int N=event.size();		
+			
+// establish output to be provided and prepare case records			
+	Rcpp::NumericVector SimControl(arg3);		
+	double R2test= SimControl[0];		
+	double  CItest=SimControl[1];		
+	int prrout=0;		
+	int pivout=0;		
+			
+	unsigned int S = as<unsigned int>(arg4);		
+	unsigned int Spct = S/100;		
+	int seed = as<int>(arg5);		
+// get the descriptive quantiles for pivotals			
+	Rcpp::NumericVector dq(arg6);		
+	int ndq = dq.size();		
+			
+// variables to control a progress output			
+	bool ProgRpt = as<bool>(arg7);		
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
@@ -71,7 +77,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
  // explicit loop to fill arma object from Rcpp object				
 	arma::mat X(F,2);			
 	X.fill(1.0);			
@@ -90,22 +96,22 @@ int LastPct=0;
 	arma::colvec y, coef, res;			
 	double Residual, TVar, pvalue, CCC2;			
 	arma::colvec R2(S);			
-	arma::mat qpiv(S,ndq);			
-				
+	arma::mat qpiv(S,ndq);				
 				
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rweibull(F, Beta, Eta));		
-		y = arma::sort(y);		
-		y=log(y);		
-				
-				
-				
+		y = Rcpp::as<arma::colvec>(rweibull(N, Beta, Eta));		
+		y = arma::sort(y);
+		for(int j=0,k=0; j<N; j++)  {		
+			if(event[j]==0)  {y.shed_row(j-k);}	
+			k++;	
+		}
+		y=log(y);				
 				
 // solve the linear equation and extract the R-square value using Armadillo's solve function				
 // this method applies the "X over Y" regression of the Weibull				
 		coef = arma::solve(X, y);		
 				
-// the prr vector is builthere only if called for by output control				
+// the prr vector is built here only if called for by output control				
 	if(R2test>0.0) {			
 		res  = y - X*coef;		
 		Residual = arma::as_scalar(sum(square(res)));		
@@ -115,7 +121,7 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/b_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
 				
 		qpiv.row(i)=arma::trans((CBq-coef(0))/coef(1));		
@@ -144,7 +150,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -247,35 +253,41 @@ LastPct = ProgPct;
  //	 '			
 }
 
-	SEXP pivotalMCln2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+	SEXP pivotalMCln2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){				
 			
  //	src2<-'			
 // ppp Must be determined in calling code, choices include exact and Benard's estimation methods				
 // quantity of ppp will identify the number of complete failures.				
 	Rcpp::NumericVector ppp(arg1);			
-	int F=ppp.size();			
-				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for confidence bound pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+	int F=ppp.size();	
+	
+// need the event vector for masking			
+// length of event vector will identify the total number of occurrences.			
+	Rcpp::NumericVector event(arg2);		
+	int N=event.size();		
+			
+// establish output to be provided and prepare case records			
+	Rcpp::NumericVector SimControl(arg3);		
+	double R2test= SimControl[0];		
+	double  CItest=SimControl[1];		
+	int prrout=0;		
+	int pivout=0;		
+			
+	unsigned int S = as<unsigned int>(arg4);		
+	unsigned int Spct = S/100;		
+	int seed = as<int>(arg5);		
+// get the descriptive quantiles for pivotals			
+	Rcpp::NumericVector dq(arg6);		
+	int ndq = dq.size();		
+			
+// variables to control a progress output			
+	bool ProgRpt = as<bool>(arg7);		
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
 // testing has suggested that prr output does not depend on value of Mulog orSigmalog				
-// but prr output would vary according to mrank differences (as with treatment of censoring)				
+// but prr output would vary according to rank position differences (as with treatment of censoring)				
 // The pivotal quantities for confidence bounds will be effected by the sampled Mulog and Sigmalog				
 // but should ultimately be able to be transformed so that the median will conform to Mulog=0;Sigmalog=1				
 	double Mulog = SimControl[2];			
@@ -288,7 +300,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}			
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
 				
 	arma::mat X(F,2);			
 	X.fill(1.0);			
@@ -311,12 +323,14 @@ int LastPct=0;
 				
 				
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rnorm(F, Mulog, Sigmalog));		
-		y = arma::sort(y);		
-//  for lognormal the datum at y is already log(y)				
-				
-				
-				
+		y = Rcpp::as<arma::colvec>(rnorm(N, Mulog, Sigmalog));		
+		y = arma::sort(y);
+		for(int j=0,k=0; j<N; j++)  {	
+			if(event[j]==0)  {y.shed_row(j-k);}
+			k++;
+		}	
+		
+//  for lognormal the data at y is already log(y)					
 //y=log(y);				
 // solve the linear equation and extract the R-square value using Armadillo's solve function				
 // this method applies the "X over Y" regression of the Weibull				
@@ -332,7 +346,7 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/s_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
 // need to confirm coeficient use here (x still equals (y-b)/m, if y=mx+b)				
 		qpiv.row(i)=arma::trans((CBq-coef(0))/coef(1));		
@@ -361,7 +375,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -465,30 +479,36 @@ LastPct = ProgPct;
 }				
 
 
-SEXP pivotalMCw2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+SEXP pivotalMCw2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){			
 		
  //	src3<-'			
 // ppp Must be determined in calling code, choices include exact and Benard's estimation methods				
 // quantity of ppp will identify the number of complete failures.				
 	Rcpp::NumericVector ppp(arg1);			
-	int F=ppp.size();			
-				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+	int F=ppp.size();
+	
+// need the event vector for masking			
+// length of event vector will identify the total number of occurrences.			
+	Rcpp::NumericVector event(arg2);		
+	int N=event.size();		
+			
+// establish output to be provided and prepare case records			
+	Rcpp::NumericVector SimControl(arg3);		
+	double R2test= SimControl[0];		
+	double  CItest=SimControl[1];		
+	int prrout=0;		
+	int pivout=0;		
+			
+	unsigned int S = as<unsigned int>(arg4);		
+	unsigned int Spct = S/100;		
+	int seed = as<int>(arg5);		
+// get the descriptive quantiles for pivotals			
+	Rcpp::NumericVector dq(arg6);		
+	int ndq = dq.size();		
+			
+// variables to control a progress output			
+	bool ProgRpt = as<bool>(arg7);		
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
@@ -506,7 +526,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}			
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
 				
 	arma::colvec x(F);			
 				
@@ -529,8 +549,12 @@ int LastPct=0;
 	arma::mat Y(F,2);			
 	Y.fill(1.0);			
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rweibull(F, Beta, Eta));		
-		y = arma::sort(y);		
+		y = Rcpp::as<arma::colvec>(rweibull(N, Beta, Eta));		
+		y = arma::sort(y);
+		for(int j=0,k=0; j<N; j++)  {	
+			if(event[j]==0)  {y.shed_row(j-k);}
+			k++;
+		}		
 		y=log(y);		
 		for(int j=0; j<F; j++) {		
 			Y(j,1)=y(j);	
@@ -550,7 +574,7 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/b_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
 // need to confirm coeficient use here with x and y reversed x=my+b)				
 		qpiv.row(i)=arma::trans(coef(1)*CBq+coef(0));		
@@ -579,7 +603,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -683,7 +707,7 @@ LastPct = ProgPct;
 }				
 
 
-SEXP pivotalMCln2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+SEXP pivotalMCln2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){				
 				
  //	src4<-'			
 // ppp Must be determined in calling code, choices include exact and Benard's estimation methods				
@@ -691,22 +715,28 @@ SEXP pivotalMCln2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SE
 	Rcpp::NumericVector ppp(arg1);			
 	int F=ppp.size();			
 				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for confidence bound pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+// need the event vector for masking		
+// length of event vector will identify the total number of occurrences.		
+	Rcpp::NumericVector event(arg2);	
+	int N=event.size();	
+		
+// establish output to be provided and prepare case records		
+	Rcpp::NumericVector SimControl(arg3);	
+	double R2test= SimControl[0];	
+	double  CItest=SimControl[1];	
+	int prrout=0;	
+	int pivout=0;	
+		
+	unsigned int S = as<unsigned int>(arg4);	
+	unsigned int Spct = S/100;	
+	int seed = as<int>(arg5);	
+// get the descriptive quantiles for pivotals		
+	Rcpp::NumericVector dq(arg6);	
+	int ndq = dq.size();	
+		
+// variables to control a progress output		
+	bool ProgRpt = as<bool>(arg7);	
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
@@ -724,7 +754,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}			
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
 				
 	arma::colvec x(F);			
 				
@@ -747,9 +777,13 @@ int LastPct=0;
 	arma::mat Y(F,2);			
 	Y.fill(1.0);			
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rnorm(F, Mulog, Sigmalog));		
-		y = arma::sort(y);		
-//  for lognormal the datum at y is already log(y)				
+		y = Rcpp::as<arma::colvec>(rnorm(N, Mulog, Sigmalog));		
+		y = arma::sort(y);	
+		for(int j=0,k=0; j<N; j++)  {	
+			if(event[j]==0)  {y.shed_row(j-k);}
+			k++;
+		}		
+//  for lognormal the data at y is already log(y)				
 		for(int j=0; j<F; j++) {		
 			Y(j,1)=y(j);	
 		}		
@@ -768,9 +802,9 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/s_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
-// need to confirm coeficient use here with x and y reversed x=my+b)				
+// need to confirm coefficient use here with x and y reversed x=my+b)				
 		qpiv.row(i)=arma::trans(coef(1)*CBq+coef(0));		
 	}			
 				
@@ -797,7 +831,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -901,7 +935,7 @@ LastPct = ProgPct;
 }
 
 
-SEXP pivotalMCg2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+SEXP pivotalMCg2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){				
 			
  //	src5<-'			
 // ppp Must be determined in calling code, choices include exact and Benard's estimation methods				
@@ -909,22 +943,28 @@ SEXP pivotalMCg2pXonY(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEX
 	Rcpp::NumericVector ppp(arg1);			
 	int F=ppp.size();			
 				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+// need the event vector for masking	
+// length of event vector will identify the total number of occurrences.	
+	Rcpp::NumericVector event(arg2);
+	int N=event.size();
+	
+// establish output to be provided and prepare case records	
+	Rcpp::NumericVector SimControl(arg3);
+	double R2test= SimControl[0];
+	double  CItest=SimControl[1];
+	int prrout=0;
+	int pivout=0;
+	
+	unsigned int S = as<unsigned int>(arg4);
+	unsigned int Spct = S/100;
+	int seed = as<int>(arg5);
+// get the descriptive quantiles for pivotals	
+	Rcpp::NumericVector dq(arg6);
+	int ndq = dq.size();
+	
+// variables to control a progress output	
+	bool ProgRpt = as<bool>(arg7);
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
@@ -942,7 +982,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}			
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
  // explicit loop to fill arma object from Rcpp object				
 	arma::mat X(F,2);			
 	X.fill(1.0);			
@@ -965,9 +1005,13 @@ int LastPct=0;
 				
 				
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rweibull(F, Beta, Eta));		
-		y = arma::sort(y);		
-//  for gumbel the datum at y is already log(y)				
+		y = Rcpp::as<arma::colvec>(rweibull(N, Beta, Eta));		
+		y = arma::sort(y);
+		for(int j=0,k=0; j<N; j++)  {	
+			if(event[j]==0)  {y.shed_row(j-k);}
+			k++;
+		}			
+//  for gumbel the data at y is already log(y)				
  // y=log(y);				
 				
 				
@@ -986,7 +1030,7 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/b_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
 				
 		qpiv.row(i)=arma::trans((CBq-coef(0))/coef(1));		
@@ -1015,7 +1059,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -1119,7 +1163,7 @@ LastPct = ProgPct;
 }				
 
 
-SEXP pivotalMCg2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6){				
+SEXP pivotalMCg2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7){				
 			
  //	src6<-'			
 // ppp Must be determined in calling code, choices include exact and Benard's estimation methods				
@@ -1127,22 +1171,28 @@ SEXP pivotalMCg2pYonX(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEX
 	Rcpp::NumericVector ppp(arg1);			
 	int F=ppp.size();			
 				
-// establish output to be provided and prepare case records				
-	Rcpp::NumericVector SimControl(arg2);			
-	double R2test= SimControl[0];			
-	double  CItest=SimControl[1];			
-	int prrout=0;			
-	int pivout=0;			
-				
-	unsigned int S = as<unsigned int>(arg3);			
-	unsigned int Spct = S/100;			
-	int seed = as<int>(arg4);			
-// get the descriptive quantiles for pivotals				
-	Rcpp::NumericVector dq(arg5);			
-	int ndq = dq.size();			
-				
-// variables to control a progress output				
-	bool ProgRpt = as<bool>(arg6);			
+// need the event vector for masking		
+// length of event vector will identify the total number of occurrences.		
+	Rcpp::NumericVector event(arg2);	
+	int N=event.size();	
+		
+// establish output to be provided and prepare case records		
+	Rcpp::NumericVector SimControl(arg3);	
+	double R2test= SimControl[0];	
+	double  CItest=SimControl[1];	
+	int prrout=0;	
+	int pivout=0;	
+		
+	unsigned int S = as<unsigned int>(arg4);	
+	unsigned int Spct = S/100;	
+	int seed = as<int>(arg5);	
+// get the descriptive quantiles for pivotals		
+	Rcpp::NumericVector dq(arg6);	
+	int ndq = dq.size();	
+		
+// variables to control a progress output		
+	bool ProgRpt = as<bool>(arg7);	
+			
 int ProgPct=0;				
 int LastPct=0;				
 				
@@ -1160,7 +1210,7 @@ int LastPct=0;
 	SetSeed(seed);
 	}			
 				
-// Fill a matrix appropritate for application of linear fit XonY				
+// Fill a matrix appropriate for application of linear fit XonY				
 				
 	arma::colvec x(F);			
 				
@@ -1183,9 +1233,13 @@ int LastPct=0;
 	arma::mat Y(F,2);			
 	Y.fill(1.0);			
 	for(unsigned int i=0; i<S; i++)  {			
-		y = Rcpp::as<arma::colvec>(rweibull(F, Beta, Eta));		
-		y = arma::sort(y);		
-//  for gumbel the datum at y is already log(y)				
+		y = Rcpp::as<arma::colvec>(rweibull(N, Beta, Eta));		
+		y = arma::sort(y);
+		for(int j=0,k=0; j<N; j++)  {	
+			if(event[j]==0)  {y.shed_row(j-k);}
+			k++;
+		}		
+//  for gumbel the data at y is already log(y)				
 		for(int j=0; j<F; j++) {		
 			Y(j,1)=y(j);	
 		}		
@@ -1204,9 +1258,9 @@ int LastPct=0;
 				
 // Here the pivotals for confidence bounds are built				
 // note that this pivotal is composed of (yp-u_hat)/b_hat, which is negative of Lawless' pivotal				
-// thie pivotals matrix is only built if called for by output control				
+// the pivotals matrix is only built if called for by output control				
 	if(CItest>0.0)  {			
-// need to confirm coeficient use here with x and y reversed x=my+b)				
+// need to confirm coefficient use here with x and y reversed x=my+b)				
 		qpiv.row(i)=arma::trans(coef(1)*CBq+coef(0));		
 	}			
 				
@@ -1233,7 +1287,7 @@ LastPct = ProgPct;
 				
 				
 				
-// process the prr vector according to ouput control				
+// process the prr vector according to output control				
 	if(R2test>0.0) {			
 	prrout = 1;			
 	R2=arma::sort(R2);			
@@ -1336,38 +1390,38 @@ LastPct = ProgPct;
  //	 '			
 }				
 			
-SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6,SEXP arg7)		
+SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6,SEXP arg7,SEXP arg8)		
 {				
 
-int casenum =as<int>(arg7);		
+int casenum =as<int>(arg8);		
 		
 switch(casenum) {				
 case 0 :				
-return pivotalMCw2pXonY(arg1, arg2, arg3, arg4, arg5, arg6);
+return pivotalMCw2pXonY(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 break;				
 				
 case 1 :				
-return pivotalMCw2pYonX(arg1, arg2, arg3, arg4, arg5, arg6);		
+return pivotalMCw2pYonX(arg1, arg2, arg3, arg4, arg5, arg6, arg7);		
 break;				
 				
 case 2 :								
-return pivotalMCln2pXonY(arg1, arg2, arg3, arg4, arg5, arg6);
+return pivotalMCln2pXonY(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 break;				
 				
 case 3 :								
-return pivotalMCln2pYonX(arg1, arg2, arg3, arg4, arg5, arg6);		
+return pivotalMCln2pYonX(arg1, arg2, arg3, arg4, arg5, arg6, arg7);		
 break;				
 				
 case 4 :				
-return pivotalMCg2pXonY(arg1, arg2, arg3, arg4, arg5, arg6);
+return pivotalMCg2pXonY(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 break;				
 				
 case 5 :				
-return pivotalMCg2pYonX(arg1, arg2, arg3, arg4, arg5, arg6);		
+return pivotalMCg2pYonX(arg1, arg2, arg3, arg4, arg5, arg6, arg7);		
 break;					
 				
 default:				
-return pivotalMCw2pXonY(arg1, arg2, arg3, arg4, arg5, arg6);
+return pivotalMCw2pXonY(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 break;				
 }				
 				

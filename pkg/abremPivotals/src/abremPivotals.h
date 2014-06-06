@@ -17,7 +17,7 @@ RcppExport SEXP LSLRg2pXonY (SEXP arg1, SEXP arg2);
 RcppExport SEXP LSLRg2pYonX (SEXP arg1, SEXP arg2);
 
 RcppExport SEXP LSLR(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4);
-RcppExport SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6,SEXP arg7);	
+RcppExport SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6,SEXP arg7,SEXP arg8);	
 RcppExport SEXP CallgetCCC2(SEXP arg1, SEXP model);
 RcppExport SEXP CallgetPvalue(SEXP arg1, SEXP arg2, SEXP arg3);
 

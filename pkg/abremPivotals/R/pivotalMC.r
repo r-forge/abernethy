@@ -1,4 +1,4 @@
-pivotalMC<-function(x, dist="weibull", reg_method="XonY", R2, CI, unrel, P1=1.0, P2=1.0, S=10^4, seed=1234, ProgRpt=FALSE)  {		
+pivotalMC<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel, P1=1.0, P2=1.0, S=10^4, seed=1234, ProgRpt=FALSE)  {		
 				
 	if(is.vector(x))  {			
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
@@ -12,7 +12,16 @@ pivotalMC<-function(x, dist="weibull", reg_method="XonY", R2, CI, unrel, P1=1.0,
 				stop("input format not recognized")	
 			}
 		}			
-	}	
+	}
+		if(missing(event)){
+		event<-c(rep(1,length(x[,1])))
+	}else{
+	## validate the event vector
+		zeros<-length(event[sapply(event, function(x) x==0)])
+		if(length(x)!=(length(event)-zeros)) {
+			stop("event vector has wrong length")
+		}
+	}
 	    if (R2 < 0|| R2>1) stop("Invalid R-squared value")
 	    if (CI < 0|| CI>1) stop("Invalid Confidence Interval")	
 		if(min(unrel)<=0||max(unrel)>=1) stop("Invalid unreliability vector")
@@ -35,7 +44,7 @@ pivotalMC<-function(x, dist="weibull", reg_method="XonY", R2, CI, unrel, P1=1.0,
 	if(dist=="gumbel") casenum=casenum+4			
 				
 				
-	result<-.Call("pivotalMC", x$ppp, c(R2,CI,P1,P2), S, seed, unrel, ProgRpt, casenum , package="abremPivotals")
+	result<-.Call("pivotalMC", x$ppp, event, c(R2,CI,P1,P2), S, seed, unrel, ProgRpt, casenum , package="abremPivotals")
 
 
 return(result)				
