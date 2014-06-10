@@ -29,16 +29,17 @@ pivotalMC(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel,
 }
 
 \details{
-Pivotal quantities are determined by establishing the x-axis value at each descriptive quantile positon for each sampled regression.  The output pivotals determined at the double sided confidence interval must be interpreted for application to any given data fit.
+Pivotal quantities are determined by establishing the x-axis value at each descriptive quantile position for each sampled regression.  The output pivotals determined at the double sided confidence interval must be interpreted for application to any given data fit.
 }
 
 \value{
-Returns an appropriate object for the input R2 and CI values.
+Returns an appropriate object for the input R2 and CI values.  There are 8 output configurations that can be generated depending on the argument values for R2 (for r^2, coefficient of determination) and CI (for confidence interval).   When either of these values is entered as zero, no output for the corresponding prr value or confidence interval are generated.  Specifically defined input values for either argument are in the range 0.0<value<1.0 .  When a specifically defined value has been provided the output for R2 will be a vector containing the prr value and the CCC^2.  The output for a specifically defined CI will be a dataframe containing the pivotal quantities.  Should an absolute value of 1.0 be given for either R2 or CI then a full vector of the r^2 CDF, or the full matrix of pivotal quantities generated for all samples will be returned.  When non-zero entries are provided for both R2 and CI the appropriate output objects are returned in a list.
 }
 
 \references{
   Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
-  Jerald F. Lawless, (2003) "Statistical Models and Methods for Lifelime Data, Second Edition"  
+  Jerald F. Lawless, (2003) "Statistical Models and Methods for Lifelime Data, Second Edition" 
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
 
 \examples{

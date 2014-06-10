@@ -18,11 +18,11 @@ AbPval(F,R2,model="weibull")
 
 }
 
-\details{The value returned is derived from a correlation developed from previously run pivotal analysis with 10^8 random samples.  Project "Abernethy Reliability Methods" has judged that only the prr derived from 2 parameter models to have usefullness in comparitive analysis.  This is seen from the "Detect Power" presentations in Appendix D of "The New Weibull Handbook, Fifth Edition".  For validity of a 3rd parameter optimization on a given model over its 2 parameter fit, only the Likelihood Ratio Test will be applied.  This validity check requires an LRT-P greater than 50% in addition to caveats placed on these biased fits by Dr. Abernethy.
+\details{The value returned is derived from a correlation developed from previously run pivotal analysis with 10^8 random samples.  Project "Abernethy Reliability Methods" has judged that only the prr derived from 2 parameter models to have usefullness in comparitive analysis.  This is seen from the "Detect Power" presentations in Appendix D of "The New Weibull Handbook, Fifth Edition".  For validity of a 3rd parameter optimization on a given model over its 2 parameter fit, only the Likelihood Ratio Test will be applied.  
 }
 
 \value{
-Returns a  vector containing the Abernethy P-value and the square of CCC (for comparison with R squared).
+Returns a vector containing the Abernethy P-value and the square of CCC (for comparison with R squared).
 }
 
 \references{
