@@ -3,7 +3,7 @@ pivotalMC<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, un
 	if(is.vector(x))  {			
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
 	}else{			
-		if(names(x)[1]=="data"&&names(x)[2]=="ppp")  {		
+		if(names(x)[1]=="time"&&names(x)[2]=="ppp")  {		
 		## will handle the output from getPPP				
 		}else{	
 			if(length(x$ppp<3))  {

@@ -6,7 +6,7 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	if(is.vector(x))  {			
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
 	}else{			
-		if(names(x)[1]=="data"&&names(x)[2]=="ppp")  {		
+		if(names(x)[1]=="time"&&names(x)[2]=="ppp")  {		
 		## will handle the output from getPPP				
 		}else{	
 			if(length(x$ppp)<3)  {
@@ -24,7 +24,7 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	if(dist=="gumbel") casenum=casenum+8			
 				
 				
-	resultVec<-.Call("LSLR", x$data, x$ppp, limit, casenum , package="abremPivotals")			
+	resultVec<-.Call("LSLR", x$time, x$ppp, limit, casenum , package="abremPivotals")			
 				
 	if(casenum < 4) {			
 		if(length(resultVec)==3)  {	

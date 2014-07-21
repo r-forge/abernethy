@@ -4,7 +4,7 @@
  ##   (c)2014 OpenReliability.org
 ##
 
-getProbabilityPlottingPositions<-function(x, s=NULL, ppos="Benard", aranks="Johnson", ties=NULL)  {							
+getProbabilityPlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard", aranks="Johnson", ties=NULL)  {							
 	F<-length(x)						
 	N<-F+length(s)						
 	##  create the event vector						
@@ -147,7 +147,7 @@ getProbabilityPlottingPositions<-function(x, s=NULL, ppos="Benard", aranks="John
 	}						
 							
 	outDF<-cbind(prep_df$data,data.frame(ppp),prep_df$adj_rank)						
-	colnames(outDF)<-c("data","ppp","adj_rank")						
+	colnames(outDF)<-c("time","ppp","adj_rank")						
 return(outDF)							
 }							
 ## assign the alias							
