@@ -1,5 +1,10 @@
 2014-04-17 Jurgen Symynck <jusy@openreliability.org>
 
+        * upgraded abrem 0.1.14 to 0.1.16:
+		No changes, trying to counter build problems on r-forge (having to do with linking to RcppArmaddillo)
+		
+2014-04-17 Jurgen Symynck <jusy@openreliability.org>
+
         * upgraded abrem 0.1.12 to 0.1.14:
 		General man page updates and reorganization, more error checking, added support for subtracting threshold parameters from the data before plotting, replaced "bernard" with "benard", renamed option "blives" to "unrel", renamed option "conf.n" to "unrel.n", added some debugging datasets and a mixed model (synthetic) dataset.
 		Many more modifications to the code for debugging and (currently) undocumented features. (choose fit calculation code, choose confidence calculation code, plot superSMITH reports ...)
