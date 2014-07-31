@@ -9,7 +9,8 @@ export(
 	contour.abrem)
 S3method(plot, abrem) 
 S3method(print, abrem) 
-S3method(contour, abrem) 
+S3method(contour, abrem)
+importFrom(abremPivotals)
 importFrom(pivotals)
 importFrom(debias) 
-importFrom(Rcpp) 
+
