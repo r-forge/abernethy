@@ -1,0 +1,10 @@
+Package: RRM
+Title: Implementation of ReliaSoft Ranking Method
+Version: 0.1.0
+Date: 2014-08-05
+Author: Jacob T. Ormerod
+Maintainer: Jacob T. Ormerod <jake@openreliability.org>
+Description: Likelihood based placement of specific fail time and rank position for data sets including interval data
+License: GPL (>= 2)
+Depends: abremPivotals
+
