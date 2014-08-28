@@ -1,14 +1,14 @@
-\name{getProbabilityPlottingPositions}
-\alias{getProbabilityPlottingPositions}
+\name{getPercentilePlottingPositions}
+\alias{getPercentilePlottingPositions}
 
-\title{ determination of probability plotting positions for linear regression with many optional methods}
+\title{ Determination of percentile plotting positions for linear regression with many optional methods}
 
 \description{
 Determination of plotting positions to be used for linear regression of life data analysis is a highly debated topic.  This function implements a wide assortment of options for the Abernethy Reliability Methods project.
 }
 
 \usage{
-getProbabilityPlottingPositions(x, s=NULL, interval=NULL, ppos="Benard",
+getPercentilePlottingPositions(x, s=NULL, interval=NULL, ppos="Benard",
  aranks="Johnson", ties=NULL) 
 }
 
