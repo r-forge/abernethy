@@ -1,4 +1,4 @@
-Package: abrem
+Package: abrem.branch
 Type: Package
 Title: Abernethy Reliability Methods
 Version: 0.1.17

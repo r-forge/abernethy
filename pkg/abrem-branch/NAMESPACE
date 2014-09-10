@@ -10,7 +10,7 @@ export(
 S3method(plot, abrem) 
 S3method(print, abrem) 
 S3method(contour, abrem)
-importFrom(abremPivotals)
+importFrom(abremPivotals.branch)
 importFrom(pivotals)
 importFrom(debias) 
 
