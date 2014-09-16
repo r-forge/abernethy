@@ -1,3 +1,0 @@
-useDynLib(abremPivotals.branch)
-importFrom(Rcpp, evalCpp)
-exportPattern("^[[:alpha:]]+")
