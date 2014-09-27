@@ -27,13 +27,13 @@ Returns a dataframe with the failure data (as potentially reduced by ties argume
 
 \references{
   Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
-  Leonard C. Johnson (1964) "The Statistical Treatment of Fatique Experiments"  
+  Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 
 \examples{
 failures<-c(90,96,30,49,82)
 suspensions<-c(100,45,10)
-median_ranks<-getPPP(failures, suspensions)[,2]
+median_percentile_ranks<-getPPP(failures, suspensions)[,2]
 }
 
 \keyword{ regression reliability }
