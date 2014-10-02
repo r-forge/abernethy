@@ -5,8 +5,8 @@
  
 #include <RcppArmadillo.h>
 
-RcppExport SEXP MLEloglike(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
-RcppExport SEXP MLEsimplex(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
+RcppExport SEXP MLEloglike(SEXP arg1, SEXP arg4, SEXP arg5);
+RcppExport SEXP MLEsimplex(SEXP arg1, SEXP arg2);
 
 #endif
 #endif

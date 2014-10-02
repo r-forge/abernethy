@@ -12,7 +12,8 @@ mleframe(x, s=NULL, interval=NULL)
 }
 
 \arguments{
-  \item{x}{A vector of failure data.}
+  \item{x}{An expected vector of failure data. Alternative support is provided for a dataframe holding time and event columns,
+  where event markers for failure occurrences are 1 and suspensions (right censored data) are 0.}
   \item{s}{An optional vector of suspension data.}
   \item{interval}{A dataframe holding interval bounds for failure data in columns named 'left' and 'right'.
   The left(early) interval bound for left-censored data must be entered as zero (NA is not accepted).

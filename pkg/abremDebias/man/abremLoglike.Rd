@@ -19,7 +19,7 @@ abremLoglike(x, par, dist="weibull" )
   }
   \item{par}{A vector of parameters taken in the same order as the underlying R distribution.
   That is, for weibull the order of parameters is (shape, scale).  For lognormal (meanlog, sdlog).
-  (Unsuitable parameters cannot be pre-tested, but will cause the function to fail with NaN.)
+  (Unsuitable parameters cannot be pre-tested, but may cause the function to fail with NaN, or inf values.)
   }
   \item{dist}{A string defining a distribution to be fit. Implemented distributions are "weibull" (default) and "lognormal".
   (Only 2-parameter models are accepted.)

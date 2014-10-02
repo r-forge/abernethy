@@ -30,27 +30,20 @@ arma::colvec right;
 arma::colvec ni;
   
 public:
-MLEmodel(SEXP,  SEXP, SEXP);
-SEXP get_time();
+MLEmodel(SEXP);
 double LogLike(arma::colvec, int, int);
-
-SEXP MLEsimplex(arma::colvec, int);
-
+SEXP MLEsimplex(SEXP);
 };
 // end of class declaration
 
 
 // class implementation
 
-
-
-
-
-MLEmodel::MLEmodel( SEXP arg1,  SEXP arg2,  SEXP arg3) {
-
-	time=Rcpp::as<arma::colvec>(arg1);
-	qty=Rcpp::as<arma::colvec>(arg2);
-	N=arg3;
+MLEmodel::MLEmodel( SEXP arg1) {
+	Rcpp::List L(arg1);
+	time=Rcpp::as<arma::colvec>(L["fsdi"]);
+	qty=Rcpp::as<arma::colvec>(L["q"]);
+	N=L["N"];
 // Provide a first non-sense element to front of time vector
 // so that position math works when Nf is zero.
 	time.insert_rows(0,1);
@@ -84,12 +77,6 @@ MLEmodel::MLEmodel( SEXP arg1,  SEXP arg2,  SEXP arg3) {
 
 }
 
-
-/*
-SEXP MLEmodel::get_time() {
-return wrap(endf);
-}
-*/
 
 
 double MLEmodel::LogLike(arma::colvec par, int sign, int dist_num)  {
@@ -157,9 +144,13 @@ else if(dist_num==2)  {
 return sign*(failcomp+suscomp+discomp+intcomp);
 }
 
-SEXP MLEmodel::MLEsimplex( arma::colvec vstart, int dist_num)  {			
-// limit could become a class member to be brought in from R				
-	double limit= 0.00001;			
+SEXP MLEmodel::MLEsimplex( SEXP arg1)  {	
+	Rcpp::List L(arg1);
+	int dist_num=Rcpp::as<int>(L["dist_num"]);
+	arma::colvec vstart=Rcpp::as<arma::colvec>(L["vstart"]);
+	double limit=Rcpp::as<double>(L["limit"]);
+	int maxit=Rcpp::as<int>(L["maxit"]);
+		
 // this algorithm is optimized specificity for the two parameter case				
 // variables to hold number of  parameters and number of vertices are vestigial				
 	int npar=2, k= npar+1;			
@@ -202,10 +193,9 @@ SEXP MLEmodel::MLEsimplex( arma::colvec vstart, int dist_num)  {
  // initialization of variables used in the loop				
 	arma::colvec vm, vr, ve, vc;			
 	double fr, fe, fc;			
-				
-				
-				
-				
+	int loopcount=1;
+	int warn=0;
+		
  // This is the main loop for the minimization				
 	while(error>limit)  {			
  // calculate the centroid				
@@ -266,13 +256,20 @@ SEXP MLEmodel::MLEsimplex( arma::colvec vstart, int dist_num)  {
 	DFrow(1)=v(1,vs);			
 	DFrow(2)=funval(vs);			
 	DFrow(3)=error;			
-	DF=join_cols(DF,DFrow);			
+	DF=join_cols(DF,DFrow);
+
+	loopcount=loopcount+1;	
+	if(loopcount>maxit)  {	
+		warn=1;
+		break;
+	}	
+	
 				
 // then close main iteration loop				
 	}			
 				
 				
-	Rcpp::NumericVector outvec(3);			
+	Rcpp::NumericVector outvec(4);			
 	if(dist_num==1) {			
 	outvec[0]=v(1,vs);			
 	outvec[1]=v(0,vs);			
@@ -281,26 +278,26 @@ SEXP MLEmodel::MLEsimplex( arma::colvec vstart, int dist_num)  {
 	outvec[1]=v(1,vs);			
 	}			
 	outvec[2]=sign*funval(vs);			
-				
-	return outvec;			
+	outvec[3]=warn;
+			
+	return List::create(outvec, wrap(DF));
+		
 	}	
 
 	// Exported Functions
 
-	SEXP MLEloglike(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5)  {
-		MLEmodel mymodel(arg1, arg2, arg3);
+	SEXP MLEloglike(SEXP arg1, SEXP arg4, SEXP arg5)  {
+		MLEmodel mymodel(arg1);
 		arma::colvec par=Rcpp::as<arma::colvec>(arg4);
 		int dist_num=Rcpp::as<int>(arg5);
 		int sign=1;
 		return wrap(mymodel.LogLike(par, sign, dist_num));
 	}
 
-	SEXP MLEsimplex(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5)  {
-		MLEmodel mymodel(arg1, arg2, arg3);
-		arma::colvec par=Rcpp::as<arma::colvec>(arg4);
-		int dist_num=Rcpp::as<int>(arg5);
+	SEXP MLEsimplex(SEXP arg1, SEXP arg2)  {
+		MLEmodel mymodel(arg1);
+		return mymodel.MLEsimplex(arg2);
 
-		return wrap(mymodel.MLEsimplex(par,dist_num));
 	}
 
 

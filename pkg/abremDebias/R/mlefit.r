@@ -1,4 +1,4 @@
-mlefit<-function(x, dist="weibull")  {				
+mlefit<-function(x, dist="weibull", debias=NULL, con=NULL)  {			
 ## check basic parameters of x				
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}			
 	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}			
@@ -42,16 +42,20 @@ mlefit<-function(x, dist="weibull")  {
 ## fsdi is the time vector to pass into C++
 ## data_est is used to estimate the magnitude of data	
 	fsd<-NULL
+	data_est<-NULL
 	if((Nf+Ns)>0)  {
 		fsd<-fsiq$left[1:(Nf + Ns)]
+## assure that data_est is a clone		
+		data_est<-fsiq$left[1:(Nf + Ns)]
 	}
 	if(Nd>0) {		
-		fsd<-c(fsd,fsiq$right[(Nf + Ns + 1):(Nf +  Ns + Nd)])	
+		fsd<-c(fsd,fsiq$right[(Nf + Ns + 1):(Nf +  Ns + Nd)])
+		data_est <- c(data_est, 0.5*(fsiq$right[(Nf + Ns + 1):(Nf + Ns + Nd)]))
 	}		
 	if(Ni>0)  {		
 		fsdi<-c(fsd, fsiq$left[(Nf + Ns + Nd + 1):nrow(fsiq)], 	
 		fsiq$right[(Nf + Ns + Nd + 1):nrow(fsiq)])
-		data_est<-c(fsd, (fsiq$left[(Nf + Ns + Nd + 1):nrow(fsiq)] + 
+		data_est<-c(data_est, (fsiq$left[(Nf + Ns + Nd + 1):nrow(fsiq)] + 
 				 fsiq$right[(Nf + Ns + Nd + 1):nrow(fsiq)])/2)		  
 	}else{
 		fsdi<-fsd
@@ -84,15 +88,52 @@ mlefit<-function(x, dist="weibull")  {
 			stop("distribution not resolved")
 		}
 	}
-							
-	outvec<-.Call("MLEsimplex",fsdi,q,N,vstart,dist_num, package="abremDebias")
+	
+## Optional optimization con list to be handled here				
+		## vstart will be as estimated	
+		limit<-1e-5	
+		maxit<-100	
+		listout<-FALSE	
+			
+	if(length(con)>0)  {		
+		if(length(con$vstart>0))  {	
+			vstart<-con$vstart
+		}	
+		if(length(con$limit)>0)  {	
+			limit<-con$limit
+		}	
+		if(length(con$maxit)>0)  {	
+			maxit<-con$maxit
+		}	
+		if(length(con$listout)>0)  {	
+			listout<-con$listout
+		}	
+	}		
+
+	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
+	SimplexList<-list(dist_num=dist_num, vstart=vstart,limit=limit,maxit=maxit)
+
+	retlist<-.Call("MLEsimplex",MLEclassList, SimplexList, package="abremDebias")
+	
+	outvec<-retlist[[1]][1:3]
+	
 	if(dist_num == 1)  {
 		names(outvec)<-c("Eta","Beta","LL")
 	}
 		if(dist_num == 2)  {
 		names(outvec)<-c("Mulog","Sigmalog","LL")
 	}
-		
-				
-outvec				
+	if(retlist[[1]][4]>0)  {
+		warn<-"likelihood optimization did not converge"
+		attr(outvec,"warning")<-warn
+	}
+	
+	if(listout==FALSE) {
+		return(outvec)
+	}else{
+		optDF<-as.data.frame(retlist[[2]])
+		names(optDF)<-c("beta_est", "eta_est", "negLL", "error")
+		return(list(fit=outvec, opt=optDF))
+	}
+	
 }				

@@ -1,6 +1,4 @@
-mleframe<-function(x, s=NULL, interval=NULL)  {				
-				
-				
+mleframe<-function(x, s=NULL, interval=NULL)  {					
 ## interval dataframe validation				
 	colname_error<-FALSE			
 	if(class(interval)=="data.frame")  {			
@@ -12,7 +10,6 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		if(test_names[2] !="right") {		
 			colname_error<-TRUE	
 		}		
-				
 ## add qty column if not provided				
 		if(ncol(interval)<3)  {		
 			interval<- cbind(interval, qty=c(rep(1,nrow(interval))))	
@@ -27,7 +24,6 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	if(colname_error==TRUE) {			
 		stop("column name error in interval dataframe object")		
 	}			
-				
 ## any additional validations, such as positive numeric checking				
 ## removal of potential na's, etc. could take place here				
 	if(anyNA(interval))  {			
@@ -52,7 +48,6 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		}		
 	}			
 				
-				
 ## now build dataframes for failures and suspensions				
 ## could x be a dataframe with time and event columns??				
 	suspensions<-NULL			
@@ -72,14 +67,59 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		stop("NA  in suspension data")		
 		}		
 		if(any(s<=0))  {		
-		stop("non-positive values in failure/occurrence data")		
+		stop("non-positive values in suspension data")		
 		}		
 		s<-sort(s)		
 		suspensions<-data.frame(left=s,right=-1,qty=rep(1,length(s)))		
 		}		
 	}else{			
-## here a time-event dataframe can be evaluated, if provided as x				
-		stop("time-event dataframe not yet supported")		
+	## here a time-event dataframe can be evaluated, if provided as x				
+	## This is the support for a time-event dataframe 
+		if (class(x) == "data.frame") {
+			test_names <- names(x)
+			if (test_names[1] != "time") {
+				colname_error <- TRUE
+			}
+			if (test_names[2] != "event") {
+				colname_error <- TRUE
+			}
+			if (colname_error == TRUE) {
+				stop("column name error in event dataframe object")
+			}
+
+	## verify positive time values
+			if (anyNA(x$time)) {
+				stop("NA in failure or suspension data")
+			}
+			if (any(x$time<= 0)) {
+				stop("non-positive values in failure or suspension data")
+			}
+	## verify 1's and 0's only in event
+	## using Jurgen's validation code
+			ev_info <- levels(factor(x$event))
+			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
+			# okay x is holding event indicators
+			}else{
+			stop("event column not '1' or '0' ")
+			}
+
+			if(length(s)>0)  {
+			warning("argument 's' ignored when time-event dataframe provided")
+			}
+
+
+
+			f<-x[which(x$event==1),1]
+					failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
+			if(identical(ev_info, c("0","1"))) {
+			s<-x[which(x$event==0),1]
+						suspensions <- data.frame(left = s, right = -1, qty = rep(1, length(s)))
+			}
+		}else {		
+			if (length(x) > 0) {
+				stop("error in x argument type")
+			}
+		}
 	}			
 	DF<-rbind(failures,suspensions,interval)			
 ## assure all integers in qty				

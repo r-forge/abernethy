@@ -64,18 +64,19 @@ abremLoglike<-function(x, par, dist="weibull" )  {
 	N<-c(Nf,Ns,Nd,Ni)	
 
 ## establish distribution number
-if(tolower(dist)=="weibull"	)  {
-dist_num=1
-}else{
-	if(tolower(dist)=="lognormal")  {
-		dist_num=2
+	if(tolower(dist)=="weibull"	)  {
+	dist_num=1
 	}else{
-		stop("distribution not resolved")
+		if(tolower(dist)=="lognormal")  {
+			dist_num=2
+		}else{
+			stop("distribution not resolved")
+		}
 	}
-}
 
+	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
 								
-	outval<-.Call("MLEloglike",fsdi,q,N,par,dist_num, package="abremDebias")
+	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, package="abremDebias")
 				
 				
 				
