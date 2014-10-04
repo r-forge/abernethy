@@ -276,7 +276,8 @@ SEXP MLEmodel::MLEsimplex( SEXP arg1)  {
 	}else{			
 	outvec[0]=v(0,vs);			
 	outvec[1]=v(1,vs);			
-	}			
+	}
+// note: multiplication by sign here assures positive log-likelihood is delivered	
 	outvec[2]=sign*funval(vs);			
 	outvec[3]=warn;
 			

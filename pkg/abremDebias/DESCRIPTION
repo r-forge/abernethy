@@ -1,7 +1,7 @@
 Package: abremDebias
 Title: Maximum Likelihood Estimation Models for Reliability Analysis
-Version: 0.2.2
-Date: 2014-10-2
+Version: 0.2.3
+Date: 2014-10-3
 Author: Jacob T. Ormerod
 Maintainer: Jacob T. Ormerod <jake@openreliability.org>
 Description: MLE for Weibull, and lognormal distributions including right, left and interval censored data.  Implements 3rd parameter optimizations and likelihood ratio contours for confidence interval determination. Built to be a reverse depend for package abrem "Abernethy Reliability Methods".  

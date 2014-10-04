@@ -21,7 +21,8 @@ mlefit(x, dist="weibull", debias=NULL, con=NULL)
   (Implementations for "weibull3p" and "lognormal3p" are pending.)
   }
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. NOT YET IMPLEMENTED.
+  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hirose-ross". Any entry for debias
+  with the lognormal distribution will be processed as "rba" with a warning if it was not specified.
   }
   \item{con}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:
   'vstart', a vector holding starting estimate for parameters in the order used by the underlying R distribution [CAUTION: for weibull

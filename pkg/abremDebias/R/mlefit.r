@@ -108,25 +108,71 @@ mlefit<-function(x, dist="weibull", debias=NULL, con=NULL)  {
 		if(length(con$listout)>0)  {	
 			listout<-con$listout
 		}	
+	}
+
+pos<-1			
+Q<-sum(q)			
+for(j in seq(1,4))  {			
+	if(N[j]>0) {		
+		Q<-c(Q, sum(q[pos:(pos+N[j]-1)]))	
+		pos<-pos+N[j]	
+	}else{		
+		Q<-c(Q, 0)	
 	}		
+}			
+names(Q)<-c("n","fo", "s", "d", "i")	
 
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
+## Test for successful log-likelihood calculation with given vstart			
+		LLtest<-.Call("MLEloglike",MLEclassList,vstart,dist_num, package="abremDebias")	
+		if(!is.finite(LLtest))  {	
+			stop("Cannot start optimization with given parameters")
+		}	
+	
 	SimplexList<-list(dist_num=dist_num, vstart=vstart,limit=limit,maxit=maxit)
 
 	retlist<-.Call("MLEsimplex",MLEclassList, SimplexList, package="abremDebias")
 	
 	outvec<-retlist[[1]][1:3]
 	
-	if(dist_num == 1)  {
-		names(outvec)<-c("Eta","Beta","LL")
-	}
-		if(dist_num == 2)  {
-		names(outvec)<-c("Mulog","Sigmalog","LL")
-	}
+		if(dist_num == 1)  {			
+			names(outvec)<-c("Eta","Beta","LL")		
+			if(length(debias)>0)  {		
+				attr(outvec,"bias_adj")<-debias	
+				if(debias=="rba")  {						
+					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
+					outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, package="abremDebias")
+				}	
+				if(debias=="mean")  {	
+					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
+					outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, package="abremDebias")
+				}	
+				if(debias=="hirose-ross")  {						
+					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
+					outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, package="abremDebias")
+				}	
+			}		
+		}			
+					
+		if(dist_num == 2)  {			
+			names(outvec)<-c("Mulog","Sigmalog","LL")		
+			if(length(debias)>0)  {				
+				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")
+				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, package="abremDebias")
+				if(debias!="rba")  {	
+					warning("rba has been applied to adjust lognormal")
+					debias="rba"
+				}	
+				attr(outvec,"bias_adj")<-debias	
+			}	
+		}
+
 	if(retlist[[1]][4]>0)  {
 		warn<-"likelihood optimization did not converge"
 		attr(outvec,"warning")<-warn
 	}
+	
+	attr(outvec,"data_types")<-Q[-2]
 	
 	if(listout==FALSE) {
 		return(outvec)
