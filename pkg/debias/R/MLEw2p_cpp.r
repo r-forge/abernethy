@@ -25,7 +25,9 @@ MLEw2p_cpp<-function(x, s=NULL,MRRfit=NULL)  {
 			
 if(missing(MRRfit))  {			
 ## a starting position is simply constructed here (quicker than MRR)			
-	data<-c(x,s)		
+##	data<-c(x,s)
+## temporary fix for Joni Ainasoja at Kone in Finland/(and Sweden?)
+			data<-x
 	            v <- var(log(data))		
 	            shape <- 1.2/sqrt(v)		
 	            vstart <-shape		
