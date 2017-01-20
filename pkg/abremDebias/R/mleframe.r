@@ -123,18 +123,26 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	}			
 	DF<-rbind(failures,suspensions,interval)			
 ## assure all integers in qty				
-	DF$qty<-floor(DF$qty)			
-	outDF<-DF[1,]			
-	outline<-2			
-	for(line in 2:nrow(DF))  {			
-		if(DF[line,1]-DF[line-1,1]+DF[line,2]-DF[line-1,2]==0)  {		
-			outDF[outline-1,3]<-DF[line,3]+DF[line-1,3]	
-		}else{		
-			outDF<-rbind(outDF,DF[line,])	
-			outline<-outline+1	
-		}		
-	}			
-	attr(outDF,"fsiq")<-TRUE			
+	DF$qty<-ceiling(DF$qty)
+	
+## futile attempt to consolidate duplicate data	
+##	outDF<-DF[1,]			
+##	outline<-2			
+##	for(line in 2:nrow(DF))  {			
+##		if(DF[line,1]-DF[line-1,1]+DF[line,2]-DF[line-1,2]==0)  {		
+##			outDF[outline-1,3]<-DF[line,3]+DF[line-1,3]	
+##		}else{		
+##			outDF<-rbind(outDF,DF[line,])	
+##			outline<-outline+1	
+##		}		
+##	}	
+
+## plyr code to aggregate duplicate data
+## http://stackoverflow.com/questions/10180132/consolidate-duplicate-rows
+	outDF<-ddply(DF,c("left","right"),numcolwise(sum))
+
+## don't know why but this bombed mlefit
+##			attr(outDF,"fsiq")<-TRUE			
 				
 return(outDF)				
 }				

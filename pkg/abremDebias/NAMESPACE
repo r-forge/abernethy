@@ -1,3 +1,5 @@
 useDynLib(abremDebias)
 importFrom(Rcpp, evalCpp)
+importFrom(plyr, ddply)
+importFrom(plyr, numcolwise)
 exportPattern("^[[:alpha:]]+")

@@ -8,7 +8,7 @@
 }
 
 \usage{
-mlefit(x, dist="weibull", debias=NULL, con=NULL)
+mlefit(x, dist="weibull", debias=NULL, optcontrol=NULL)
 }
 
 \arguments{
@@ -17,14 +17,14 @@ mlefit(x, dist="weibull", debias=NULL, con=NULL)
 	Suspension data has last known life[time] entered in 'left' column and -1 entered in 'right' column.
 	The left(early) interval bound for left-censored data must be entered as zero. (NA is not accepted).
   }
-  \item{dist}{A string defining a distribution to be fit. Implemented distributions are "weibull" (default) and "lognormal".
-  (Implementations for "weibull3p" and "lognormal3p" are pending.)
+  \item{dist}{A string defining a distribution to be fit. Implemented distributions are "weibull" (default),"lognormal",
+   "weibull3p" and "lognormal3p".
   }
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
   parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hirose-ross". Any entry for debias
   with the lognormal distribution will be processed as "rba" with a warning if it was not specified.
   }
-  \item{con}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:
+  \item{optcontrol}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:
   'vstart', a vector holding starting estimate for parameters in the order used by the underlying R distribution [CAUTION: for weibull
   the order of parameters is (shape, scope)], 'limit', the convergence limit, 'maxit', the maximum number of interations permitted in
   the optimization, and 'listout' a logical indicating whether output should list both the fit and the optimization progress as a dataframe.
@@ -38,7 +38,7 @@ Returns a named vector with parameters of the distribution fit and goodness of f
 \details{
 The negative log-likelihood is minimized by the Nelder-Meade, simplex, algorithm.  This algorithm requires a reasonable starting point
 for the estimate.  Such a reasonable estimate is attempted by default, but in some cases this may be inadequate for proper function.
-the con[trol] argument has been provided to give expert users a means of altering and examining the progress of the optimization.
+the optcontrol argument has been provided to give debug developers a means of altering and examining the progress of the optimization.
 }
 
 \references{

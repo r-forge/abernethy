@@ -1,4 +1,4 @@
-abremLoglike<-function(x, par, dist="weibull" )  {				
+abremLoglike<-function(par, x, dist="weibull", sign=1, tz=0 )  {				
 ## check basic format of x				
 				
 	if(class(x)!="data.frame") {stop("abremLoglike takes a structured dataframe input, use mleframe")}			
@@ -59,6 +59,18 @@ abremLoglike<-function(x, par, dist="weibull" )  {
 			  fsiq$right[(Nf + Ns + Nd + 1):nrow(fsiq)])	
 	}
 	
+## qualify the tz argument		
+	if(tz>0)  {		
+		fdr<-NULL	
+		if(Nf>0) {fdr<-fsdi[1:Nf]}	
+		if(Nd>0) {fdr<-c(fdr,fsdi[(Nf+Ns+1):(Nf+Ns+Nd)])}	
+		if(Ni>0)  {fdr<-c(fdr, fsdi[(Nf+Ns+Nd+Ni+1):(Nf+Ns+Nd+2*Ni)])}	
+			
+		if(tz>fdr)  {	
+			stop("tz is greater than data permits")
+		}	
+	}		
+	
 	q<-fsiq$qty			
 ## third argument will be c(Nf,Ns,Nd,Ni)				
 	N<-c(Nf,Ns,Nd,Ni)	
@@ -75,10 +87,12 @@ abremLoglike<-function(x, par, dist="weibull" )  {
 	}
 
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
-								
-	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, package="abremDebias")
-				
-				
+	
+	if(sign^2!=1)  {	
+		stop("sign must be 1 or -1")
+	}	
+							
+	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, sign, tz, package="abremDebias")
 				
 			
 outval			
