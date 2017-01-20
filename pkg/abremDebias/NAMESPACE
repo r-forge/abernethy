@@ -1,4 +1,8 @@
 useDynLib(abremDebias)
+export(FMbounds,
+abremLoglike,
+hrbu,
+rba)
 importFrom(Rcpp, evalCpp)
 importFrom(plyr, ddply)
 importFrom(plyr, numcolwise)
