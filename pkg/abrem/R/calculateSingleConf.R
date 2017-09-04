@@ -172,8 +172,8 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                                             # 
                                         # TODO: makes sense to have BBB bounds with mle?
                                     }
-                                    sx <- sx[order(sx$rank),]
-                                        # order data according to rank
+                                    sx <- sx[order(sx$time),]
+                                        # order data according to time
                                     sx <- cbind(sx,arank=NA)
                                     sx$rrank <- (fit$n+1-order(sx$rank))
                                         # TODO: does order() completely replace x$rank? (NA?)
