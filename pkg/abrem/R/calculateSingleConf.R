@@ -175,12 +175,12 @@ calculateSingleConf <- function(fit,opadata,datarange,...){
                                     sx <- sx[order(sx$time),]
                                         # order data according to time
                                     sx <- cbind(sx,arank=NA)
-                                    sx$rrank <- (fit$n+1-order(sx$rank))
-                                        # TODO: does order() completely replace x$rank? (NA?)
-                                        # reverse rank order
-                                        # TODO: keep the rrank and arank in fit$data or discard?
+                                    ##sx$rrank <- (fit$n+1-order(sx$rank))
+									## move reverse rank calculation to inside arank calculation loop
+
                                     parank <- 0
                                     for (j in 1:fit$n){
+										sx$rrank[j]<-fit$n-j+1
                                         if(!sx$event[j] || is.null(sx$event)){
                                             sx$arank[j] <- NA
                                         }else{
